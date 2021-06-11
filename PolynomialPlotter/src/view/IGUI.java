@@ -11,9 +11,9 @@ package view;
  */
 public interface IGUI{
 
-    public int getWidth();
+     int getPlotWidth();
 
-    public int getHeight();
+     int getPlotHeight();
 
-    public float getZoom();
+     float getPlotZoom();
 }

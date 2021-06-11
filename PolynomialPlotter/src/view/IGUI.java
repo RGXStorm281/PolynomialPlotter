@@ -3,19 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package polynomialplotter;
+package view;
 
 /**
  *
  * @author robinepple
  */
-public class PolynomialPlotter {
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        
-    }
+public interface IGUI {
     
 }

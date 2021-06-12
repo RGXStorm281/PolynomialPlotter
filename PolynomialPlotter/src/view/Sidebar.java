@@ -37,9 +37,6 @@ public class Sidebar extends JPanel {
         vBox.add(heading);
         JTextField mainField = new TF_Sidebar();
         vBox.add(mainField);
-        vBox.add(new rowBox("29x+2x",new Color(24,46,142),this));
-        vBox.add(new rowBox("29x+2x",new Color(24,46,142),this));
-        vBox.add(new rowBox("29x+2x",new Color(24,46,142),this));
 
         // Remove any Padding
         FlowLayout layout = (FlowLayout)getLayout();

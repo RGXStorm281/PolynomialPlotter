@@ -1,11 +1,14 @@
 package view;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.JTextField;
+
 import java.awt.Color;
-import java.awt.Insets;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class TF_Sidebar extends JTextField{
 
@@ -27,6 +30,18 @@ public class TF_Sidebar extends JTextField{
                 }
             }
             });
+        addKeyListener(new KeyAdapter(){
+            @Override
+            public void keyPressed(KeyEvent e){
+                if(e.getKeyCode() == 10){ // ENTER
+                    JTextField tf = (JTextField) e.getSource();
+                    Box box = (Box) tf.getParent();
+                    box.add(new rowBox(tf.getText(),new Color(24,46,142)));
+                    box.revalidate();
+                    box.repaint();
+                }
+            }
+        });
         setColumns(10);
         setBorder(BorderFactory.createLineBorder(Color.white));
         setBorder(BorderFactory.createCompoundBorder(

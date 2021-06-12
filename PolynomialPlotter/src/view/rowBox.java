@@ -12,11 +12,9 @@ import java.awt.event.FocusListener;
 public class rowBox extends Box {
 
     private Color backgroundColor = new Color(200, 200, 200);
-    private JPanel parent;
 
-    public rowBox(String value, Color color, JPanel parent) {
+    public rowBox(String value, Color color) {
         super(0);
-        this.parent = parent;
         JTextField tf_main = new JTextField();
         tf_main.setText(value);
         tf_main.setFont(GUI.getFont(20));

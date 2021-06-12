@@ -10,25 +10,30 @@ import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import java.awt.geom.AffineTransform;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.GeneralPath;
+import java.util.ArrayList;
+import java.util.function.DoubleFunction;
 
 public class Plotter extends JPanel {
 
     private float zoom = 1f;
-    private float spacing = 20;
+    private float spacing = 100;
     private Point origin;
     private Point mousePt;
 
 
     public Plotter(){
+        // Scroll Listener to handle the Zoom
         addMouseWheelListener(new MouseWheelListener() {
 			public void mouseWheelMoved(MouseWheelEvent e) {
                handleMouseWheelMoved(e);
 			}
         });
+        // Mouse Listener to Handle Drag and change the cursor
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -47,20 +52,22 @@ public class Plotter extends JPanel {
                 self.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             }
         });
+        // Mouse Motion listener to handle Drag
         addMouseMotionListener(new MouseMotionAdapter() {
 			@Override
 			public void mouseDragged(MouseEvent e) {
-                Plotter self = (Plotter) e.getSource();
+                // difference of x,y since the last drag
                 float dx = e.getX() - mousePt.x;
                 float dy = e.getY() - mousePt.y;
-                self.translate(dx,dy);
+                // Change the origin, based on the differences
                 origin.setLocation(origin.x + dx, origin.y + dy);
+                // Update the original Point to the current position
                 mousePt = e.getPoint();
-                System.out.println(origin.x + " " + origin.y);
+                // Repaint the screen
                 repaint();
 			}
         });
-        origin = new Point(getWidth()/2,getHeight()/2);
+        origin = new Point(0,0);
     }
 
     protected void handleMouseWheelMoved(MouseWheelEvent e) {
@@ -71,8 +78,10 @@ public class Plotter extends JPanel {
          }else{
              self.zoom-=e.getWheelRotation()*0.1;
          }
+         // Clamp the zoom to min 0.1f
          if(self.zoom<=0.1)self.zoom=0.1f;
-         self.repaint();
+         // Repaint the screen with new Zoom;
+         repaint();
          System.out.println(self.getZoom());
 	}
 
@@ -80,35 +89,53 @@ public class Plotter extends JPanel {
         int width = this.getWidth();
         int height = this.getHeight();
         Graphics2D g2d = (Graphics2D) g;
+        AffineTransform at = new AffineTransform();
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
         RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setColor(Color.WHITE);
         g2d.fillRect(0,0,width,height);
-        g2d.translate(width/2,height/2);
-        
         g2d.translate((double) origin.x,(double)origin.y);
+        g2d.translate(width/2, height/2);
         g2d.scale(zoom,zoom);
         drawGrid(g2d);
         drawAxes(g2d);
-        drawFunction(g2d);
+        drawFunction(g2d,x->(float)(x*x));
+        drawFunction(g2d,x->(float)(x*x*x));
     }
 
-    private void drawFunction(Graphics2D g2d) {
-
+    private void drawFunction(Graphics2D g2d,DoubleFunction<Float>function) {
+        float unit = spacing;
+        float xSpace = getWidth()/unit;
+        float xStart = -xSpace/2;
+        float xStop = xSpace/2;
+        float wStart = -getWidth()/2*zoom;
+        float wStop = getWidth()/2*zoom;
+        float ySpace = getHeight()/unit;
+        float yStart = -ySpace/2;
+        float yStop = ySpace/2;
+        float hStart = getHeight()/2*zoom;
+        float hStop = -getHeight()/2*zoom;
+        float steps = 0.01f;
+        ArrayList<Point> points = new ArrayList<Point>();
+        for(float i = xStart;i<xStop;i+=steps){
+            float x = map(i,xStart,xStop,wStart,wStop);
+            float y = map(function.apply((double)i),yStart,yStop,hStart,hStop);
+            points.add(new Point((int)x,(int)y));
+        }
         GeneralPath gp = new GeneralPath();
         g2d.setPaint(Color.RED);
-        gp.moveTo(getWidth()/2, getHeight()/2);
-        gp.lineTo(0,0);
+        gp.moveTo(points.get(0).x, points.get(1).y);
+        for(int i = 1;i<points.size();i++){
+           gp.lineTo(points.get(i).x, points.get(i).y);
+        }
         g2d.draw(gp);
 
 	}
 
 	private void drawAxes(Graphics2D g2d) {
         g2d.setColor(Color.BLACK);
-        float xCorrection = 0;
-        float yCorrection = 0;
-        g2d.drawLine((int)(0-origin.x/zoom), (int)((getHeight()/2-yCorrection)/zoom), (int)((getWidth()-origin.x)/zoom),(int)((getHeight()/2-yCorrection)/zoom));
-        g2d.drawLine((int)((getWidth()/2-xCorrection)/zoom), (int)((0-origin.y)/zoom), (int)((getWidth()/2-xCorrection)/zoom),  (int)((getHeight()-origin.y)/zoom));
+        g2d.drawLine((int)-((getWidth()/2+origin.x)/zoom), (int)(0), (int)((getWidth()/2-origin.x)/zoom),(int)(0)); // X-Axis
+        g2d.drawLine((int)0, (int)-((getHeight()/2+origin.y)/zoom), (int)(0),(int)((getHeight()/2-origin.y)/zoom)); // Y-Axis
 	}
 
 	private void drawOrientation(Graphics2D g2d) {
@@ -119,12 +146,14 @@ public class Plotter extends JPanel {
 	public void drawGrid(Graphics2D g2d){
         int width = this.getWidth();
         int height = this.getHeight();
+        float xCorrection = (origin.x%(spacing*zoom));
+        float yCorrection = (origin.y%(spacing*zoom));
         g2d.setColor(new Color(200,200,200));
-        for(float x = (-origin.x+(origin.x%(spacing*zoom)))/zoom;x<(width-origin.x+(origin.x%(spacing*zoom)))/zoom;x+=spacing){
-            g2d.drawLine((int)(x),(int)((0-origin.y)/zoom),(int)(x),(int)((height-origin.y)/zoom));
+        for(float x = (-width/2-origin.x+xCorrection)/zoom;x<(width/2-origin.x+xCorrection)/zoom;x+=spacing){ // Y-Axis-Girds
+            g2d.drawLine((int)x, (int)-((getHeight()/2+origin.y)/zoom), (int)(x),(int)((getHeight()/2-origin.y)/zoom));
         }
-        for(float y = (-origin.y+(origin.y%(spacing*zoom)))/zoom;y<(height-origin.y+(origin.y%(spacing*zoom)))/zoom;y+=spacing){
-            g2d.drawLine((int)((0-origin.x)/zoom),(int)(y),(int)((width-origin.x)/zoom),(int)(y));
+        for(float y = (-height/2-origin.y+yCorrection)/zoom;y<(height/2-origin.y+yCorrection)/zoom;y+=spacing){
+            g2d.drawLine((int)-((getWidth()/2+origin.x)/zoom), (int)(y), (int)((getWidth()/2-origin.x)/zoom),(int)(y));
         }
     }
 
@@ -137,8 +166,8 @@ public class Plotter extends JPanel {
         return this.zoom;
     }
 
-    public void translate(float x, float y){
-        
-    }
-
+    static public final float map(float value, float start1, float stop1, float start2, float stop2) {
+		float outgoing = start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
+		return outgoing;
+	}
 }

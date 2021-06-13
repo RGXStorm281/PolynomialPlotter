@@ -34,11 +34,9 @@ public class TF_Sidebar extends JTextField{
             @Override
             public void keyPressed(KeyEvent e){
                 if(e.getKeyCode() == 10){ // ENTER
-                    JTextField tf = (JTextField) e.getSource();
-                    Box box = (Box) tf.getParent();
-                    box.add(new rowBox(tf.getText(),new Color(24,46,142)));
-                    box.revalidate();
-                    box.repaint();
+                    TF_Sidebar tf = (TF_Sidebar) e.getSource();
+                    ((Sidebar)((Box)tf.getParent()).getParent()).addElement(tf.getText());
+                    tf.setText("");
                 }
             }
         });

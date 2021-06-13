@@ -17,25 +17,25 @@ import javax.swing.border.EmptyBorder;
 
 public class Sidebar extends JPanel {
 
-    private GUI parent;
+    private Box vBox;
+    private TF_Sidebar mainField;
 
-    public Sidebar(GUI gui) {
-        this.parent = gui;
+    public Sidebar() {
         setBackground(new Color(241,241,241));
 
-        Box vBox = Box.createVerticalBox();
+        vBox = Box.createVerticalBox();
         add(vBox);
 
-        JPanel heading = new JPanel();
+        JPanel heading = new JPanel(); // Panel used for the Heading-Text (to set a Background)
         JLabel headingText = new JLabel("Applikationsname");
-        headingText.setFont(GUI.getFont(30));
-        heading.setBackground(GUI.aktzent1);
-        headingText.setForeground(Color.WHITE);
+        headingText.setFont(GUI.getFont(30)); // Set the font to size 30
+        headingText.setForeground(Color.WHITE); 
         headingText.setAlignmentX(Component.CENTER_ALIGNMENT);
-        headingText.setBorder(new EmptyBorder(10,30,10,30));
+        headingText.setBorder(new EmptyBorder(10,30,10,30)); // Add a margin around the Text
+        heading.setBackground(GUI.aktzent1);
         heading.add(headingText);
         vBox.add(heading);
-        JTextField mainField = new TF_Sidebar();
+        mainField = new TF_Sidebar(); // Main-Input field to add new things to the list
         vBox.add(mainField);
 
         // Remove any Padding
@@ -43,5 +43,15 @@ public class Sidebar extends JPanel {
         layout.setHgap(0);
         layout.setVgap(0);
     }
+
+    protected void addElement(String text){
+        vBox.add(new rowBox(text,Color.BLUE));
+        vBox.revalidate();
+        vBox.repaint();
+    }
+
+	public void onElementRemove(rowBox box) {
+        // Gets triggered when an element is removed
+	}
 
 }

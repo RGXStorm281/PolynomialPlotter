@@ -64,10 +64,11 @@ public class rowBox extends Box {
             public void mouseClicked(java.awt.event.MouseEvent evt){
                 JPanel target = (JPanel) evt.getSource();
                 rowBox box = (rowBox) target.getParent();
-                Box sb = (Box) box.getParent();
-                sb.remove(box);
-                sb.revalidate();
-                sb.repaint();
+                Box vBox = (Box) box.getParent();
+                ((Sidebar)vBox.getParent()).onElementRemove(box);
+                vBox.remove(box);
+                vBox.revalidate();
+                vBox.repaint();
 
 
             }

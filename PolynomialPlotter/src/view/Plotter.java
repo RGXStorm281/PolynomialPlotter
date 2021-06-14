@@ -14,7 +14,9 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.GeneralPath;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.awt.geom.Line2D;
 import java.util.function.DoubleFunction;
 
 public class Plotter extends JPanel {
@@ -92,7 +94,7 @@ public class Plotter extends JPanel {
          float dy = (e.getY()-getHeight()/2-origin.y)*-dZoom;
 
          debugPoint.setLocation(dx,dy);
-         origin.setLocation(origin.x-dx*self.zoom,origin.y-dy*self.zoom);
+        //  origin.setLocation(origin.x-dx*self.zoom,origin.y-dy*self.zoom);
          repaint();
 	}
 
@@ -115,51 +117,66 @@ public class Plotter extends JPanel {
         // drawGrid(g2d);
         drawAxes(g2d);
         drawFunction(g2d,x->(float)(x*x),Color.RED);
-        drawFunction(g2d,x->(float)(x*x*x),Color.BLUE);
-        drawDebug(g2d);
+        drawFunction(g2d,x->(float)((x+1)*(x-1)),Color.BLUE);
+        // drawDebug(g2d);
         zoomed = false;
     }
 
     private void drawDebug(Graphics2D g2d) {
         // Method used for drawing Debug Points or Lines
-        g2d.drawLine(0,0,debugPoint.x, debugPoint.y);
+        // g2d.drawLine(0,0,debugPoint.x, debugPoint.y);
+        float x = -1f;
+        float y = 10f;
+        float unit = spacing;
+        float xSpace = getWidth()/unit;
+        float xStart = -xSpace/2; 
+        float xStop = xSpace/2; 
+        float wStart = -getWidth()/2; 
+        float wStop = getWidth()/2;
+        float[] numericRange = {};
+        g2d.drawOval((int)map(x,xStart,xStop,wStart,wStop),(int)-y,10,10);
 	}
 
 	private void drawFunction(Graphics2D g2d,DoubleFunction<Float>function,Color color) {
         // Set a Constant Stroke width, which scales itself down accordingly to the zoom factor
         g2d.setStroke(new BasicStroke((1/zoom)*3));
 
-        float unit = spacing; // Represents how many Pixels equals 1 (as a numeric value)
-        float xSpace = getWidth()/unit; // How many units are on the x-Axis
-        float xStart = -xSpace/2; // Start of the x-Range
-        float xStop = xSpace/2; // Stop of the x-Range
-        float wStart = -getWidth()/2*zoom; // Start of the width-Range (used to map the x-value to a point on the canvas)
-        float wStop = getWidth()/2*zoom;
+        double unit = spacing; // Represents how many Pixels equals 1 (as a numeric value)
+        double xSpace = getWidth()/unit; // How many units are on the x-Axis
+        double xStart = -xSpace/2; // Start of the x-Range
+        double xStop = xSpace/2; // Stop of the x-Range
+        double wStart = -getWidth()/2; // Start of the width-Range (used to map the x-value to a point on the canvas)
+        double wStop = getWidth()/2;
 
-        float ySpace = getHeight()/unit;
-        float yStart = -ySpace/2;
-        float yStop = ySpace/2;
-        float hStart = getHeight()/2*zoom;
-        float hStop = -getHeight()/2*zoom;
-        float steps = 1f; // Detail of the Graph
-        ArrayList<Point> points = new ArrayList<Point>();
-        for(float i = xStart;i<xStop;i+=steps){
+        double ySpace = getHeight()/unit;
+        double yStart = -ySpace/2;
+        double yStop = ySpace/2;
+        double hStart = getHeight()/2;
+        double hStop = -getHeight()/2;
+        double steps = 0.005f; // Detail of the Graph
+        ArrayList<Point.Float> points = new ArrayList<Point.Float>();
+        for(double i = xStart;i<xStop;i+=steps){
             // Map the x/y-numeric value to the space on the screen
-            float x = map(i,xStart,xStop,wStart,wStop); 
-            float y = map(function.apply((double)i),yStart,yStop,hStart,hStop);
-            points.add(new Point((int)x,(int)y));
+            double x = map(i,xStart,xStop,wStart,wStop); 
+            double y = map(function.apply((double)i),yStart,yStop,hStart,hStop);
+            points.add(new Point.Float(Math.round(x),Math.round(y)));
         }
         GeneralPath gp = new GeneralPath();
         g2d.setPaint(color);
         // Move to the first point
         gp.moveTo(points.get(0).x, points.get(1).y);
-        for(int i = 1;i<points.size();i++){
+        BufferedImage img = new BufferedImage(getWidth(),getHeight(),BufferedImage.TYPE_INT_ARGB);
+        for(int i = 0;i<points.size()-1;i++){
             // Draw a line between every point in the List
-            gp.lineTo(points.get(i).x, points.get(i).y);
+            g2d.draw(new Line2D.Float(points.get(i).x, points.get(i).y, points.get(i+1).x, points.get(i+1).y));
+            // gp.lineTo(points.get(i).x, points.get(i).y);
+            // img.setRGB(points.get(i).x,points.get(i).y,color.getRGB());
         }
+
 
         // Draw the Path and reset the Stroke Width
         g2d.draw(gp);
+        // g2d.drawImage(img,-getWidth()/2-origin.x,-getHeight()-origin.y,getWidth()/2-origin.x,getHeight()/2-origin.y,null);
         g2d.setStroke(new BasicStroke(1));
 
 	}
@@ -168,23 +185,30 @@ public class Plotter extends JPanel {
         // Set Constant-Stroke width which scales itself down with the zoom-factor
         g2d.setStroke(new BasicStroke((1/zoom)*2));
         g2d.setColor(Color.BLACK);
-        g2d.drawLine((int)-((getWidth()/2+origin.x)/zoom), (int)(0), (int)((getWidth()/2-origin.x)/zoom),(int)(0)); // draw  X-Axis
+        g2d.setFont(GUI.getFont((1/zoom)*25));
+        // Draw X-Axis
+        g2d.drawLine((int)-((getWidth()/2+origin.x)/zoom), (int)(0), (int)((getWidth()/2-origin.x)/zoom),(int)(0)); // Main Lines
+        g2d.drawLine((int)-spacing,(int)((1/zoom)*10),(int)-spacing,(int)-((1/zoom)*10));
+        g2d.drawString("-1",-spacing,(1/zoom)*-10);
         g2d.drawLine((int)0, (int)-((getHeight()/2+origin.y)/zoom), (int)(0),(int)((getHeight()/2-origin.y)/zoom)); // draw  Y-Axis
         g2d.setStroke(new BasicStroke(1));
 	}
 
 	public void drawGrid(Graphics2D g2d){
+        g2d.setStroke(new BasicStroke((1/zoom)*4));
+        g2d.setColor(Color.BLUE);
         int width = this.getWidth();
         int height = this.getHeight();
-        float xCorrection = (origin.x%(spacing*zoom));
-        float yCorrection = (origin.y%(spacing*zoom));
-        g2d.setColor(new Color(200,200,200));
-        for(float x = (-width/2-origin.x+xCorrection)/zoom;x<(width/2-origin.x+xCorrection)/zoom;x+=spacing){ // Y-Axis-Girds
-            g2d.drawLine((int)x, (int)-((getHeight()/2+origin.y)/zoom), (int)(x),(int)((getHeight()/2-origin.y)/zoom));
-        }
-        for(float y = (-height/2-origin.y+yCorrection)/zoom;y<(height/2-origin.y+yCorrection)/zoom;y+=spacing){
-            g2d.drawLine((int)-((getWidth()/2+origin.x)/zoom), (int)(y), (int)((getWidth()/2-origin.x)/zoom),(int)(y));
-        }
+        g2d.drawLine((int)-spacing,(int)(-height/2-origin.y),(int)-spacing,(int)(height/2-origin.y));
+        // float xCorrection = (origin.x%(spacing*zoom));
+        // float yCorrection = (origin.y%(spacing*zoom));
+        // g2d.setColor(new Color(200,200,200));
+        // for(float x = (-width/2-origin.x+xCorrection)/zoom;x<(width/2-origin.x+xCorrection)/zoom;x+=spacing){ // Y-Axis-Girds
+        //     g2d.drawLine((int)x, (int)-((getHeight()/2+origin.y)/zoom), (int)(x),(int)((getHeight()/2-origin.y)/zoom));
+        // }
+        // for(float y = (-height/2-origin.y+yCorrection)/zoom;y<(height/2-origin.y+yCorrection)/zoom;y+=spacing){
+        //     g2d.drawLine((int)-((getWidth()/2+origin.x)/zoom), (int)(y), (int)((getWidth()/2-origin.x)/zoom),(int)(y));
+        // }
     }
 
     public void setZoom(float zoom){
@@ -198,6 +222,11 @@ public class Plotter extends JPanel {
 
     static public final float map(float value, float start1, float stop1, float start2, float stop2) {
 		float outgoing = start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
+		return outgoing;
+	}
+
+    static public final double map(double value, double start1, double stop1, double start2, double stop2) {
+		double outgoing = start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
 		return outgoing;
 	}
 }

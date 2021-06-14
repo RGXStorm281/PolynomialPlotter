@@ -7,8 +7,13 @@ package view;
 
 /**
  *
- * @author robinepple
+ * @author raphaelsack
  */
-public interface IGUI {
-    
+public interface IGUI{
+
+     int getPlotWidth();
+
+     int getPlotHeight();
+
+     float getPlotZoom();
 }

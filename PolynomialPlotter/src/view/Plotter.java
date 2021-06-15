@@ -138,6 +138,7 @@ public class Plotter extends JPanel {
 	}
 
 	private void drawFunction(Graphics2D g2d,DoubleFunction<Float>function,Color color) {
+        
         // Set a Constant Stroke width, which scales itself down accordingly to the zoom factor
         g2d.setStroke(new BasicStroke((1/zoom)*3));
 

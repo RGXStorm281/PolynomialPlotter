@@ -6,6 +6,8 @@
 package logic;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+
 import model.IFunction;
 
 /**

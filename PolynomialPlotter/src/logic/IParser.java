@@ -5,10 +5,14 @@
  */
 package logic;
 
+import model.IFunction;
+
 /**
  *
  * @author robinepple
  */
 public interface IParser {
+    public boolean canParse(String function);
     
+    public IFunction parse(String function);
 }

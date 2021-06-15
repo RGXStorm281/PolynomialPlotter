@@ -112,11 +112,11 @@ public class Plotter extends JPanel {
         // Handle the transform
         g2d.translate((double) origin.x,(double)origin.y); // Translate towards the origin point (Handles the dragging)
         g2d.translate(width/2, height/2); // Translates to the middle of the screen
-        g2d.scale(zoom,zoom);
+        // g2d.scale(zoom,zoom);
 
         // drawGrid(g2d);
         drawAxes(g2d);
-        drawFunction(g2d,x->(float)(x*x),Color.RED);
+        drawFunction(g2d,x->(float)((x*x)+1),Color.RED);
         drawFunction(g2d,x->(float)((x+1)*(x-1)),Color.BLUE);
         // drawDebug(g2d);
         zoomed = false;
@@ -140,21 +140,22 @@ public class Plotter extends JPanel {
 	private void drawFunction(Graphics2D g2d,DoubleFunction<Float>function,Color color) {
         
         // Set a Constant Stroke width, which scales itself down accordingly to the zoom factor
-        g2d.setStroke(new BasicStroke((1/zoom)*3));
+        g2d.setStroke(new BasicStroke(3));
 
-        double unit = spacing; // Represents how many Pixels equals 1 (as a numeric value)
+        double unit = spacing*zoom; // Represents how many Pixels equals 1 (as a numeric value)
         double xSpace = getWidth()/unit; // How many units are on the x-Axis
-        double xStart = -xSpace/2; // Start of the x-Range
-        double xStop = xSpace/2; // Stop of the x-Range
-        double wStart = -getWidth()/2; // Start of the width-Range (used to map the x-value to a point on the canvas)
-        double wStop = getWidth()/2;
+        double xStart = -xSpace/2-(origin.x/unit); // Start of the x-Range
+        double xStop = xSpace/2-(origin.x/unit); // Stop of the x-Range
+        System.out.println(xSpace/2 + " " + origin.x/unit);
+        double wStart = -getWidth()/2-origin.x; // Start of the width-Range (used to map the x-value to a point on the canvas)
+        double wStop = getWidth()/2-origin.x;
 
         double ySpace = getHeight()/unit;
-        double yStart = -ySpace/2;
-        double yStop = ySpace/2;
-        double hStart = getHeight()/2;
-        double hStop = -getHeight()/2;
-        double steps = 0.005f; // Detail of the Graph
+        double yStart = -ySpace/2+(origin.y/unit);
+        double yStop = ySpace/2+(origin.y/unit);
+        double hStart = getHeight()/2-origin.y;
+        double hStop = -getHeight()/2-origin.y;
+        double steps = 0.05f/zoom; // Detail of the Graph
         ArrayList<Point.Float> points = new ArrayList<Point.Float>();
         for(double i = xStart;i<xStop;i+=steps){
             // Map the x/y-numeric value to the space on the screen
@@ -169,8 +170,8 @@ public class Plotter extends JPanel {
         BufferedImage img = new BufferedImage(getWidth(),getHeight(),BufferedImage.TYPE_INT_ARGB);
         for(int i = 0;i<points.size()-1;i++){
             // Draw a line between every point in the List
-            g2d.draw(new Line2D.Float(points.get(i).x, points.get(i).y, points.get(i+1).x, points.get(i+1).y));
-            // gp.lineTo(points.get(i).x, points.get(i).y);
+            // g2d.draw(new Line2D.Float(points.get(i).x, points.get(i).y, points.get(i+1).x, points.get(i+1).y));
+            gp.lineTo(points.get(i).x, points.get(i).y);
             // img.setRGB(points.get(i).x,points.get(i).y,color.getRGB());
         }
 
@@ -184,14 +185,17 @@ public class Plotter extends JPanel {
 
 	private void drawAxes(Graphics2D g2d) {
         // Set Constant-Stroke width which scales itself down with the zoom-factor
-        g2d.setStroke(new BasicStroke((1/zoom)*2));
+        g2d.setStroke(new BasicStroke(2));
         g2d.setColor(Color.BLACK);
-        g2d.setFont(GUI.getFont((1/zoom)*25));
+        g2d.setFont(GUI.getFont(25));
         // Draw X-Axis
-        g2d.drawLine((int)-((getWidth()/2+origin.x)/zoom), (int)(0), (int)((getWidth()/2-origin.x)/zoom),(int)(0)); // Main Lines
-        g2d.drawLine((int)-spacing,(int)((1/zoom)*10),(int)-spacing,(int)-((1/zoom)*10));
-        g2d.drawString("-1",-spacing,(1/zoom)*-10);
-        g2d.drawLine((int)0, (int)-((getHeight()/2+origin.y)/zoom), (int)(0),(int)((getHeight()/2-origin.y)/zoom)); // draw  Y-Axis
+        g2d.drawLine((int)-((getWidth()/2+origin.x)), (int)(0), (int)((getWidth()/2-origin.x)),(int)(0)); // Main Lines
+        g2d.drawLine((int)(-spacing*zoom),(int)(10),(int)(-spacing*zoom),(int)-(10));
+        g2d.drawLine((int)(spacing*zoom),(int)(10),(int)(spacing*zoom),(int)-10);
+        g2d.drawLine(-10,(int)(-spacing*zoom),10,(int)(-spacing*zoom));
+        g2d.drawLine(-10,(int)(spacing*zoom),10,(int)(spacing*zoom));
+        g2d.drawString("-1",-spacing*zoom,-20);
+        g2d.drawLine((int)0, (int)-((getHeight()/2+origin.y)), (int)(0),(int)((getHeight()/2-origin.y))); // draw  Y-Axis
         g2d.setStroke(new BasicStroke(1));
 	}
 

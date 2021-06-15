@@ -45,12 +45,12 @@ public class Sidebar extends JPanel {
     }
 
     protected void addElement(String text){
-        vBox.add(new rowBox(text,Color.BLUE));
+        vBox.add(new HRowBox(text,Color.BLUE));
         vBox.revalidate();
         vBox.repaint();
     }
 
-	public void onElementRemove(rowBox box) {
+	public void onElementRemove(HRowBox box) {
         // Gets triggered when an element is removed
 	}
 

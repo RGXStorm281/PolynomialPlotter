@@ -12,9 +12,15 @@ public class UniversalFunction implements IFunction {
 	
 	@Override
 	public double[] calculate(double start, double end, double step) {
-		int valueCount = (int) ((end - start) * step);
+		int valueCounter = (int) ((end - start) / step);
+		double[] tableOfValues = new double[valueCounter+1];
 		
-		Expression functionExpression = new ExpressionBuilder(functionalTerm).build();
-		return null;
+		for(Integer i = 0; i <= valueCounter; i++) {
+			functionalTerm.replace("x", ((Integer)((int)(start+(step*i)))).toString());
+			Expression functionExpression = new ExpressionBuilder(functionalTerm).build();
+			tableOfValues[i] = functionExpression.evaluate();
+		}
+		
+		return tableOfValues;
 	}
 }

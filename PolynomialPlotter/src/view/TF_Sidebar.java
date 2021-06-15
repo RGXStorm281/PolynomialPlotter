@@ -41,7 +41,9 @@ public class TF_Sidebar extends JTextField{
             }
         });
         setColumns(10);
+        setForeground(Color.GRAY);
         setBorder(BorderFactory.createLineBorder(Color.white));
+        setText("Eingabe...");
         setBorder(BorderFactory.createCompoundBorder(
         getBorder(), 
         BorderFactory.createEmptyBorder(10, 20, 10, 10)));

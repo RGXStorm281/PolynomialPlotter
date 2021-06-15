@@ -5,11 +5,17 @@ import java.net.URL;
 
 import java.awt.Font;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FontFormatException;
 import java.io.IOException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.KeyAdapter;
+
+
 
 /**
  * @author raphaelsack
@@ -17,7 +23,7 @@ import javax.swing.JFrame;
 
 public class GUI extends JFrame implements IGUI{
 
-    private Plotter plotter_panel;
+    private JPlotter plotter_panel;
     private Sidebar sidebar_panel;
 
     // Color palette
@@ -31,15 +37,19 @@ public class GUI extends JFrame implements IGUI{
         URL iconURL = getClass().getResource("../data/icon.png");
         ImageIcon icon = new ImageIcon(iconURL);
         setIconImage(icon.getImage());
-
+        this.setPreferredSize(new Dimension(1270,800)); // IMPORTANT: Plotter needs initial Width --> Plotter.drawXSteps()
+        pack();
+        
         // Split up in 2 Panes
         sidebar_panel = new Sidebar();
-        plotter_panel = new Plotter();
+        plotter_panel = new JPlotter();
         getContentPane().add(sidebar_panel, BorderLayout.WEST);
         getContentPane().add(plotter_panel, BorderLayout.CENTER);
-
-        pack();
+        
+        plotter_panel.requestFocus();
+        
         setExtendedState(JFrame.MAXIMIZED_BOTH);
+        pack();
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setTitle("Polynomial plotter");
         

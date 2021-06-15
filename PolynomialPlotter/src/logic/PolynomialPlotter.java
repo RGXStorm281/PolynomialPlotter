@@ -5,9 +5,7 @@
  */
 package logic;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
@@ -26,8 +24,14 @@ public class PolynomialPlotter {
     public static void main(String[] args) {
         try {
             // Settings
-            Properties settings = new Properties();
-            settings.load(new FileReader("src/logic/settings.properties"));
+            Properties propertiesFile = new Properties();
+            Settings settings = new Settings();
+            propertiesFile.load(new FileReader("src/logic/settings.properties"));
+            settings.defaultCalculationPixelJump = (int) propertiesFile.get("defaultCalculationPixelJump");
+            settings.defaultIntervalSizeX = (double) propertiesFile.get("defaultZoomX");
+            settings.defaultIntervalSizeY = (double) propertiesFile.get("defaultZoomX");
+            settings.plotDefaultWidth = (int) propertiesFile.get("plotDefaultWidth");
+            settings.plotDefaultHeight = (int) propertiesFile.get("plotDefaultHeight");
             
             
         } catch (FileNotFoundException ex) {

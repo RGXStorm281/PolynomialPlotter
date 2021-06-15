@@ -27,11 +27,11 @@ public class PolynomialPlotter {
             Properties propertiesFile = new Properties();
             Settings settings = new Settings();
             propertiesFile.load(new FileReader("src/logic/settings.properties"));
-            settings.defaultCalculationPixelJump = (int) propertiesFile.get("defaultCalculationPixelJump");
-            settings.defaultIntervalSizeX = (double) propertiesFile.get("defaultZoomX");
-            settings.defaultIntervalSizeY = (double) propertiesFile.get("defaultZoomX");
-            settings.plotDefaultWidth = (int) propertiesFile.get("plotDefaultWidth");
-            settings.plotDefaultHeight = (int) propertiesFile.get("plotDefaultHeight");
+            settings.defaultCalculationPixelJump = Integer.parseInt(propertiesFile.getProperty("defaultCalculationPixelJump"));
+            settings.defaultIntervalSizeX = Double.parseDouble(propertiesFile.getProperty("defaultIntervalSizeX"));
+            settings.defaultIntervalSizeY = Double.parseDouble(propertiesFile.getProperty("defaultIntervalSizeY"));
+            settings.plotDefaultWidth = Integer.parseInt(propertiesFile.getProperty("plotDefaultWidth"));
+            settings.plotDefaultHeight = Integer.parseInt(propertiesFile.getProperty("plotDefaultHeight"));
             
             
         } catch (FileNotFoundException ex) {

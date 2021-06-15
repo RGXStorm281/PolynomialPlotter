@@ -14,6 +14,8 @@ import javax.swing.JFrame;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.KeyAdapter;
+import model.DrawingInformationContainer;
+import model.Tuple;
 
 
 
@@ -72,20 +74,32 @@ public class GUI extends JFrame implements IGUI{
     
     }
 
-	@Override
 	public int getPlotWidth() {
 		return plotter_panel.getWidth();
 	}
 
 
-	@Override
 	public int getPlotHeight() {
 		return plotter_panel.getHeight();
 	}
 
 
-	@Override
 	public float getPlotZoom() {
 		return plotter_panel.getZoom();
 	}
+
+    @Override
+    public void drawFunctions(DrawingInformationContainer drawingInformation) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Tuple<Double, Double> getIntervallX() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public double getFunctionStep() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

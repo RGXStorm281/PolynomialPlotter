@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package logic;
+package startup;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -26,7 +26,7 @@ public class PolynomialPlotter {
             // Settings
             Properties propertiesFile = new Properties();
             Settings settings = new Settings();
-            propertiesFile.load(new FileReader("src/logic/settings.properties"));
+            propertiesFile.load(new FileReader("src/startup/settings.properties"));
             settings.defaultCalculationPixelJump = Integer.parseInt(propertiesFile.getProperty("defaultCalculationPixelJump"));
             settings.defaultIntervalSizeX = Double.parseDouble(propertiesFile.getProperty("defaultIntervalSizeX"));
             settings.defaultIntervalSizeY = Double.parseDouble(propertiesFile.getProperty("defaultIntervalSizeY"));

@@ -3,6 +3,16 @@
 # Learn more about .gitignore:
 #     https://www.atlassian.com/git/tutorials/saving-changes/gitignore
 
+#bin folder
+/bin/
+/nbproject
+
+#further files
+*.project
+*.classpath
+/PolynomialPlotter/build.xml
+/PolynomialPlotter/manifest.mf
+
 # Node artifact files
 node_modules/
 dist/
@@ -17,7 +27,6 @@ dist/
 *.log
 
 # Package files
-*.jar
 
 # Maven
 target/

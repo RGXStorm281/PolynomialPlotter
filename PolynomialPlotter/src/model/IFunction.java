@@ -11,4 +11,6 @@ package model;
  */
 public interface IFunction {
     
+    public double[] calculate(double start, double end, double step);
+    
 }

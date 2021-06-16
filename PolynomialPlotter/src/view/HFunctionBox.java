@@ -9,11 +9,11 @@ import java.awt.Dimension;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
-public class HRowBox extends Box {
+public class HFunctionBox extends Box {
 
     private Color backgroundColor = new Color(200, 200, 200);
 
-    public HRowBox(String value, Color color) {
+    public HFunctionBox(String value, Color color) {
         super(0);
         JTextField tf_main = new JTextField();
         tf_main.setText(value);
@@ -63,7 +63,7 @@ public class HRowBox extends Box {
 
             public void mouseClicked(java.awt.event.MouseEvent evt){
                 JPanel target = (JPanel) evt.getSource();
-                HRowBox box = (HRowBox) target.getParent();
+                HFunctionBox box = (HFunctionBox) target.getParent();
                 Box vBox = (Box) box.getParent();
                 ((Sidebar)vBox.getParent()).onElementRemove(box);
                 vBox.remove(box);

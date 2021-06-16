@@ -5,12 +5,22 @@
  */
 package startup;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.swing.JButton;
+import javax.swing.SwingUtilities;
+
+import events.FunctionAdded;
+import view.FunctionDialog;
+import view.GUI;
 
 /**
  *
@@ -24,15 +34,15 @@ public class PolynomialPlotter {
     public static void main(String[] args) {
         try {
             // Settings
-            Properties propertiesFile = new Properties();
-            Settings settings = new Settings();
-            propertiesFile.load(new FileReader("src/startup/settings.properties"));
-            settings.defaultCalculationPixelJump = Integer.parseInt(propertiesFile.getProperty("defaultCalculationPixelJump"));
-            settings.defaultIntervalSizeX = Double.parseDouble(propertiesFile.getProperty("defaultIntervalSizeX"));
-            settings.defaultIntervalSizeY = Double.parseDouble(propertiesFile.getProperty("defaultIntervalSizeY"));
-            settings.plotDefaultWidth = Integer.parseInt(propertiesFile.getProperty("plotDefaultWidth"));
-            settings.plotDefaultHeight = Integer.parseInt(propertiesFile.getProperty("plotDefaultHeight"));
-            
+            Settings settings = new Settings("PolynomialPlotter/src/startup/settings.properties");
+            GUI gui = new GUI(settings);
+            gui.addInputListener(new FunctionAdded(gui));
+            SwingUtilities.invokeLater(new Runnable(){
+                @Override 
+                public void run(){
+                    gui.start();
+                }
+            });
             
         } catch (FileNotFoundException ex) {
             Logger.getLogger(PolynomialPlotter.class.getName()).log(Level.SEVERE, null, ex);

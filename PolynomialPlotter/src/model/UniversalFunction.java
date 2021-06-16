@@ -17,4 +17,9 @@ public class UniversalFunction implements IFunction {
 		Expression functionExpression = new ExpressionBuilder(functionalTerm).build();
 		return null;
 	}
+
+	@Override
+	public String toString(){
+		return functionalTerm;
+	}
 }

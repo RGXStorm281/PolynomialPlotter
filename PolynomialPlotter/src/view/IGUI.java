@@ -7,6 +7,10 @@ package view;
 
 import model.DrawingInformationContainer;
 import model.Tuple;
+import model.UniversalFunction;
+
+import java.awt.event.ActionListener;
+import java.awt.Color;
 
 /**
  *
@@ -29,4 +33,29 @@ public interface IGUI{
      * @param drawingInformation Die nötigen Informationen für's Zeichnen.
      */
     void drawFunctions(DrawingInformationContainer drawingInformation);
+
+    /**
+     * Mit den Funktionen kann ein neuer Listener hinzugefügt werden
+     * in diesem Listener werden dann bei jedem Aufruf, das Funktionsobjekt und
+     * die Farbe des Graphens geholt und gespeichert werden. 
+     */
+
+    /**
+     * Gibt die aktuelle Funktions-Eingabe als UniversalFunctionObjekt zurück
+     */
+    UniversalFunction getFunction();
+
+    /**
+     * 
+     * @return Farbe der neuen Funktion
+     */
+    Color getColor();
+
+
+    /**
+     * Fügt einen ActionListener, für das Handlen von Eingabe und Änderungen hinzu
+     * @param actionListener ActionListener 
+     */
+    void addInputListener(ActionListener actionListener);
+
 }

@@ -2,6 +2,7 @@ package view;
 
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -18,6 +19,9 @@ import javax.swing.InputMap;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
+import model.DrawingInformationContainer;
+import startup.Settings;
+
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -30,20 +34,25 @@ import java.util.function.DoubleFunction;
 
 public class JPlotter extends JPanel {
 
-    private float zoom = 1f; // Global zoomlevel
-    private final float MIN_ZOOM = 0.1f;
-    private final float MAX_ZOOM = 20f;
+    private double zoom; // Global zoomlevel
 
-    private float spacing = 100; // Hardcoded Space-unit, |spacing| pixels = 1 numerical unit
+    private final float SPACING; // Hardcoded Space-unit, |spacing| pixels = 1 numerical unit
 
+
+    
     private Point origin; // Point to keep track of the origin point (Used for dragging the screen)
     private Point mousePt; // Point to keep track of the last mouse-position
+    private Settings settings;
     // Temporäre Vars
-    private Point debugPoint = new Point(0, 0);
     private double stepsize = 1.0; // In welchen Abständen werden markierungen auf x/y-Achse angezeigt
 
-    public JPlotter() {
+    private DrawingInformationContainer drawingInformation;
+
+    public JPlotter(Settings settings) {
         // Scroll-Listener --> Zoom
+        this.settings = settings;
+        this.zoom = settings.INITIAL_ZOOM;
+        this.SPACING = settings.PIXEL_TO_UNIT_RATIO;
         addMouseWheelListener(new MouseWheelListener() {
             public void mouseWheelMoved(MouseWheelEvent e) {
                 handleMouseWheelZoom(e);
@@ -139,7 +148,8 @@ public class JPlotter extends JPanel {
             }
         });
         // Setzte den Ursprung initial auf 0,0
-        origin = new Point(0, 0);
+        setPreferredSize(new Dimension(settings.INITIAL_PLOT_WIDTH,settings.INITIAL_PLOT_HEIGHT));
+        origin = new Point(settings.INITIAL_ORIGIN_X, settings.INITIAL_ORIGIN_Y);
     }
 
     protected void resetZoom() {
@@ -172,7 +182,7 @@ public class JPlotter extends JPanel {
      * @param dZoom Um diesen Wert wird reingezoomt
      */
     public void zoomIn(float dZoom) {
-        if (dZoom > 0f && this.zoom + dZoom < MAX_ZOOM) {
+        if (dZoom > 0f && this.zoom + dZoom < settings.MAX_ZOOM) {
             this.zoom += dZoom;
         }
     }
@@ -183,7 +193,7 @@ public class JPlotter extends JPanel {
      * @param dZoom Um diesen Wert wird rausgezoomt
      */
     public void zoomOut(float dZoom) {
-        if (dZoom > 0f && this.zoom - dZoom > MIN_ZOOM) {
+        if (dZoom > 0f && this.zoom - dZoom > settings.MIN_ZOOM) {
             this.zoom -= dZoom;
         }
     }
@@ -214,7 +224,7 @@ public class JPlotter extends JPanel {
 
         float x = -1f;
         float y = 10f;
-        float unit = spacing;
+        float unit = SPACING;
         float xSpace = getWidth() / unit;
         float xStart = -xSpace / 2;
         float xStop = xSpace / 2;
@@ -240,7 +250,7 @@ public class JPlotter extends JPanel {
         // factor
         g2d.setStroke(new BasicStroke(3));
 
-        double unit = spacing * zoom; // Represents how many Pixels equals 1 (as a numeric value) [Scales up with the
+        double unit = SPACING * zoom; // Represents how many Pixels equals 1 (as a numeric value) [Scales up with the
                                       // zoom factor]
         double xSpace = getWidth() / unit; // How many 1-units are currently on the x-Axis [Maybe refactor this later,
                                            // to only calculate it when the screen is resized]
@@ -311,7 +321,7 @@ public class JPlotter extends JPanel {
      * @param g2d Graphics2D context
      */
     private void drawXSteps(Graphics2D g2d) {
-        double unit = spacing * zoom;
+        double unit = SPACING * zoom;
         // TODO: xSpace und ySpace Als Globales Attribut deklarieren und nur ändern wenn
         // man den Screen resized
         double xSpace = getWidth() / unit; // Wie viele 1er Werte (numerisch) passen auf die x-Achse
@@ -353,13 +363,12 @@ public class JPlotter extends JPanel {
      * @param g2d Graphics2D context
      */
     private void drawYSteps(Graphics2D g2d) {
-        double unit = spacing * zoom;
+        double unit = SPACING * zoom;
         double ySpace = getHeight() / unit;
         double yStart = -ySpace / 2 - (origin.y / unit);
         double yStop = ySpace / 2 - (origin.y / unit);
         double hStart = -getHeight() / 2 - origin.y;
         double hStop = getHeight() / 2 - origin.y;
-        System.out.println(zoom);
         DecimalFormat df = new DecimalFormat(stepsize - stepsize + "");
         df.setRoundingMode(RoundingMode.HALF_DOWN);
         double textHeight = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), "-1").getVisualBounds()
@@ -421,7 +430,7 @@ public class JPlotter extends JPanel {
      * 
      * @return float
      */
-    public float getZoom() {
+    public double getZoom() {
         return this.zoom;
     }
 

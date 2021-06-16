@@ -8,36 +8,54 @@ import java.io.InputStream;
 
 import java.awt.FlowLayout;
 import java.awt.Component;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+
 
 import javax.swing.Box;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import model.UniversalFunction;
+import startup.Settings;
+import view.outdated.TF_Sidebar;
+
 public class Sidebar extends JPanel {
 
-    private Box vBox;
-    private TF_Sidebar mainField;
+    private Box vFunctionsBox;
+    private FunctionDialog functionDialog;
+    private JButton addFunctionButton;
 
     public Sidebar() {
         setBackground(new Color(241,241,241));
+        functionDialog = new FunctionDialog();
+        addFunctionButton = new JButton("+");
+        addFunctionButton.addActionListener(new ActionListener(){
 
-        vBox = Box.createVerticalBox();
-        add(vBox);
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                functionDialog.start();
+                
+            }
+
+        });
+        vFunctionsBox = Box.createVerticalBox();
+
+        add(vFunctionsBox);
 
         JPanel heading = new JPanel(); // Panel used for the Heading-Text (to set a Background)
-        JLabel headingText = new JLabel("Applikationsname");
+        JLabel headingText = new JLabel("Polynomialplotter");
         headingText.setFont(GUI.getFont(30)); // Set the font to size 30
         headingText.setForeground(Color.WHITE); 
         headingText.setAlignmentX(Component.CENTER_ALIGNMENT);
         headingText.setBorder(new EmptyBorder(10,30,10,30)); // Add a margin around the Text
         heading.setBackground(GUI.aktzent1);
         heading.add(headingText);
-        vBox.add(heading);
-        mainField = new TF_Sidebar(); // Main-Input field to add new things to the list
-        vBox.add(mainField);
-
+        vFunctionsBox.add(heading);
+        vFunctionsBox.add(addFunctionButton);
         // Remove any Padding
         FlowLayout layout = (FlowLayout)getLayout();
         layout.setHgap(0);
@@ -45,13 +63,21 @@ public class Sidebar extends JPanel {
     }
 
     protected void addElement(String text){
-        vBox.add(new HRowBox(text,Color.BLUE));
-        vBox.revalidate();
-        vBox.repaint();
+        vFunctionsBox.add(new HFunctionBox(text,Color.BLUE));
+        vFunctionsBox.revalidate();
+        vFunctionsBox.repaint();
     }
 
-	public void onElementRemove(HRowBox box) {
+	public void onElementRemove(HFunctionBox box) {
         // Gets triggered when an element is removed
 	}
+
+    public UniversalFunction getFunction() {
+        return new UniversalFunction(functionDialog.getFunctionString());
+    }
+
+    public FunctionDialog getFunctionDialog() {
+        return this.functionDialog;
+    }
 
 }

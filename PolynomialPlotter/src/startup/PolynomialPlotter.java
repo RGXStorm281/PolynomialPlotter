@@ -5,21 +5,19 @@
  */
 package startup;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
+
+
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.JButton;
 import javax.swing.SwingUtilities;
 
-import events.FunctionAdded;
-import view.FunctionDialog;
+import events.*;
+import events.plot.*;
+import logic.BusinessLogic;
+import logic.FunctionManager;
 import view.GUI;
 
 /**
@@ -33,14 +31,22 @@ public class PolynomialPlotter {
      */
     public static void main(String[] args) {
         try {
-            // Settings
+            // Objekte initialisieren
             Settings settings = new Settings("PolynomialPlotter/src/startup/settings.properties");
-            GUI gui = new GUI(settings);
-            gui.addInputListener(new FunctionAdded(gui));
+            FunctionManager model = new FunctionManager();
+            GUI view = new GUI(settings);
+            BusinessLogic logic = new BusinessLogic(view, model, settings);
+
+            // Events Setzen
+            view.addFunctionInputListener(new FunctionAddedListener(logic,view));
+            view.addPlotMouseListeners(new PlotMouseDraggedListener(view, logic), new PlotMouseListener(view, logic));
+            view.addPlotZoomedListener(new PlotZoomedListener(view, logic));
+            view.addPlotResizedListener(new PlotResizedListener(view, logic));
+            // Applikation starten
             SwingUtilities.invokeLater(new Runnable(){
                 @Override 
                 public void run(){
-                    gui.start();
+                    view.start();
                 }
             });
             

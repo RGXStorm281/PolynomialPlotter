@@ -2,24 +2,20 @@ package view;
 
 import java.awt.BorderLayout;
 import java.net.URL;
-import java.util.Properties;
 import java.awt.Font;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.FontFormatException;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
+
+import events.FunctionAddedListener;
+import events.plot.PlotMouseDraggedListener;
+import events.plot.PlotMouseListener;
+import events.plot.PlotResizedListener;
+import events.plot.PlotZoomedListener;
 import model.DrawingInformationContainer;
-import model.Tuple;
 import model.UniversalFunction;
 import startup.Settings;
 
@@ -100,15 +96,6 @@ public class GUI extends JFrame implements IGUI{
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
-    public Tuple<Double, Double> getIntervallX() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public double getFunctionStep() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
 
 
     @Override
@@ -124,13 +111,38 @@ public class GUI extends JFrame implements IGUI{
 
 
     @Override
-    public void addInputListener(ActionListener actionListener) {
-        this.sidebar_panel.getFunctionDialog().addInputListener(actionListener);
+    public void addFunctionInputListener(FunctionAddedListener fa) {
+        this.sidebar_panel.getFunctionDialog().addInputListener(fa);
         
     }
 
 
-    public void closeDialog() {
+    public void closeFunctionDialog() {
         this.sidebar_panel.getFunctionDialog().closeDialog();
     }
+
+
+    @Override
+    public void addPlotMouseListeners(PlotMouseDraggedListener pmd, PlotMouseListener pml) {
+        plotter_panel.addMouseMotionListener(pmd);
+        plotter_panel.addMouseListener(pml);
+        
+    }
+
+
+    @Override
+    public void addPlotResizedListener(PlotResizedListener pr) {
+        addComponentListener(pr);
+        
+    }
+
+
+    @Override
+    public void addPlotZoomedListener(PlotZoomedListener pz) {
+        plotter_panel.addMouseWheelListener(pz);
+        
+    }
+
+
+  
 }

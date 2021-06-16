@@ -66,16 +66,6 @@ public class JPlotter extends JPanel {
                 repaint();
                 requestFocus();
             }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                ((JPlotter) e.getSource()).setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                ((JPlotter) e.getSource()).setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-            }
         });
         // MouseMotionListener für die Drag-Funktionalität
         addMouseMotionListener(new MouseMotionAdapter() {

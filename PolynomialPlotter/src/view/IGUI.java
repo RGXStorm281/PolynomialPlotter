@@ -10,6 +10,13 @@ import model.Tuple;
 import model.UniversalFunction;
 
 import java.awt.event.ActionListener;
+
+import events.FunctionAddedListener;
+import events.plot.PlotMouseDraggedListener;
+import events.plot.PlotMouseListener;
+import events.plot.PlotResizedListener;
+import events.plot.PlotZoomedListener;
+
 import java.awt.Color;
 
 /**
@@ -18,15 +25,15 @@ import java.awt.Color;
  */
 public interface IGUI{
 
-    /**
-     * Gibt den Start- und Endwert für das zu berechnende Intervall zurück.
-     */
-    Tuple<Double,Double> getIntervallX();
+    // /**
+    //  * Gibt den Start- und Endwert für das zu berechnende Intervall zurück.
+    //  */
+    // Tuple<Double,Double> getIntervallX();
 
-    /**
-     * Gibt die Schrittweite für die Funktions-Wertetabelle zurück.
-     */
-    double getFunctionStep();
+    // /**
+    //  * Gibt die Schrittweite für die Funktions-Wertetabelle zurück.
+    //  */
+    // double getFunctionStep();
      
     /**
      * Zeichnet die Funktionen mit den gegebenen Funktions-Wertetabellen.
@@ -56,6 +63,12 @@ public interface IGUI{
      * Fügt einen ActionListener, für das Handlen von Eingabe und Änderungen hinzu
      * @param actionListener ActionListener 
      */
-    void addInputListener(ActionListener actionListener);
+    void addFunctionInputListener(FunctionAddedListener fa);
+
+    void addPlotMouseListeners(PlotMouseDraggedListener pmd, PlotMouseListener pml);
+
+    void addPlotResizedListener(PlotResizedListener pr);
+
+    void addPlotZoomedListener(PlotZoomedListener pz);
 
 }

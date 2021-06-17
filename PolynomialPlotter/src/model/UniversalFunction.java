@@ -16,7 +16,7 @@ public class UniversalFunction implements IFunction {
 		double[] tableOfValues = new double[valueCounter+1];
 		
 		for(Integer i = 0; i <= valueCounter; i++) {
-			functionalTerm.replace("x", ((Integer)((int)(start+(step*i)))).toString());
+			functionalTerm.replace("x", "("+((Integer)((int)(start+(step*i)))).toString()+")");
 			Expression functionExpression = new ExpressionBuilder(functionalTerm).build();
 			tableOfValues[i] = functionExpression.evaluate();
 		}

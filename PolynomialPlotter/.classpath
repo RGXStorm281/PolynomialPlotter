@@ -6,7 +6,7 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/lukas/Documents/Studium/2. Semester/Programmieren/Polynomial-Plotter Projekt/Git_Polynomial-Plotter/polynomial-plotter/PolynomialPlotter/lib/exp4j-0.4.8.jar">
+	<classpathentry kind="lib" path="lib/exp4j-0.4.8.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>

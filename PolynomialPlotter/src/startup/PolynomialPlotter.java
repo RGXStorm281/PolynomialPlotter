@@ -42,18 +42,20 @@ public class PolynomialPlotter {
             view.addFunctionListener(new FunctionListener(){
 
                 @Override
-                public void functionAdded(FunctionEvent e) {
+                public boolean functionAdded(FunctionEvent e) {
                     String functionString = e.getFunctionString();
                     Color functionColor = e.getFunctionColor();    
                     char functionChar = e.getFunctionChar();
                     System.out.println("New function \""+functionChar+"\" with: "+functionString+" and the Color"+functionColor);
+
+                    return true; // Return ob gegebene funktion legal war
                     
                 }
 
                 @Override
-                public void functionEdited(FunctionEditedEvent e) {
+                public boolean functionEdited(FunctionEditedEvent e) {
                     System.out.println(e.getOldFunctionChar()+"-Function was edited to: "+e.getFunctionString()+" with the color: "+e.getFunctionColor());
-                    
+                    return true; // Return ob der Edit einen Fehler verursach / Legal war
                 }
 
                 @Override

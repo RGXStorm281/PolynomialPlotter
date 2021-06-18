@@ -2,8 +2,8 @@ package event;
 
 public interface FunctionListener extends java.util.EventListener{
 
-    void functionAdded(FunctionEvent e);
-    void functionEdited(FunctionEditedEvent e);
+    boolean functionAdded(FunctionEvent e);
+    boolean functionEdited(FunctionEditedEvent e);
     void functionDeleted(FunctionEvent e);
     
 }

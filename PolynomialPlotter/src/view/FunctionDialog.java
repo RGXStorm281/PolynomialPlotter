@@ -31,6 +31,7 @@ public class FunctionDialog extends JFrame {
 
     private JTextField functionInput;
     private JLabel functionInputLabel;
+    private JLabel functionErrorLabel;
 
     private CustomColorChooser colorChooser;
     private JLabel colorLabel;
@@ -66,6 +67,13 @@ public class FunctionDialog extends JFrame {
         functionInputLabel.setBounds(10, 10, 132, 14);
         getContentPane().add(functionInputLabel);
 
+        functionErrorLabel = new JLabel();
+        functionErrorLabel.setFont(font.deriveFont(11f));
+        functionErrorLabel.setBounds(10, 60, 345, 14);
+        functionErrorLabel.setForeground(Color.RED);
+        functionErrorLabel.setVisible(false);
+        getContentPane().add(functionErrorLabel);
+
         colorLabel = new JLabel("Farbe:");
         colorLabel.setFont(font.deriveFont(15f));
         colorLabel.setBounds(10, 71, 53, 20);
@@ -79,8 +87,15 @@ public class FunctionDialog extends JFrame {
         okButton.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-            for(FunctionListener listener: functionListeners)((FunctionListener)listener).functionAdded(new FunctionEvent(e.getSource(), colorPanel.getBackground(), functionInput.getText().trim(), functionInput.getText().trim().toCharArray()[0]));
-            closeDialog();
+            boolean legalFunction = false;
+            for(FunctionListener listener: functionListeners)legalFunction = ((FunctionListener)listener).functionAdded(new FunctionEvent(e.getSource(), colorPanel.getBackground(), functionInput.getText().trim(), functionInput.getText().trim().toCharArray()[0]));
+            if(legalFunction){
+                //Add the function
+                disableWarn();
+                closeDialog();
+            }else{
+                enableWarn("Eingegebene Funktion ist nicht valide");
+            }
             }
         });
         okButton.addMouseListener(new MouseAdapter(){
@@ -152,6 +167,23 @@ public class FunctionDialog extends JFrame {
 
         });
         getContentPane().add(colorPanel);
+        pack();
+    }
+
+    protected void disableWarn() {
+        functionErrorLabel.setVisible(false);
+        colorLabel.setBounds(10, 71, 53, 20);
+        colorPanel.setBounds(60, 68, 26, 26);
+        this.setPreferredSize(new Dimension(476, 150));
+        pack();
+    }
+    
+    protected void enableWarn(String msg) {
+        functionErrorLabel.setText(msg);
+        colorLabel.setBounds(10, 71+functionErrorLabel.getHeight(), 53, 20);
+        colorPanel.setBounds(60, 68+functionErrorLabel.getHeight(), 26, 26);
+        functionErrorLabel.setVisible(true);
+        this.setPreferredSize(new Dimension(476, 150+functionErrorLabel.getHeight()));
         pack();
     }
 

@@ -5,12 +5,14 @@
  */
 package model;
 
+import java.awt.Point;
+
 /**
  *
  * @author lukasepple
  */
 public interface IFunction {
     
-    public double[] calculate(double start, double end, double step);
+    public Koordinate[] calculate(double start, double end, double step);
     
 }

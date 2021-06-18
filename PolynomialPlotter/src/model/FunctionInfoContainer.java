@@ -14,28 +14,29 @@ import java.awt.Color;
 public class FunctionInfoContainer {
     
     // Darstellungsfarbe der Linie
-    private Color lineColor;
+    private IFunction function;
     
     // Funktionswerte: Item1 = X-Wert, Item2 = Y-Wert
-    private Tuple<Double,Double>[] functionValues;
+    private Koordinate[] functionValues;
 
-    public FunctionInfoContainer(Color lineColor, Tuple<Double, Double>[] functionValues) {
-        this.lineColor = lineColor;
+    public FunctionInfoContainer(IFunction function, Koordinate[] functionValues) {
+        this.function = function;
         this.functionValues = functionValues;
     }
 
     /**
-     * Gibt die Farbe zurück, in der die Linie des Graphen gezeichnet werden soll.
+     * Gibt die Definition der Funktion zurück, die Informationen zu Farbe, Name, ... hält.
+     * @return 
      */
-    public Color getLineColor() {
-        return lineColor;
+    public IFunction getFunction() {
+        return function;
     }
-
+    
     /**
      * Gibt die Funktionswerte zurück.
      * Item1 = X-Wert, Item2 = Y-Wert
      */
-    public Tuple<Double, Double>[] getFunctionValues() {
+    public Koordinate[] getFunctionValues() {
         return functionValues;
     }
 }

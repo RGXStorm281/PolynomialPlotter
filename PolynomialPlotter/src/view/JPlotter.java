@@ -52,7 +52,7 @@ public class JPlotter extends JPanel {
         // Scroll-Listener --> Zoom
         this.settings = settings;
         this.zoom = settings.INITIAL_ZOOM;
-        this.SPACING = settings.PIXEL_TO_UNIT_RATIO;
+        this.SPACING = settings.INITIAL_PIXEL_TO_UNIT_RATIO;
         addMouseWheelListener(new MouseWheelListener() {
             public void mouseWheelMoved(MouseWheelEvent e) {
                 handleMouseWheelZoom(e);

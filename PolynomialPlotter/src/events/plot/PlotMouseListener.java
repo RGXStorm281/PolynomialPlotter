@@ -9,6 +9,7 @@ import view.GUI;
 
 import java.awt.event.MouseEvent;
 import java.awt.Cursor;
+import java.awt.Point;
 
 public class PlotMouseListener implements MouseListener {
 
@@ -21,7 +22,7 @@ public class PlotMouseListener implements MouseListener {
     @Override
     public void mousePressed(MouseEvent e) {
         // Mouse Point speichern für Drag logik in PlotMouseDragged.java
-        // mousePt = e.getPoint();
+        Point mousePt = e.getPoint();
         ((JPanel) e.getSource()).setCursor(new Cursor(Cursor.MOVE_CURSOR));
         System.out.println("EVENT TRIGGERED: Plotter Mouse Pressed");
     }

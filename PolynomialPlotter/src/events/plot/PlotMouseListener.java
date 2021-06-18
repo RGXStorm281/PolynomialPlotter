@@ -25,7 +25,6 @@ public class PlotMouseListener implements MouseListener {
         Point mousePt = e.getPoint();
         logic.setMousePoint(mousePt);
         ((JPanel) e.getSource()).setCursor(new Cursor(Cursor.MOVE_CURSOR));
-        System.out.println("EVENT TRIGGERED: Plotter Mouse Pressed");
     }
 
     @Override

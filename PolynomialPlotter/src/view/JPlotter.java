@@ -20,6 +20,9 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
 import model.DrawingInformationContainer;
+import model.FunctionInfoContainer;
+import model.IFunction;
+import model.Koordinate;
 import startup.Settings;
 
 import java.awt.Graphics;
@@ -53,90 +56,90 @@ public class JPlotter extends JPanel {
         this.settings = settings;
         this.zoom = settings.INITIAL_ZOOM;
         this.SPACING = settings.INITIAL_PIXEL_TO_UNIT_RATIO;
-        addMouseWheelListener(new MouseWheelListener() {
-            public void mouseWheelMoved(MouseWheelEvent e) {
-                handleMouseWheelZoom(e);
-            }
-        });
-        // Mouse Listener für die Drag-Funktionalität und um den Cursor zu ändern
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                mousePt = e.getPoint();
-                repaint();
-                requestFocus();
-            }
-        });
-        // MouseMotionListener für die Drag-Funktionalität
-        addMouseMotionListener(new MouseMotionAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent e) {
-                // Differenz zwischen der momentanten und letzten Maus-Position
-                float dx = e.getX() - mousePt.x;
-                float dy = e.getY() - mousePt.y;
-                // Ändere den Ursprung, basierend auf dx,dy
-                origin.setLocation(origin.x + dx, origin.y + dy);
-                mousePt = e.getPoint();
-                repaint();
-            }
-        });
-        // Hotkeys - Wird noch in eine Extra Klasse gepackt
-        InputMap inputmap = getInputMap(WHEN_IN_FOCUSED_WINDOW);
-        ActionMap actionmap = getActionMap();
-        inputmap.put(KeyStroke.getKeyStroke("UP"), "moveUp");
-        inputmap.put(KeyStroke.getKeyStroke("DOWN"), "moveDown");
-        inputmap.put(KeyStroke.getKeyStroke("LEFT"), "moveLeft");
-        inputmap.put(KeyStroke.getKeyStroke("RIGHT"), "moveRight");
-        inputmap.put(KeyStroke.getKeyStroke("W"), "moveUp");
-        inputmap.put(KeyStroke.getKeyStroke("S"), "moveDown");
-        inputmap.put(KeyStroke.getKeyStroke("A"), "moveLeft");
-        inputmap.put(KeyStroke.getKeyStroke("D"), "moveRight");
-        inputmap.put(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP,0), "zoomIn");
-        inputmap.put(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN,0), "zoomOut");
-        actionmap.put("moveUp", new AbstractAction(){
-            public void actionPerformed(ActionEvent e) {
-                moveUp(10);
-                repaint();
-            }
-        });
-        actionmap.put("moveDown", new AbstractAction(){
-            public void actionPerformed(ActionEvent e) {
-                moveDown(10);
-                repaint();
-            }
-        });
-        actionmap.put("moveLeft", new AbstractAction(){
-            public void actionPerformed(ActionEvent e) {
-                moveLeft(10);
-                repaint();
-            }
-        });
-        actionmap.put("moveRight", new AbstractAction(){
-            public void actionPerformed(ActionEvent e) {
-                moveRight(10);
-                repaint();
-            }
-        });
-        inputmap.put(KeyStroke.getKeyStroke("F12"), "resetOrigin");
-        actionmap.put("resetOrigin", new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
-                resetOrigin();
-                resetZoom();
-                repaint();
-            }
-        });
-        actionmap.put("zoomIn", new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
-                zoomIn(0.01f);
-                repaint();
-            }
-        });
-        actionmap.put("zoomOut", new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
-                zoomOut(0.01f);
-                repaint();
-            }
-        });
+        // addMouseWheelListener(new MouseWheelListener() {
+        //     public void mouseWheelMoved(MouseWheelEvent e) {
+        //         handleMouseWheelZoom(e);
+        //     }
+        // });
+        // // Mouse Listener für die Drag-Funktionalität und um den Cursor zu ändern
+        // addMouseListener(new MouseAdapter() {
+        //     @Override
+        //     public void mousePressed(MouseEvent e) {
+        //         mousePt = e.getPoint();
+        //         repaint();
+        //         requestFocus();
+        //     }
+        // });
+        // // MouseMotionListener für die Drag-Funktionalität
+        // addMouseMotionListener(new MouseMotionAdapter() {
+        //     @Override
+        //     public void mouseDragged(MouseEvent e) {
+        //         // Differenz zwischen der momentanten und letzten Maus-Position
+        //         float dx = e.getX() - mousePt.x;
+        //         float dy = e.getY() - mousePt.y;
+        //         // Ändere den Ursprung, basierend auf dx,dy
+        //         origin.setLocation(origin.x + dx, origin.y + dy);
+        //         mousePt = e.getPoint();
+        //         repaint();
+        //     }
+        // });
+        // // Hotkeys - Wird noch in eine Extra Klasse gepackt
+        // InputMap inputmap = getInputMap(WHEN_IN_FOCUSED_WINDOW);
+        // ActionMap actionmap = getActionMap();
+        // inputmap.put(KeyStroke.getKeyStroke("UP"), "moveUp");
+        // inputmap.put(KeyStroke.getKeyStroke("DOWN"), "moveDown");
+        // inputmap.put(KeyStroke.getKeyStroke("LEFT"), "moveLeft");
+        // inputmap.put(KeyStroke.getKeyStroke("RIGHT"), "moveRight");
+        // inputmap.put(KeyStroke.getKeyStroke("W"), "moveUp");
+        // inputmap.put(KeyStroke.getKeyStroke("S"), "moveDown");
+        // inputmap.put(KeyStroke.getKeyStroke("A"), "moveLeft");
+        // inputmap.put(KeyStroke.getKeyStroke("D"), "moveRight");
+        // inputmap.put(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP,0), "zoomIn");
+        // inputmap.put(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN,0), "zoomOut");
+        // actionmap.put("moveUp", new AbstractAction(){
+        //     public void actionPerformed(ActionEvent e) {
+        //         moveUp(10);
+        //         repaint();
+        //     }
+        // });
+        // actionmap.put("moveDown", new AbstractAction(){
+        //     public void actionPerformed(ActionEvent e) {
+        //         moveDown(10);
+        //         repaint();
+        //     }
+        // });
+        // actionmap.put("moveLeft", new AbstractAction(){
+        //     public void actionPerformed(ActionEvent e) {
+        //         moveLeft(10);
+        //         repaint();
+        //     }
+        // });
+        // actionmap.put("moveRight", new AbstractAction(){
+        //     public void actionPerformed(ActionEvent e) {
+        //         moveRight(10);
+        //         repaint();
+        //     }
+        // });
+        // inputmap.put(KeyStroke.getKeyStroke("F12"), "resetOrigin");
+        // actionmap.put("resetOrigin", new AbstractAction() {
+        //     public void actionPerformed(ActionEvent e) {
+        //         resetOrigin();
+        //         resetZoom();
+        //         repaint();
+        //     }
+        // });
+        // actionmap.put("zoomIn", new AbstractAction() {
+        //     public void actionPerformed(ActionEvent e) {
+        //         zoomIn(0.01f);
+        //         repaint();
+        //     }
+        // });
+        // actionmap.put("zoomOut", new AbstractAction() {
+        //     public void actionPerformed(ActionEvent e) {
+        //         zoomOut(0.01f);
+        //         repaint();
+        //     }
+        // });
         // Setzte den Ursprung initial auf 0,0
         setPreferredSize(new Dimension(settings.INITIAL_PLOT_WIDTH,settings.INITIAL_PLOT_HEIGHT));
         origin = new Point(settings.INITIAL_ORIGIN_X, settings.INITIAL_ORIGIN_Y);
@@ -199,10 +202,31 @@ public class JPlotter extends JPanel {
         g2d.translate((double) origin.x, (double) origin.y); // View abhängig vom Ursprung translaten, wichtig für die
                                                              // Drag-Funktionalität
         g2d.translate(getWidth() / 2, getHeight() / 2); // View auf die Mitte des Panels translaten
+        drawFunctions(g2d);
+        // drawAxes(g2d);
+        // drawFunction(g2d, x -> (float) ((x * x) + 1), Color.RED);
+        // drawFunction(g2d, x -> (float) (Math.sin(x) * x * x), Color.BLUE);
+    }
 
-        drawAxes(g2d);
-        drawFunction(g2d, x -> (float) ((x * x) + 1), Color.RED);
-        drawFunction(g2d, x -> (float) (Math.sin(x) * x * x), Color.BLUE);
+    private void drawFunctions(Graphics2D g2d) {
+        // Um es wirklich an den canvas anzupassen, benötige ich entweder daten über den zoom+origin, oder den
+        // Sichtbaren y-Intervall. Anders kann ich nicht wissen wie ich die numerischen Werte an den Canvas anpassen soll
+        double xStart = drawingInformation.getIntervallStart();
+        double xStop = drawingInformation.getIntervallEnd();
+        double xStep = drawingInformation.getStep();
+        FunctionInfoContainer[] functionInfo = drawingInformation.getFunctionInfo();
+        g2d.setPaint(Color.RED);
+        for(FunctionInfoContainer functionContainer: functionInfo){
+            IFunction func = functionContainer.getFunction();
+            Koordinate[] values = functionContainer.getFunctionValues();
+            GeneralPath gp = new GeneralPath();
+            gp.moveTo(values[0].getX(),values[1].getY());
+            for(int i = 1;i<values.length;i++){
+                gp.lineTo(values[i].getX(),values[i].getY());
+            }
+            g2d.draw(gp);
+        }
+
     }
 
     /**

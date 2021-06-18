@@ -21,7 +21,6 @@ public class PlotResizedListener implements ComponentListener{
     @Override
     public void componentResized(ComponentEvent e) {
         // On Resize --> Funktion neu berechnen mit neuen Dimensionen
-        System.out.println("EVENT TRIGGERED: Plotter Resized");
         logic.resize();
         
     }

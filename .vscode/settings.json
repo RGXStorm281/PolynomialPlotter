@@ -1,0 +1,9 @@
+{
+    "java.project.sourcePaths": [
+    "\\src"
+    ],
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "PolynomialPlotter/lib/exp4j-0.4.8.jar"
+    ]
+}

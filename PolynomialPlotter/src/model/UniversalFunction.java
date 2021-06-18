@@ -12,7 +12,7 @@ public class UniversalFunction implements IFunction {
 	
 	
 	/**
-	 * Berechnet die Wertetabelle (y-Werte) für Polynomfunktionen in der allgemeinen Form
+	 * Berechnet die Wertetabelle (y-Werte) fuer Polynomfunktionen in der allgemeinen Form
 	 * @return double array mit den y-Werten
 	 */	
 	@Override
@@ -21,8 +21,8 @@ public class UniversalFunction implements IFunction {
 		double[] tableOfValues = new double[valueCounter+1];
 		
 		for(Integer i = 0; i <= valueCounter; i++) {
-			functionalTerm.replace("x", "("+((Integer)((int)(start+(step*i)))).toString()+")");
-			Expression functionExpression = new ExpressionBuilder(functionalTerm).build();
+			String temp = functionalTerm.replace("x", "("+((Integer)((int)(start+(step*i)))).toString()+")");
+			Expression functionExpression = new ExpressionBuilder(temp).build();
 			tableOfValues[i] = functionExpression.evaluate();
 		}
 		

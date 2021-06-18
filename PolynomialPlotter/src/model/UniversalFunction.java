@@ -12,7 +12,7 @@ public class UniversalFunction implements IFunction {
 	
 	
 	/**
-	 * Berechnet die Wertetabelle (y-Werte) für Polynomfunktionen in der allgemeinen Form
+	 * Berechnet die Wertetabelle (y-Werte) fÃ¼r Polynomfunktionen in der allgemeinen Form
 	 * @return double array mit den y-Werten
 	 */	
 	@Override

@@ -51,12 +51,7 @@ public class UniversalFunctionTests {
 		double end = 5.0;
 		double step = 1.0;
 		
-<<<<<<< HEAD
-//		double[] expectedValues = new double[] {1.0, 3.0, 5.0, 7.0, 9.0, 11.0};
-//		double[] returnedValues = testFunction.calculate(start, end, step);
-//		
-//		Assert.assertArrayEquals(expectedValues, returnedValues, 0);
-=======
+
 		Koordinate[] expectedValues = new Koordinate[] { 
 				new Koordinate(0.0, 1.0), 
 				new Koordinate(1.0, 3.0), 
@@ -75,13 +70,12 @@ public class UniversalFunctionTests {
 			Assert.assertEquals("x-Value, position "+ i.toString(), expectedValues[i].getX(), returnedValues[i].getX(), 0.0);
 			Assert.assertEquals("y-Value, position"+ i.toString(), expectedValues[i].getX(), returnedValues[i].getX(), 0.0);
 		}
->>>>>>> feature/devLE
 	}
 	
 	@Test
 	public void calculate_returnNullInsteadOfException()
 	{
-		UniversalFunction testFunction = new UniversalFunction("yxcvöasdf");
+		UniversalFunction testFunction = new UniversalFunction("yxcvï¿½asdf");
 		Object result = testFunction.calculate(0.0, 10.0, 0.1);
 		
 		Assert.assertEquals(null, result);

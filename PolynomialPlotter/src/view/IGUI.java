@@ -73,4 +73,5 @@ public interface IGUI{
     
     int getPlotWidth();
 
+    int getPlotHeight();
 }

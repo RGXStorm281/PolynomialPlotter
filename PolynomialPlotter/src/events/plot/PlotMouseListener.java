@@ -23,6 +23,7 @@ public class PlotMouseListener implements MouseListener {
     public void mousePressed(MouseEvent e) {
         // Mouse Point speichern für Drag logik in PlotMouseDragged.java
         Point mousePt = e.getPoint();
+        logic.setMousePoint(mousePt);
         ((JPanel) e.getSource()).setCursor(new Cursor(Cursor.MOVE_CURSOR));
         System.out.println("EVENT TRIGGERED: Plotter Mouse Pressed");
     }

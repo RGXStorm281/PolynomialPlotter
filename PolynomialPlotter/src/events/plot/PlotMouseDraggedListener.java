@@ -31,7 +31,6 @@ public class PlotMouseDraggedListener implements MouseMotionListener{
         // Origin benötigt auch der View!
         // Am Ende den mousePt updaten
         // mousePt = e.getPoint();
-        
     }
 
     @Override

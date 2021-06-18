@@ -26,8 +26,11 @@ import view.outdated.TF_Sidebar;
 public class Sidebar extends JPanel {
 
     private Box vFunctionsBox;
+    private JPanel heading;
     private FunctionDialog functionDialog;
     private JAddButton addFunctionButton;
+    private JFunctionComponent functionListElement;
+    private JFunctionComponent[] functionList = {new JFunctionComponent("f(x) = 4x",Color.RED),new JFunctionComponent("g(x) = 2x + 1", Color.BLUE)};
 
     public Sidebar() {
         setBackground(new Color(241,241,241));
@@ -43,12 +46,12 @@ public class Sidebar extends JPanel {
 
         add(vFunctionsBox);
 
-        JPanel heading = new JPanel(); // Panel used for the Heading-Text (to set a Background)
+        heading = new JPanel(); // Panel used for the Heading-Text (to set a Background)
         JLabel headingText = new JLabel("Polynomialplotter");
         headingText.setFont(GUI.getFont(30)); // Set the font to size 30
         headingText.setForeground(Color.WHITE); 
         headingText.setAlignmentX(Component.CENTER_ALIGNMENT);
-        headingText.setBorder(new EmptyBorder(10,30,10,30)); // Add a margin around the Text
+        headingText.setBorder(new EmptyBorder(10,50,10,50)); // Add a margin around the Text
         heading.setBackground(GUI.aktzent1);
         heading.add(headingText);
         vFunctionsBox.add(heading);
@@ -57,12 +60,24 @@ public class Sidebar extends JPanel {
         FlowLayout layout = (FlowLayout)getLayout();
         layout.setHgap(0);
         layout.setVgap(0);
+        renderJFunctionComponents();
     }
 
     protected void addElement(String text){
         vFunctionsBox.add(new HFunctionBox(text,Color.BLUE));
         vFunctionsBox.revalidate();
         vFunctionsBox.repaint();
+    }
+
+    public void renderJFunctionComponents(){
+        vFunctionsBox.removeAll();
+        vFunctionsBox.add(heading);
+        vFunctionsBox.add(addFunctionButton);
+        for(JFunctionComponent fc: functionList){
+            vFunctionsBox.add(fc);
+        }
+        revalidate();
+        repaint();
     }
 
 	public void onElementRemove(HFunctionBox box) {

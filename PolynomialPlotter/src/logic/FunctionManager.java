@@ -24,7 +24,7 @@ public class FunctionManager {
     		new UniversalParser()
     };
 	
-    private FunctionManager(){
+    public FunctionManager(){
     	// Initialisiert FunctionMap
     	functionMap = new HashMap<>();
     }

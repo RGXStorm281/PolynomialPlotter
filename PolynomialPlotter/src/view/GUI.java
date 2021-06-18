@@ -93,6 +93,7 @@ public class GUI extends JFrame implements IGUI{
 
     @Override
     public void drawFunctions(DrawingInformationContainer drawingInformation) {
+        // TODO: IMPLEMENTIEREN!!!!!!
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

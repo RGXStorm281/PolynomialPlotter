@@ -6,7 +6,7 @@ public class HornerParser implements IParser {
 
 	@Override
 	public boolean canParse(String function) {
-		// TODO TV implement
+		// TODO TV mit RegEx implement
 		return false;
 	}
 

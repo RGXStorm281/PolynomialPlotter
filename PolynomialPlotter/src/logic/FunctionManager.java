@@ -5,8 +5,8 @@
  */
 package logic;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.UUID;
 
 import model.IFunction;
 
@@ -42,8 +42,8 @@ public class FunctionManager {
      * Gibt alle geparsten functions aus.
      * @return functionMap.
      */
-    public HashMap<String, IFunction> getFunctionMap() {
-        return this.functionMap;
+    public ArrayList<IFunction> getFunctionList() {
+        return new ArrayList<IFunction>(this.functionMap.values());
     }
     
     /** 
@@ -60,7 +60,7 @@ public class FunctionManager {
     	}
     	
     	// TODO TV nicht so pfuschen!
-    	return this.add(UUID.randomUUID().toString(), functionString);
+    	return null;
     }
     
     /** 

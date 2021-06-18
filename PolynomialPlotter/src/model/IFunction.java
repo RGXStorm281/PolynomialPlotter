@@ -7,10 +7,7 @@ package model;
 
 import java.awt.Point;
 
-/**
- *
- * @author lukasepple
- */
+
 public interface IFunction {
     
     public Koordinate[] calculate(double start, double end, double step);

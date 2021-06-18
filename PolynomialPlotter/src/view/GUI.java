@@ -10,11 +10,8 @@ import java.io.IOException;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
-import events.FunctionAddedListener;
-import events.plot.PlotMouseDraggedListener;
-import events.plot.PlotMouseListener;
-import events.plot.PlotResizedListener;
-import events.plot.PlotZoomedListener;
+import event.FunctionListener;
+import event.PlotListener;
 import model.DrawingInformationContainer;
 import model.UniversalFunction;
 import startup.Settings;
@@ -112,8 +109,8 @@ public class GUI extends JFrame implements IGUI{
 
 
     @Override
-    public void addFunctionInputListener(FunctionAddedListener fa) {
-        this.sidebar_panel.getFunctionDialog().addInputListener(fa);
+    public void addFunctionListener(FunctionListener functionListener) {
+        this.sidebar_panel.addFunctionListener(functionListener);
         
     }
 
@@ -124,23 +121,8 @@ public class GUI extends JFrame implements IGUI{
 
 
     @Override
-    public void addPlotMouseListeners(PlotMouseDraggedListener pmd, PlotMouseListener pml) {
-        plotter_panel.addMouseMotionListener(pmd);
-        plotter_panel.addMouseListener(pml);
-        
-    }
-
-
-    @Override
-    public void addPlotResizedListener(PlotResizedListener pr) {
-        addComponentListener(pr);
-        
-    }
-
-
-    @Override
-    public void addPlotZoomedListener(PlotZoomedListener pz) {
-        plotter_panel.addMouseWheelListener(pz);
+    public void addPlotListener(PlotListener plotListener) {
+        this.plotter_panel.addPlotListener(plotListener);
         
     }
 

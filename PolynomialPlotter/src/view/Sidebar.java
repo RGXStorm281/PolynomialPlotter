@@ -5,7 +5,8 @@ import java.awt.Font;
 import java.awt.FontFormatException;
 import java.io.IOException;
 import java.io.InputStream;
-
+import java.util.ArrayList;
+import java.util.List;
 import java.awt.FlowLayout;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
@@ -19,6 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import event.FunctionListener;
 import model.UniversalFunction;
 import startup.Settings;
 import view.outdated.TF_Sidebar;
@@ -29,8 +31,9 @@ public class Sidebar extends JPanel {
     private JPanel heading;
     private FunctionDialog functionDialog;
     private JAddButton addFunctionButton;
+    private List<FunctionListener> functionListeners = new ArrayList<FunctionListener>();
     private JFunctionComponent functionListElement;
-    private JFunctionComponent[] functionList = {new JFunctionComponent("f(x) = 4x",Color.RED),new JFunctionComponent("g(x) = 2x + 1", Color.BLUE)};
+    private List<JFunctionComponent> functionList = new ArrayList<JFunctionComponent>();
 
     public Sidebar() {
         setBackground(new Color(241,241,241));
@@ -60,13 +63,16 @@ public class Sidebar extends JPanel {
         FlowLayout layout = (FlowLayout)getLayout();
         layout.setHgap(0);
         layout.setVgap(0);
+        addJFunctionComponent('g', "g(x) = 4x+3", Color.decode("0x252632"));
+        addJFunctionComponent('f', "f(x) = x²+5", Color.decode("0xDE425C"));
         renderJFunctionComponents();
     }
 
-    protected void addElement(String text){
-        vFunctionsBox.add(new HFunctionBox(text,Color.BLUE));
-        vFunctionsBox.revalidate();
-        vFunctionsBox.repaint();
+    public void addJFunctionComponent(char functionChar,String functionString, Color functionColor){
+        JFunctionComponent jfc = new JFunctionComponent(functionChar, functionString, functionColor);
+        for(FunctionListener functionListener: functionListeners)jfc.addFunctionListener(functionListener);
+        functionList.add(jfc);
+        // renderJFunctionComponents();
     }
 
     public void renderJFunctionComponents(){
@@ -90,6 +96,12 @@ public class Sidebar extends JPanel {
 
     public FunctionDialog getFunctionDialog() {
         return this.functionDialog;
+    }
+
+    public void addFunctionListener(FunctionListener functionListener){
+        functionListeners.add(functionListener);
+        for(JFunctionComponent jfc: functionList)jfc.addFunctionListener(functionListener);
+        functionDialog.addFunctionListener(functionListener);
     }
 
 }

@@ -11,11 +11,8 @@ import model.UniversalFunction;
 
 import java.awt.event.ActionListener;
 
-import events.FunctionAddedListener;
-import events.plot.PlotMouseDraggedListener;
-import events.plot.PlotMouseListener;
-import events.plot.PlotResizedListener;
-import events.plot.PlotZoomedListener;
+import event.FunctionListener;
+import event.PlotListener;
 
 import java.awt.Color;
 
@@ -63,13 +60,9 @@ public interface IGUI{
      * Fügt einen ActionListener, für das Handlen von Eingabe und Änderungen hinzu
      * @param actionListener ActionListener 
      */
-    void addFunctionInputListener(FunctionAddedListener fa);
+    void addFunctionListener(FunctionListener functionListener);
 
-    void addPlotMouseListeners(PlotMouseDraggedListener pmd, PlotMouseListener pml);
-
-    void addPlotResizedListener(PlotResizedListener pr);
-
-    void addPlotZoomedListener(PlotZoomedListener pz);
+    void addPlotListener(PlotListener plotListener);
     
     int getPlotWidth();
 

@@ -8,10 +8,16 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.BasicStroke;
 
+import javax.swing.JButton;
 import javax.swing.JComponent;
+
+import event.FunctionEvent;
+import event.FunctionListener;
 
 import java.awt.RenderingHints;
 import java.awt.event.MouseMotionListener;
+import java.util.ArrayList;
+import java.util.List;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.Point;
@@ -19,18 +25,20 @@ import java.awt.Point;
 public class JFunctionComponent extends JComponent implements MouseMotionListener {
 
     private String functionString;
-    
+    private char functionChar;
+
     private Color currentCardBg;
     private Color defaultCardBg;
     private Color hoverCardBg;
     private float cardWidthPercent;
     private float cardWidth;
     private float cardVMargin;
-    private boolean cardHover;
     
     private Color circleColor;
     private int circleRadius;
     private int circleMargin;
+
+    private List<FunctionListener> functionListeners = new ArrayList<FunctionListener>();
 
     private Color closeButtonCrossDefaultColor;
     private Color closeButtonCrossCurrentColor;
@@ -45,10 +53,11 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
     private float closeButtonCrossLenghtFactor;
 
 
-    public JFunctionComponent(String functionString, Color circleColor) {
+    public JFunctionComponent(char _functionChar, String functionString, Color circleColor) {
         super();
         this.circleColor = circleColor;
         this.functionString = functionString;
+        this.functionChar = _functionChar;
         defaultCardBg = Color.LIGHT_GRAY;
         currentCardBg = defaultCardBg;
         hoverCardBg = Color.GRAY;
@@ -71,18 +80,25 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
         closeButtonCrossStroke = new BasicStroke(closeButtonStrokeWidth,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND);
         closeButtonCrossLenghtFactor = 0.6f;
         setPreferredSize(new Dimension(getWidth(), 80));
+        addMouseListener(new MouseAdapter(){
+            @Override
+            public void mouseExited(MouseEvent e) {
+                resetAllStyles();
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if(isInCloseButtonBounds(e)){
+                            for(FunctionListener listener: functionListeners)((FunctionListener)listener).functionDeleted(new FunctionEvent(e.getSource(), circleColor, functionString, functionChar)); 
+                }
+            }
+        });
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         addMouseMotionListener(this);
-        addMouseListener(new MouseAdapter(){
-            @Override
-            public void mouseExited(MouseEvent e) {
-                resetAllStyles();
-            }
-        });
         cardWidth = (int) (getWidth() * cardWidthPercent);
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -191,4 +207,10 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
     private boolean isInCloseButtonBounds(MouseEvent e) {
         return e.getPoint().distance(new Point((int)(getWidth() * ((1 - cardWidthPercent) / 2) + closeButtonMargin + closeButtonRadius), (int)cardVMargin+closeButtonMargin+closeButtonRadius)) < closeButtonRadius;
     }
+
+    public void addFunctionListener(FunctionListener functionListener) {
+        functionListeners.add(functionListener);
+    }
+
+    
 }

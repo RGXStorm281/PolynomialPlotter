@@ -13,8 +13,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.awt.Color;
 import javax.swing.JTextField;
+
+import event.FunctionEvent;
+import event.FunctionListener;
+
 import java.awt.Dimension;
 import java.awt.Cursor;
 
@@ -30,6 +36,7 @@ public class FunctionDialog extends JFrame {
     private JLabel colorLabel;
 
     private JPanel colorPanel;
+    private List<FunctionListener> functionListeners = new ArrayList<FunctionListener>();
 
     FunctionDialog() {
         URL iconURL = getClass().getResource("../data/functionDialogIcon.png");
@@ -43,7 +50,6 @@ public class FunctionDialog extends JFrame {
         setType(Type.POPUP);
         setResizable(false);
         getContentPane().setLayout(null);
-
         functionInput = new JTextField();
         functionInput.setText("f(x) = lul");
         functionInput.setFont(font);
@@ -70,6 +76,13 @@ public class FunctionDialog extends JFrame {
         okButton.setBackground(Color.decode("0xDEDEDE"));
         okButton.setBorder(BorderFactory.createLineBorder(Color.decode("0xDEDEDE")));
         okButton.setFont(font.deriveFont(15f));
+        okButton.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            for(FunctionListener listener: functionListeners)((FunctionListener)listener).functionAdded(new FunctionEvent(e.getSource(), colorPanel.getBackground(), functionInput.getText().trim(), functionInput.getText().trim().toCharArray()[0]));
+            closeDialog();
+            }
+        });
         okButton.addMouseListener(new MouseAdapter(){
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -164,8 +177,8 @@ public class FunctionDialog extends JFrame {
         }
     }
 
-    public void addInputListener(ActionListener actionListener) {
-        okButton.addActionListener(actionListener);
+    public void addFunctionListener(FunctionListener functionListener) {
+        functionListeners.add(functionListener);
     }
 
     public void start() {

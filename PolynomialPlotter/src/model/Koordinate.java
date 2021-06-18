@@ -34,4 +34,9 @@ public class Koordinate {
     public void setY(double y) {
         this.y = y;
     }
+
+    @Override
+    public String toString() {
+        return "Koordinate[x: "+this.x+", y: "+this.y+"]";
+    }
 }

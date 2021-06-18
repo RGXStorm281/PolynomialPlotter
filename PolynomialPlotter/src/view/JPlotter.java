@@ -9,6 +9,8 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.ActionEvent;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.BasicStroke;
 import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
@@ -19,6 +21,10 @@ import javax.swing.InputMap;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
+import event.PlotEvent;
+import event.PlotListener;
+import event.PlotMovedEvent;
+import event.PlotZoomedEvent;
 import model.DrawingInformationContainer;
 import model.FunctionInfoContainer;
 import model.IFunction;
@@ -32,6 +38,7 @@ import java.awt.geom.GeneralPath;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
 import java.awt.geom.Line2D;
 import java.util.function.DoubleFunction;
 
@@ -42,7 +49,7 @@ public class JPlotter extends JPanel {
     private final float SPACING; // Hardcoded Space-unit, |spacing| pixels = 1 numerical unit
 
 
-    
+    private List<PlotListener> plotListeners = new ArrayList<PlotListener>();
     private Point origin; // Point to keep track of the origin point (Used for dragging the screen)
     private Point mousePt; // Point to keep track of the last mouse-position
     private Settings settings;
@@ -56,33 +63,62 @@ public class JPlotter extends JPanel {
         this.settings = settings;
         this.zoom = settings.INITIAL_ZOOM;
         this.SPACING = settings.INITIAL_PIXEL_TO_UNIT_RATIO;
-        // addMouseWheelListener(new MouseWheelListener() {
-        //     public void mouseWheelMoved(MouseWheelEvent e) {
-        //         handleMouseWheelZoom(e);
-        //     }
-        // });
-        // // Mouse Listener für die Drag-Funktionalität und um den Cursor zu ändern
-        // addMouseListener(new MouseAdapter() {
-        //     @Override
-        //     public void mousePressed(MouseEvent e) {
-        //         mousePt = e.getPoint();
-        //         repaint();
-        //         requestFocus();
-        //     }
-        // });
-        // // MouseMotionListener für die Drag-Funktionalität
-        // addMouseMotionListener(new MouseMotionAdapter() {
-        //     @Override
-        //     public void mouseDragged(MouseEvent e) {
-        //         // Differenz zwischen der momentanten und letzten Maus-Position
-        //         float dx = e.getX() - mousePt.x;
-        //         float dy = e.getY() - mousePt.y;
-        //         // Ändere den Ursprung, basierend auf dx,dy
-        //         origin.setLocation(origin.x + dx, origin.y + dy);
-        //         mousePt = e.getPoint();
-        //         repaint();
-        //     }
-        // });
+        addMouseWheelListener(new MouseWheelListener() {
+            public void mouseWheelMoved(MouseWheelEvent e) {
+                float dZoom = e.isControlDown() ? 0.1f : 0.05f;
+                dZoom*=e.getWheelRotation();
+                for(PlotListener listener: plotListeners)listener.plotResized(new PlotZoomedEvent(e.getSource(), getWidth(), getHeight(), dZoom));
+            }
+        });
+        // Mouse Listener für die Drag-Funktionalität und um den Cursor zu ändern
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                mousePt = e.getPoint();
+                repaint();
+                requestFocus();
+            }
+        });
+        // MouseMotionListener für die Drag-Funktionalität
+        addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                // Differenz zwischen der momentanten und letzten Maus-Position
+                double dx = e.getX() - mousePt.x;
+                double dy = e.getY() - mousePt.y;
+                // Ändere den Ursprung, basierend auf dx,dy
+                for(PlotListener listener: plotListeners)listener.plotMoved(new PlotMovedEvent(e.getSource(), getWidth(), getHeight(), new Koordinate(dx, dy)));
+                mousePt = e.getPoint();
+                repaint();
+            }
+        });
+
+        addComponentListener(new ComponentListener(){
+
+            @Override
+            public void componentResized(ComponentEvent e) {
+                for(PlotListener listener: plotListeners)listener.plotResized(new PlotEvent(e.getSource(), getWidth(), getHeight()));
+            }
+
+            @Override
+            public void componentMoved(ComponentEvent e) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void componentShown(ComponentEvent e) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void componentHidden(ComponentEvent e) {
+                // TODO Auto-generated method stub
+                
+            }
+            
+        });
         // // Hotkeys - Wird noch in eine Extra Klasse gepackt
         // InputMap inputmap = getInputMap(WHEN_IN_FOCUSED_WINDOW);
         // ActionMap actionmap = getActionMap();
@@ -201,6 +237,7 @@ public class JPlotter extends JPanel {
     }
 
     private void drawFunctions(Graphics2D g2d) {
+        if(drawingInformation == null)return;
         // Um es wirklich an den canvas anzupassen, benötige ich entweder daten über den zoom+origin, oder den
         // Sichtbaren y-Intervall. Anders kann ich nicht wissen wie ich die numerischen Werte an den Canvas anpassen soll
         double xStart = drawingInformation.getIntervallStart();
@@ -474,5 +511,9 @@ public class JPlotter extends JPanel {
 
     public void resetOrigin() {
         origin = new Point(0, 0);
+    }
+
+    public void addPlotListener(PlotListener plotListener) {
+        plotListeners.add(plotListener);
     }
 }

@@ -123,7 +123,7 @@ public class FunctionDialog extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 Color col = colorChooser.showDialog(null, "Farbe wählen", colorPanel.getBackground());
-                colorPanel.setBackground(col);
+                if(col != null) colorPanel.setBackground(col);
             }
 
             @Override

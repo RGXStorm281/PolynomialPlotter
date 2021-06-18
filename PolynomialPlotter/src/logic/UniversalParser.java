@@ -1,12 +1,17 @@
 package logic;
 
 import model.IFunction;
+import model.UniversalFunction;
 
 public class UniversalParser implements IParser {
 
 	@Override
 	public boolean canParse(String function) {
-		// TODO TV mit RegEx implement
+		UniversalFunction uvFunction = new UniversalFunction(function);
+		if(uvFunction.calculate(0, 1, 1) != null) {
+			return true;
+		}
+		
 		return false;
 	}
 

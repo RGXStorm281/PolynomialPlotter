@@ -22,7 +22,7 @@ public class PlotResizedListener implements ComponentListener{
     public void componentResized(ComponentEvent e) {
         // On Resize --> Funktion neu berechnen mit neuen Dimensionen
         System.out.println("EVENT TRIGGERED: Plotter Resized");
-        // logic."update"?
+        logic.resize();
         
     }
 

@@ -20,10 +20,10 @@ public class PlotZoomedListener implements MouseWheelListener{
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
         // delta-Zoom
-        float dZoom = e.isControlDown() ? 1f : 0.1f;
-        dZoom*=-e.getWheelRotation();
+        float dZoom = e.isControlDown() ? 0.1f : 0.05f;
+        dZoom*=e.getWheelRotation();
         System.out.println("EVENT TRIGGERED: Plotter Zoomed");
-        // logic.handleZoom(dZoom)
+        logic.zoom(dZoom);
     }
 
     

@@ -99,7 +99,7 @@ public class GUI extends JFrame implements IGUI{
 
 
     @Override
-    public UniversalFunction getFunction() {
+    public String getFunction() {
         return sidebar_panel.getFunction();
     }
 

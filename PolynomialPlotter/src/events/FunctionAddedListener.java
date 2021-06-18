@@ -25,7 +25,7 @@ public class FunctionAddedListener implements ActionListener{
 
         // Retrieve Function and invoke logic
         view.closeFunctionDialog();
-        UniversalFunction newFunction = view.getFunction();
+        String newFunction = view.getFunction();
         Color functionColor = view.getColor();    
         System.out.println("EVENT TRIGGERED: Function Added");
         // logic.foo(functionColor,newFunction) welche view wieder aufruft

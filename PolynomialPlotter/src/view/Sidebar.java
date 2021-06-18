@@ -8,8 +8,8 @@ import java.io.InputStream;
 
 import java.awt.FlowLayout;
 import java.awt.Component;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 
 import javax.swing.Box;
@@ -27,20 +27,17 @@ public class Sidebar extends JPanel {
 
     private Box vFunctionsBox;
     private FunctionDialog functionDialog;
-    private JButton addFunctionButton;
+    private JAddButton addFunctionButton;
 
     public Sidebar() {
         setBackground(new Color(241,241,241));
         functionDialog = new FunctionDialog();
-        addFunctionButton = new JButton("+");
-        addFunctionButton.addActionListener(new ActionListener(){
-
+        addFunctionButton = new JAddButton(getBackground());
+        addFunctionButton.addMouseListener(new MouseAdapter(){
             @Override
-            public void actionPerformed(ActionEvent e) {
-                functionDialog.start();
-                
+            public void mouseClicked(MouseEvent e) {
+                if(addFunctionButton.isOverButton(e))functionDialog.start();
             }
-
         });
         vFunctionsBox = Box.createVerticalBox();
 
@@ -72,8 +69,8 @@ public class Sidebar extends JPanel {
         // Gets triggered when an element is removed
 	}
 
-    public UniversalFunction getFunction() {
-        return new UniversalFunction(functionDialog.getFunctionString());
+    public String getFunction() {
+        return functionDialog.getFunctionString();
     }
 
     public FunctionDialog getFunctionDialog() {

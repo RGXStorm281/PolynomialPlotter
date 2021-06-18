@@ -104,4 +104,9 @@ public class Sidebar extends JPanel {
         functionDialog.addFunctionListener(functionListener);
     }
 
+    public void removeJFunctionComponent(JFunctionComponent jFunctionComponent) {
+        functionList.remove(jFunctionComponent);
+        renderJFunctionComponents();
+    }
+
 }

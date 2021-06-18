@@ -90,9 +90,14 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
             public void mouseClicked(MouseEvent e) {
                 if(isInCloseButtonBounds(e)){
                             for(FunctionListener listener: functionListeners)((FunctionListener)listener).functionDeleted(new FunctionEvent(e.getSource(), circleColor, functionString, functionChar)); 
+                            destroy();
                 }
             }
         });
+    }
+
+    protected void destroy() {
+        ((Sidebar)getParent().getParent()).removeJFunctionComponent(this);
     }
 
     @Override

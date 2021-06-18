@@ -20,7 +20,7 @@ public class JAddButton extends JComponent implements MouseMotionListener{
 
     private Color bg;
     private Color hoverButtonBgCol;
-
+    
     private int radius;
     private int padding;
     private int margin;

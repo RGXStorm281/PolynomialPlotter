@@ -10,6 +10,11 @@ public class UniversalFunction implements IFunction {
 		functionalTerm = term;
 	}
 	
+	
+	/**
+	 * Berechnet die Wertetabelle (y-Werte) für Polynomfunktionen in der allgemeinen Form
+	 * @return double array mit den y-Werten
+	 */	
 	@Override
 	public double[] calculate(double start, double end, double step) {
 		int valueCounter = (int) ((end - start) / step);

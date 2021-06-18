@@ -7,7 +7,7 @@ package model;
 
 /**
  *
- * @author robinepple
+ * @author lukasepple
  */
 public interface IFunction {
     

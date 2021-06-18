@@ -50,7 +50,7 @@ public interface IGUI{
     /**
      * Gibt die aktuelle Funktions-Eingabe als UniversalFunctionObjekt zurück
      */
-    UniversalFunction getFunction();
+    String getFunction();
 
     /**
      * 

@@ -72,8 +72,8 @@ public class Sidebar extends JPanel {
         // Gets triggered when an element is removed
 	}
 
-    public UniversalFunction getFunction() {
-        return new UniversalFunction(functionDialog.getFunctionString());
+    public String getFunction() {
+        return functionDialog.getFunctionString();
     }
 
     public FunctionDialog getFunctionDialog() {

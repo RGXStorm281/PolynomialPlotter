@@ -12,7 +12,7 @@ public class FunctionAddedListener implements ActionListener{
     private GUI view;
     private BusinessLogic logic;
 
-    public FunctionAddedListener(BusinessLogic logic, GUI view){
+    public FunctionAddedListener(GUI view, BusinessLogic logic){
         this.view = view;
         this.logic = logic;
     }

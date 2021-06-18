@@ -38,7 +38,7 @@ public class PolynomialPlotter {
             BusinessLogic logic = new BusinessLogic(view, model, settings);
 
             // Events Setzen
-            view.addFunctionInputListener(new FunctionAddedListener(logic,view));
+            view.addFunctionInputListener(new FunctionAddedListener(view,logic));
             view.addPlotMouseListeners(new PlotMouseDraggedListener(view, logic), new PlotMouseListener(view, logic));
             view.addPlotZoomedListener(new PlotZoomedListener(view, logic));
             view.addPlotResizedListener(new PlotResizedListener(view, logic));

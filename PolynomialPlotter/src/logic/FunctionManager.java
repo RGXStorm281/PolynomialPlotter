@@ -26,4 +26,7 @@ public class FunctionManager {
         return functionList;
     }
     
+    public void parseAndAddFunction(String function){
+        
+    }
 }

@@ -1,5 +1,6 @@
 package model;
 
+import java.awt.Point;
 import net.objecthunter.exp4j.*;
 
 public class UniversalFunction implements IFunction {
@@ -12,18 +13,19 @@ public class UniversalFunction implements IFunction {
 	
 	
 	/**
-	 * Berechnet die Wertetabelle (y-Werte) fuer Polynomfunktionen in der allgemeinen Form
+	 * Berechnet die Wertetabelle (y-Werte) für Polynomfunktionen in der allgemeinen Form
 	 * @return double array mit den y-Werten
 	 */	
 	@Override
-	public double[] calculate(double start, double end, double step) {
+	public Koordinate[] calculate(double start, double end, double step) {
 		int valueCounter = (int) ((end - start) / step);
-		double[] tableOfValues = new double[valueCounter+1];
+		Koordinate[] tableOfValues = new Koordinate[valueCounter+1];
 		
 		for(Integer i = 0; i <= valueCounter; i++) {
-			String temp = functionalTerm.replace("x", "("+((Integer)((int)(start+(step*i)))).toString()+")");
-			Expression functionExpression = new ExpressionBuilder(temp).build();
-			tableOfValues[i] = functionExpression.evaluate();
+                    double currentX = start + (step*i);
+                    functionalTerm.replace("x", "("+ currentX +")");
+                    Expression functionExpression = new ExpressionBuilder(functionalTerm).build();
+                    tableOfValues[i] = new Koordinate(currentX,functionExpression.evaluate());
 		}
 		
 		return tableOfValues;

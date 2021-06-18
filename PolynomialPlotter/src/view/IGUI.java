@@ -70,5 +70,7 @@ public interface IGUI{
     void addPlotResizedListener(PlotResizedListener pr);
 
     void addPlotZoomedListener(PlotZoomedListener pz);
+    
+    int getPlotWidth();
 
 }

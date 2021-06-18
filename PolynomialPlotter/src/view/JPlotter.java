@@ -156,16 +156,8 @@ public class JPlotter extends JPanel {
      * 
      * @param e
      */
-    protected void handleMouseWheelZoom(MouseWheelEvent e) {
-        float factor = e.isControlDown() ? 1f : 0.1f; // Wenn man STRG gedrückt hält, zoomt man schneller rein und raus
-        switch (e.getWheelRotation()) {
-            case 1:
-                zoomOut(factor);
-                break;
-            case -1:
-                zoomIn(factor);
-                break;
-        }
+    protected void updateDrawingInformation(DrawingInformationContainer drawingInformation){
+        this.drawingInformation = drawingInformation;
         repaint();
     }
 

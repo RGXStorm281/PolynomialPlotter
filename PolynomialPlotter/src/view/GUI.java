@@ -94,7 +94,7 @@ public class GUI extends JFrame implements IGUI{
     @Override
     public void drawFunctions(DrawingInformationContainer drawingInformation) {
         // TODO RS von RE: Wäre wichtig das hier rüber zu zeichnen, damit ich testen kann.
-        // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        plotter_panel.updateDrawingInformation(drawingInformation);
     }
 
 

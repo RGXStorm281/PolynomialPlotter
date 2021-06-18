@@ -18,7 +18,7 @@ public class FunctionManager {
     
     private ArrayList<IFunction> functionList;
     
-    private FunctionManager(){
+    public FunctionManager(){
         functionList = new ArrayList<>();
     }
 

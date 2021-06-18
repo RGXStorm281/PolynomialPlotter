@@ -28,4 +28,9 @@ public class UniversalFunction implements IFunction {
 		
 		return tableOfValues;
 	}
+
+	@Override
+	public String toString(){
+		return functionalTerm;
+	}
 }

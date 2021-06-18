@@ -2,18 +2,22 @@ package view;
 
 import java.awt.BorderLayout;
 import java.net.URL;
-
 import java.awt.Font;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.FontFormatException;
 import java.io.IOException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.KeyAdapter;
+
+import events.FunctionAddedListener;
+import events.plot.PlotMouseDraggedListener;
+import events.plot.PlotMouseListener;
+import events.plot.PlotResizedListener;
+import events.plot.PlotZoomedListener;
+import model.DrawingInformationContainer;
+import model.UniversalFunction;
+import startup.Settings;
 
 
 
@@ -26,26 +30,27 @@ public class GUI extends JFrame implements IGUI{
     private JPlotter plotter_panel;
     private Sidebar sidebar_panel;
 
+    private final Settings settings; 
+
     // Color palette
     public static final Color aktzent1 = new Color(226,0,26);
   
 
 
-    public GUI() {
+    public GUI(Settings settings) {
         super();
+        this.settings = settings;
         // Add custom icon
         URL iconURL = getClass().getResource("../data/icon.png");
         ImageIcon icon = new ImageIcon(iconURL);
         setIconImage(icon.getImage());
-        this.setPreferredSize(new Dimension(1270,800)); // IMPORTANT: Plotter needs initial Width --> Plotter.drawXSteps()
         pack();
         
         // Split up in 2 Panes
         sidebar_panel = new Sidebar();
-        plotter_panel = new JPlotter();
+        plotter_panel = new JPlotter(this.settings);
         getContentPane().add(sidebar_panel, BorderLayout.WEST);
         getContentPane().add(plotter_panel, BorderLayout.CENTER);
-        
         plotter_panel.requestFocus();
         
         setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -72,20 +77,72 @@ public class GUI extends JFrame implements IGUI{
     
     }
 
-	@Override
 	public int getPlotWidth() {
 		return plotter_panel.getWidth();
 	}
 
 
-	@Override
 	public int getPlotHeight() {
 		return plotter_panel.getHeight();
 	}
 
 
-	@Override
-	public float getPlotZoom() {
+	public double getPlotZoom() {
 		return plotter_panel.getZoom();
 	}
+
+    @Override
+    public void drawFunctions(DrawingInformationContainer drawingInformation) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+
+
+    @Override
+    public UniversalFunction getFunction() {
+        return sidebar_panel.getFunction();
+    }
+
+
+    @Override
+    public Color getColor() {
+        return sidebar_panel.getFunctionDialog().getColor();
+    }
+
+
+    @Override
+    public void addFunctionInputListener(FunctionAddedListener fa) {
+        this.sidebar_panel.getFunctionDialog().addInputListener(fa);
+        
+    }
+
+
+    public void closeFunctionDialog() {
+        this.sidebar_panel.getFunctionDialog().closeDialog();
+    }
+
+
+    @Override
+    public void addPlotMouseListeners(PlotMouseDraggedListener pmd, PlotMouseListener pml) {
+        plotter_panel.addMouseMotionListener(pmd);
+        plotter_panel.addMouseListener(pml);
+        
+    }
+
+
+    @Override
+    public void addPlotResizedListener(PlotResizedListener pr) {
+        addComponentListener(pr);
+        
+    }
+
+
+    @Override
+    public void addPlotZoomedListener(PlotZoomedListener pz) {
+        plotter_panel.addMouseWheelListener(pz);
+        
+    }
+
+
+  
 }

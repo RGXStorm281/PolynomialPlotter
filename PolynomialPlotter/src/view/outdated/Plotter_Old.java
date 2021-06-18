@@ -1,4 +1,4 @@
-package view;
+package view.outdated;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -15,6 +15,8 @@ import java.awt.Component;
 import javax.swing.AbstractAction;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
+
+import view.GUI;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;

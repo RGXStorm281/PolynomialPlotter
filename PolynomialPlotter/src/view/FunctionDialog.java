@@ -18,6 +18,7 @@ import java.util.List;
 import java.awt.Color;
 import javax.swing.JTextField;
 
+import event.FunctionEditedEvent;
 import event.FunctionEvent;
 import event.FunctionListener;
 
@@ -26,8 +27,15 @@ import java.awt.Cursor;
 
 public class FunctionDialog extends JFrame {
 
+    enum DialogType{
+        ADD,
+        EDIT
+    }
+
     private JButton okButton;
     private JButton cancelButton;
+
+    private char lastFunctionChar;
 
     private JTextField functionInput;
     private JLabel functionInputLabel;
@@ -39,7 +47,7 @@ public class FunctionDialog extends JFrame {
     private JPanel colorPanel;
     private List<FunctionListener> functionListeners = new ArrayList<FunctionListener>();
 
-    FunctionDialog() {
+    FunctionDialog(DialogType dialogType) {
         URL iconURL = getClass().getResource("../data/functionDialogIcon.png");
         ImageIcon icon = new ImageIcon(iconURL);
         setIconImage(icon.getImage());
@@ -52,7 +60,6 @@ public class FunctionDialog extends JFrame {
         setResizable(false);
         getContentPane().setLayout(null);
         functionInput = new JTextField();
-        functionInput.setText("f(x) = lul");
         functionInput.setFont(font);
         functionInput.setBounds(10, 25, 345, 33);
         getContentPane().add(functionInput);
@@ -84,20 +91,40 @@ public class FunctionDialog extends JFrame {
         okButton.setBackground(Color.decode("0xDEDEDE"));
         okButton.setBorder(BorderFactory.createLineBorder(Color.decode("0xDEDEDE")));
         okButton.setFont(font.deriveFont(15f));
-        okButton.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e) {
-            boolean legalFunction = false;
-            for(FunctionListener listener: functionListeners)legalFunction = ((FunctionListener)listener).functionAdded(new FunctionEvent(e.getSource(), colorPanel.getBackground(), functionInput.getText().trim(), functionInput.getText().trim().toCharArray()[0]));
-            if(legalFunction){
-                //Add the function
-                disableWarn();
-                closeDialog();
-            }else{
-                enableWarn("Eingegebene Funktion ist nicht valide");
-            }
-            }
-        });
+
+        switch(dialogType){
+            case ADD:
+            okButton.addActionListener(new ActionListener(){
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                boolean legalFunction = false;
+                for(FunctionListener listener: functionListeners)legalFunction = ((FunctionListener)listener).functionAdded(new FunctionEvent(e.getSource(), colorPanel.getBackground(), functionInput.getText().trim(), functionInput.getText().trim().toCharArray()[0]));
+                if(legalFunction){
+                    //Add the function
+                    disableWarn();
+                    closeDialog();
+                }else{
+                    enableWarn("Eingegebene Funktion ist nicht valide");
+                }
+                }
+            });
+            break;
+            case EDIT:
+            okButton.addActionListener(new ActionListener(){
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                boolean legalFunction = false;
+                for(FunctionListener listener: functionListeners)legalFunction = ((FunctionListener)listener).functionEdited(new FunctionEditedEvent(e.getSource(), colorPanel.getBackground(), functionInput.getText().trim(), functionInput.getText().trim().toCharArray()[0],lastFunctionChar));
+                if(legalFunction){
+                    //Add the function
+                    disableWarn();
+                    closeDialog();
+                }else{
+                    enableWarn("Eingegebene Funktion ist nicht valide");
+                }
+                }
+            });
+        }
         okButton.addMouseListener(new MouseAdapter(){
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -215,6 +242,19 @@ public class FunctionDialog extends JFrame {
 
     public void start() {
         setVisible(true);
+    }
+
+    public void setFunctionString(String functionString) {
+        functionInput.setText(functionString);
+
+    }
+
+    public void setColor(Color circleColor) {
+        colorPanel.setBackground(circleColor);
+    }
+
+    public void setLastFunctionChar(char functionChar) {
+        this.lastFunctionChar = functionChar;
     }
 
 

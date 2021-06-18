@@ -7,12 +7,16 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.BasicStroke;
+import java.awt.Point;
+import java.awt.Rectangle;
+
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
 
 import event.FunctionEvent;
 import event.FunctionListener;
+import view.FunctionDialog.DialogType;
 
 import java.awt.RenderingHints;
 import java.awt.event.MouseMotionListener;
@@ -26,6 +30,8 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
 
     private String functionString;
     private char functionChar;
+
+    private FunctionDialog functionDialog;
 
     private Color currentCardBg;
     private Color defaultCardBg;
@@ -52,15 +58,25 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
     private float closeButtonStrokeWidth;
     private float closeButtonCrossLenghtFactor;
 
+    private Color editButtonCurrentColor;
+    private Color editButtonDefaultColor;
+    private Color editButtonHoverColor;
+    private int editButtonCircleRadii;
+    private int editButtonCircleMargin;
+
 
     public JFunctionComponent(char _functionChar, String functionString, Color circleColor) {
         super();
         this.circleColor = circleColor;
         this.functionString = functionString;
         this.functionChar = _functionChar;
-        defaultCardBg = Color.LIGHT_GRAY;
+        functionDialog = new FunctionDialog(DialogType.EDIT);
+        functionDialog.setFunctionString(functionString);
+        functionDialog.setColor(circleColor);
+        functionDialog.setLastFunctionChar(this.functionChar);
+        defaultCardBg = Color.decode("0xDFDFDF");
         currentCardBg = defaultCardBg;
-        hoverCardBg = Color.GRAY;
+        hoverCardBg = Color.decode("0xDBDBDB");
         cardWidthPercent = .9f;
         cardVMargin = 7;
 
@@ -79,6 +95,12 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
         closeButtonStrokeWidth = 2f;
         closeButtonCrossStroke = new BasicStroke(closeButtonStrokeWidth,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND);
         closeButtonCrossLenghtFactor = 0.6f;
+
+        editButtonDefaultColor = Color.GRAY;
+        editButtonCurrentColor = editButtonDefaultColor;
+        editButtonHoverColor = Color.DARK_GRAY;
+        editButtonCircleRadii = 4;
+        editButtonCircleMargin = 2;
         setPreferredSize(new Dimension(getWidth(), 80));
         addMouseListener(new MouseAdapter(){
             @Override
@@ -91,6 +113,8 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
                 if(isInCloseButtonBounds(e)){
                             for(FunctionListener listener: functionListeners)((FunctionListener)listener).functionDeleted(new FunctionEvent(e.getSource(), circleColor, functionString, functionChar)); 
                             destroy();
+                }else if(isInEditButtonBounds(e)){
+                    functionDialog.start();
                 }
             }
         });
@@ -116,7 +140,19 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
         paintColorCircle(g2d);
         paintFunctionString(g2d);
         paintCloseButton(g2d);
-        
+        paintEditButton(g2d);
+    }
+
+    private void paintEditButton(Graphics2D g2d) {
+        int margins = (int)(getWidth() * ((1 - cardWidthPercent) / 2)+editButtonCircleMargin*3.5);
+        int rectY = (int)(cardVMargin+editButtonCircleMargin*3.5);
+        int width = (int)(2*(3*editButtonCircleRadii+editButtonCircleMargin));
+        int rectX = (int)(getWidth() - margins - width);
+        g2d.setColor(editButtonCurrentColor);
+        for(int i = 0;i<3;i++){
+            g2d.fillOval(rectX+(i*(editButtonCircleMargin+editButtonCircleRadii*2)), rectY, editButtonCircleRadii*2, editButtonCircleRadii*2);
+        }
+
     }
 
     private void paintCloseButton(Graphics2D g2d) {
@@ -163,6 +199,15 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
         repaint();
     }
 
+    private boolean isInEditButtonBounds(MouseEvent e){
+        int margins = (int)(getWidth() * ((1 - cardWidthPercent) / 2)+editButtonCircleMargin*3.5);
+        int rectY = (int)(cardVMargin+editButtonCircleMargin*3.5);
+        int width = (int)(2*(3*editButtonCircleRadii+editButtonCircleMargin));
+        int rectX = (int)(getWidth() - margins - width);
+        int height = (int)(2*editButtonCircleRadii);
+        return (e.getX() > rectX && e.getX() < rectX+width) && (e.getY() > rectY && e.getY() < rectY+height);
+    }
+
     private boolean isInCardBounds(MouseEvent e) {
         int x = e.getX();
         int y = e.getY();
@@ -191,6 +236,8 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
             if(currentCardBg != hoverCardBg)callCardHover(true);
             if(isInCloseButtonBounds(e) && closeButtonBgCurrentColor != closeButtonBgHoverColor)callCloseButtonHover(true);
             else if(!isInCloseButtonBounds(e) && closeButtonBgCurrentColor != closeButtonBgDefaultColor)callCloseButtonHover(false);
+            if(isInEditButtonBounds(e) && editButtonCurrentColor != editButtonHoverColor)callEditButtonHover(true);
+            else if(!isInEditButtonBounds(e) && editButtonCurrentColor != editButtonDefaultColor)callEditButtonHover(false);
         }
         else if (!isInCardBounds(e)&&currentCardBg != defaultCardBg){
             resetAllStyles();
@@ -208,12 +255,22 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
         }
         repaint();
     }
-
+    
+    private void callEditButtonHover(boolean hover) {
+        if(hover){
+            editButtonCurrentColor = editButtonHoverColor;
+            
+        }else{
+            editButtonCurrentColor = editButtonDefaultColor;           
+        }
+        repaint();
+    }
     private boolean isInCloseButtonBounds(MouseEvent e) {
         return e.getPoint().distance(new Point((int)(getWidth() * ((1 - cardWidthPercent) / 2) + closeButtonMargin + closeButtonRadius), (int)cardVMargin+closeButtonMargin+closeButtonRadius)) < closeButtonRadius;
     }
 
     public void addFunctionListener(FunctionListener functionListener) {
+        functionDialog.addFunctionListener(functionListener);
         functionListeners.add(functionListener);
     }
 

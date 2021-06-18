@@ -23,6 +23,7 @@ import javax.swing.border.EmptyBorder;
 import event.FunctionListener;
 import model.UniversalFunction;
 import startup.Settings;
+import view.FunctionDialog.DialogType;
 import view.outdated.TF_Sidebar;
 
 public class Sidebar extends JPanel {
@@ -37,7 +38,7 @@ public class Sidebar extends JPanel {
 
     public Sidebar() {
         setBackground(new Color(241,241,241));
-        functionDialog = new FunctionDialog();
+        functionDialog = new FunctionDialog(DialogType.ADD);
         addFunctionButton = new JAddButton(getBackground());
         addFunctionButton.addMouseListener(new MouseAdapter(){
             @Override

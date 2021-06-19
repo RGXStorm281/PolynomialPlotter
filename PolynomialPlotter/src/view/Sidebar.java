@@ -28,6 +28,7 @@ public class Sidebar extends JPanel {
     private StyleClass styleClass;
     private List<FunctionListener> functionListeners = new ArrayList<FunctionListener>();
     private List<JFunctionComponent> functionList = new ArrayList<JFunctionComponent>();
+    private JLabel headingText;
 
     public Sidebar(StyleClass styleClass) {
         this.styleClass = styleClass;
@@ -45,7 +46,7 @@ public class Sidebar extends JPanel {
         add(vFunctionsBox);
 
         heading = new JPanel(); // Panel used for the Heading-Text (to set a Background)
-        JLabel headingText = new JLabel("Polynomialplotter");
+        headingText = new JLabel("Polynomialplotter");
         headingText.setFont(GUI.getFont(FontFamily.ROBOTO,FontStyle.BOLD,30)); // Set the font to size 30
         headingText.setForeground(this.styleClass.HEADING_FG_COLOR); 
         headingText.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -102,6 +103,18 @@ public class Sidebar extends JPanel {
     public void removeJFunctionComponent(JFunctionComponent jFunctionComponent) {
         functionList.remove(jFunctionComponent);
         renderJFunctionComponents();
+    }
+
+    public void recolor(StyleClass styleClass) {
+        this.styleClass = styleClass;
+        setBackground(this.styleClass.SIDEBAR_BG_COLOR);
+        addFunctionButton.recolor(this.styleClass);
+        headingText.setForeground(this.styleClass.HEADING_FG_COLOR); 
+        heading.setBackground(this.styleClass.HEADING_BG_COLOR);
+        for(JFunctionComponent fc: functionList){
+            fc.recolor(styleClass);
+        }
+
     }
 
 }

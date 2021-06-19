@@ -39,14 +39,14 @@ public class GUI extends JFrame implements IGUI{
     private Sidebar sidebar_panel;
 
     private final Settings settings; 
-    private final StyleClass styleClass;
+    private StyleClass styleClass;
   
 
 
     public GUI(Settings settings) throws FileNotFoundException, IOException {
         super();
         this.settings = settings;
-        styleClass = new StyleClass("src/view/style.properties");
+        this.styleClass = new StyleClass("src/view/style2.properties");
         // Add custom icon
         URL iconURL = getClass().getResource("../data/icon.png");
         ImageIcon icon = new ImageIcon(iconURL);
@@ -68,6 +68,14 @@ public class GUI extends JFrame implements IGUI{
 
     }
 
+    public void changeTheme(String newPath){
+        try {
+            this.styleClass = new StyleClass(newPath);
+            sidebar_panel.recolor(this.styleClass);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public void start() {
         if (!isVisible())

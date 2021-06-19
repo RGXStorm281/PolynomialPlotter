@@ -6,10 +6,6 @@
 package view;
 
 import model.DrawingInformationContainer;
-import model.Tuple;
-import model.UniversalFunction;
-
-import java.awt.event.ActionListener;
 
 import event.FunctionListener;
 import event.PlotListener;

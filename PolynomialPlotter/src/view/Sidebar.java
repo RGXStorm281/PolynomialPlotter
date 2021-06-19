@@ -1,10 +1,6 @@
 package view;
 
 import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontFormatException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.awt.FlowLayout;
@@ -14,17 +10,14 @@ import java.awt.event.MouseEvent;
 
 
 import javax.swing.Box;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import event.FunctionListener;
-import model.UniversalFunction;
-import startup.Settings;
 import view.FunctionDialog.DialogType;
-import view.outdated.TF_Sidebar;
+import view.GUI.FontFamily;
+import view.GUI.FontStyle;
 
 public class Sidebar extends JPanel {
 
@@ -32,14 +25,15 @@ public class Sidebar extends JPanel {
     private JPanel heading;
     private FunctionDialog functionDialog;
     private JAddButton addFunctionButton;
+    private StyleClass styleClass;
     private List<FunctionListener> functionListeners = new ArrayList<FunctionListener>();
-    private JFunctionComponent functionListElement;
     private List<JFunctionComponent> functionList = new ArrayList<JFunctionComponent>();
 
-    public Sidebar() {
-        setBackground(new Color(241,241,241));
+    public Sidebar(StyleClass styleClass) {
+        this.styleClass = styleClass;
+        setBackground(this.styleClass.SIDEBAR_BG_COLOR);
         functionDialog = new FunctionDialog(DialogType.ADD);
-        addFunctionButton = new JAddButton(getBackground());
+        addFunctionButton = new JAddButton(this.styleClass);
         addFunctionButton.addMouseListener(new MouseAdapter(){
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -52,11 +46,11 @@ public class Sidebar extends JPanel {
 
         heading = new JPanel(); // Panel used for the Heading-Text (to set a Background)
         JLabel headingText = new JLabel("Polynomialplotter");
-        headingText.setFont(GUI.getFont(30)); // Set the font to size 30
-        headingText.setForeground(Color.WHITE); 
+        headingText.setFont(GUI.getFont(FontFamily.ROBOTO,FontStyle.BOLD,30)); // Set the font to size 30
+        headingText.setForeground(this.styleClass.HEADING_FG_COLOR); 
         headingText.setAlignmentX(Component.CENTER_ALIGNMENT);
         headingText.setBorder(new EmptyBorder(10,50,10,50)); // Add a margin around the Text
-        heading.setBackground(GUI.aktzent1);
+        heading.setBackground(this.styleClass.HEADING_BG_COLOR);
         heading.add(headingText);
         vFunctionsBox.add(heading);
         vFunctionsBox.add(addFunctionButton);
@@ -70,7 +64,7 @@ public class Sidebar extends JPanel {
     }
 
     public void addJFunctionComponent(char functionChar,String functionString, Color functionColor){
-        JFunctionComponent jfc = new JFunctionComponent(functionChar, functionString, functionColor);
+        JFunctionComponent jfc = new JFunctionComponent(this.styleClass,functionChar, functionString, functionColor);
         for(FunctionListener functionListener: functionListeners)jfc.addFunctionListener(functionListener);
         functionList.add(jfc);
         // renderJFunctionComponents();

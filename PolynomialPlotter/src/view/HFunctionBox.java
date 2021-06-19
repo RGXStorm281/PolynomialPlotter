@@ -4,6 +4,10 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
+import view.GUI.FontFamily;
+import view.GUI.FontStyle;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.FocusEvent;
@@ -17,7 +21,7 @@ public class HFunctionBox extends Box {
         super(0);
         JTextField tf_main = new JTextField();
         tf_main.setText(value);
-        tf_main.setFont(GUI.getFont(20));
+        tf_main.setFont(GUI.getFont(FontFamily.RUBIK,FontStyle.REGULAR,20));
         tf_main.setBackground(backgroundColor);
         tf_main.setColumns(10);
         tf_main.addFocusListener(new FocusListener() {

@@ -5,6 +5,7 @@ import java.net.URL;
 import java.awt.Font;
 import java.awt.Color;
 import java.awt.FontFormatException;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javax.swing.ImageIcon;
@@ -13,7 +14,6 @@ import javax.swing.JFrame;
 import event.FunctionListener;
 import event.PlotListener;
 import model.DrawingInformationContainer;
-import model.UniversalFunction;
 import startup.Settings;
 
 
@@ -24,19 +24,29 @@ import startup.Settings;
 
 public class GUI extends JFrame implements IGUI{
 
+    enum FontFamily{
+        RUBIK,
+        ROBOTO,
+    }
+
+    enum FontStyle{
+        THIN,
+        ITALIC,
+        BOLD,
+        REGULAR
+    }
     private JPlotter plotter_panel;
     private Sidebar sidebar_panel;
 
     private final Settings settings; 
-
-    // Color palette
-    public static final Color aktzent1 = new Color(226,0,26);
+    private final StyleClass styleClass;
   
 
 
-    public GUI(Settings settings) {
+    public GUI(Settings settings) throws FileNotFoundException, IOException {
         super();
         this.settings = settings;
+        styleClass = new StyleClass("src/view/style.properties");
         // Add custom icon
         URL iconURL = getClass().getResource("../data/icon.png");
         ImageIcon icon = new ImageIcon(iconURL);
@@ -44,7 +54,7 @@ public class GUI extends JFrame implements IGUI{
         pack();
         
         // Split up in 2 Panes
-        sidebar_panel = new Sidebar();
+        sidebar_panel = new Sidebar(styleClass);
         plotter_panel = new JPlotter(this.settings);
         getContentPane().add(sidebar_panel, BorderLayout.WEST);
         getContentPane().add(plotter_panel, BorderLayout.CENTER);
@@ -64,9 +74,28 @@ public class GUI extends JFrame implements IGUI{
             setVisible(true);
     }
 
-    public static Font getFont(float f){
+    public static Font getFont(FontFamily ft,FontStyle fs, float f){
         try {
-			return Font.createFont(Font.TRUETYPE_FONT, Sidebar.class.getResourceAsStream("../data/Rubik/Rubik-Regular.ttf")).deriveFont(f); // Looks for The Font and returns the font with the size f
+            switch(ft){
+                case ROBOTO:
+                switch(fs){
+                    case BOLD:
+                    return Font.createFont(Font.TRUETYPE_FONT, Sidebar.class.getResourceAsStream("../data/Roboto/Roboto-Bold.ttf")).deriveFont(f);
+                    case THIN:
+                    return Font.createFont(Font.TRUETYPE_FONT, Sidebar.class.getResourceAsStream("../data/Roboto/Roboto-Thin.ttf")).deriveFont(f);
+                    default:
+                    return Font.createFont(Font.TRUETYPE_FONT, Sidebar.class.getResourceAsStream("../data/Roboto/Roboto-Regular.ttf")).deriveFont(f);
+                }
+                default:
+                switch(fs){
+                    case BOLD:
+                    return Font.createFont(Font.TRUETYPE_FONT, Sidebar.class.getResourceAsStream("../data/Rubik/Rubik-Bold.ttf")).deriveFont(f); // Looks for The Font and returns the font with the size f
+                    case ITALIC:
+                    return Font.createFont(Font.TRUETYPE_FONT, Sidebar.class.getResourceAsStream("../data/Rubik/Rubik-ITALIC.ttf")).deriveFont(f); // Looks for The Font and returns the font with the size f
+                    default:
+                    return Font.createFont(Font.TRUETYPE_FONT, Sidebar.class.getResourceAsStream("../data/Rubik/Rubik-Regular.ttf")).deriveFont(f); // Looks for The Font and returns the font with the size f
+                }
+            }
 		} catch (FontFormatException | IOException e) {
 			e.printStackTrace();
 			return Font.getFont(Font.SANS_SERIF); // If the Font is not found, return a Sans-Serif Font

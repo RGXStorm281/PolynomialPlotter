@@ -21,6 +21,8 @@ import javax.swing.JTextField;
 import event.FunctionEditedEvent;
 import event.FunctionEvent;
 import event.FunctionListener;
+import view.GUI.FontFamily;
+import view.GUI.FontStyle;
 
 import java.awt.Dimension;
 import java.awt.Cursor;
@@ -41,7 +43,6 @@ public class FunctionDialog extends JFrame {
     private JLabel functionInputLabel;
     private JLabel functionErrorLabel;
 
-    private CustomColorChooser colorChooser;
     private JLabel colorLabel;
 
     private JPanel colorPanel;
@@ -51,7 +52,7 @@ public class FunctionDialog extends JFrame {
         URL iconURL = getClass().getResource("../data/functionDialogIcon.png");
         ImageIcon icon = new ImageIcon(iconURL);
         setIconImage(icon.getImage());
-        Font font = GUI.getFont(16);
+        Font font = GUI.getFont(FontFamily.ROBOTO,FontStyle.REGULAR,16);
         getContentPane().setBackground(new Color(241,241,241));
         setFont(font);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -168,8 +169,6 @@ public class FunctionDialog extends JFrame {
         });
         getContentPane().add(cancelButton);
 
-
-        colorChooser = new CustomColorChooser();
         colorPanel = new JPanel();
         colorPanel.setBackground(randomColor());
         colorPanel.setBounds(60, 68, 26, 26);
@@ -177,7 +176,7 @@ public class FunctionDialog extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                Color col = colorChooser.showDialog(null, "Farbe wählen", colorPanel.getBackground());
+                Color col = CustomColorChooser.showDialog(null, "Farbe wählen", colorPanel.getBackground());
                 if(col != null) colorPanel.setBackground(col);
             }
 

@@ -4,15 +4,14 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.AWTEvent;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseEvent;
 import java.awt.Point;
-import java.awt.Stroke;
 import java.awt.BasicStroke;
 import java.awt.RenderingHints;
 
-import javax.swing.JButton;
 import javax.swing.JComponent;
 
 public class JAddButton extends JComponent implements MouseMotionListener{
@@ -25,30 +24,30 @@ public class JAddButton extends JComponent implements MouseMotionListener{
     private int padding;
     private int margin;
     private float strokeWidth;
-    private Color initialButtonBgCol;
+    private Color defaultButtonBgCol;
     private Color currentButtonBgCol;
-    private Color initialButtonCrossColor;
+    private Color defaultButtonCrossColor;
     private Color currentCrossCol;
     private Color hoverButtonCrossCol;
     private BasicStroke crossStroke;
     
 
 
-    public JAddButton(Color col){
+    public JAddButton(StyleClass styleClass){
         super();
         addMouseMotionListener(this);
-        radius = 25;
+        radius = 20;
         enableInputMethods(true);
         enableEvents(AWTEvent.ACTION_EVENT_MASK);
-        bg = col;
-        strokeWidth = 4f;
-        initialButtonBgCol = Color.decode("0xC4C4C4");
-        hoverButtonBgCol = Color.decode("0xA3A3A3");
-        currentButtonBgCol = initialButtonBgCol;
-        initialButtonCrossColor = Color.decode("0x5C5C5C");
-        currentCrossCol = initialButtonCrossColor;
-        hoverButtonCrossCol = Color.decode("0x414141");
-        padding = 15;
+        bg = styleClass.SIDEBAR_BG_COLOR;
+        strokeWidth = 3f;
+        defaultButtonBgCol = styleClass.SIDEBAR_ADD_BUTTON_BG;
+        hoverButtonBgCol = defaultButtonBgCol.darker();
+        currentButtonBgCol = defaultButtonBgCol;
+        defaultButtonCrossColor = styleClass.SIDEBAR_ADD_BUTTON_FG;
+        currentCrossCol = defaultButtonCrossColor;
+        hoverButtonCrossCol = defaultButtonCrossColor.darker();
+        padding = 12;
         margin = 10;
         crossStroke = new BasicStroke(strokeWidth,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND);
         setPreferredSize(new Dimension(radius*2+margin,radius*2+margin*2));
@@ -79,9 +78,11 @@ public class JAddButton extends JComponent implements MouseMotionListener{
         if(hover){
             currentButtonBgCol = hoverButtonBgCol;
             currentCrossCol = hoverButtonCrossCol;
+            setCursor(new Cursor(Cursor.HAND_CURSOR));
         }else{
-            currentButtonBgCol = initialButtonBgCol;
-            currentCrossCol = initialButtonCrossColor;
+            currentButtonBgCol = defaultButtonBgCol;
+            currentCrossCol = defaultButtonCrossColor;
+            setCursor(Cursor.getDefaultCursor());
         }
         repaint();
     }
@@ -95,7 +96,7 @@ public class JAddButton extends JComponent implements MouseMotionListener{
     @Override
     public void mouseMoved(MouseEvent e) {
         if(isOverButton(e) && currentButtonBgCol != hoverButtonBgCol)callHover(true);
-        else if(!isOverButton(e) && currentButtonBgCol != initialButtonBgCol)callHover(false);
+        else if(!isOverButton(e) && currentButtonBgCol != defaultButtonBgCol)callHover(false);
         
     }
 

@@ -47,7 +47,7 @@ public class PolynomialPlotter {
                     Color functionColor = e.getFunctionColor();    
                     char functionChar = e.getFunctionChar();
                     System.out.println("New function \""+functionChar+"\" with: "+functionString+" and the Color"+functionColor);
-                    view.changeTheme("src/view/style.properties");
+                    view.changeTheme("src/view/style2.properties");
                     return true; // Return ob gegebene funktion legal war
                     
                 }

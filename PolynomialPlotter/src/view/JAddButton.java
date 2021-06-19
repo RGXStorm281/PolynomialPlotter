@@ -50,7 +50,6 @@ public class JAddButton extends JComponent implements MouseMotionListener {
         setPreferredSize(new Dimension(radius * 2 + margin, radius * 2 + margin * 2));
     }
 
-    
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -68,17 +67,21 @@ public class JAddButton extends JComponent implements MouseMotionListener {
 
     }
 
-    
-    /** Checkt, ob die Maus überm Button ist
+    /**
+     * Checkt, ob die Maus überm Button ist
+     * 
      * @param e
      * @return boolean
      */
     public boolean isOverButton(MouseEvent e) {
-        return e.getPoint().distance(new Point(getWidth() / 2, getHeight() / 2)) < radius; // Distanz zwischen Maus und Mitte des Buttons < radius (Button ist ein Kreis)
+        return e.getPoint().distance(new Point(getWidth() / 2, getHeight() / 2)) < radius; // Distanz zwischen Maus und
+                                                                                           // Mitte des Buttons < radius
+                                                                                           // (Button ist ein Kreis)
     }
 
-    
-    /** Wird gecallt, wenn die Maus über dem Button ist
+    /**
+     * Wird gecallt, wenn die Maus über dem Button ist
+     * 
      * @param hover
      */
     public void callHover(boolean hover) {
@@ -100,7 +103,6 @@ public class JAddButton extends JComponent implements MouseMotionListener {
 
     }
 
-
     @Override
     public void mouseMoved(MouseEvent e) {
         if (isOverButton(e) && currentButtonBgCol != hoverButtonBgCol)
@@ -110,14 +112,19 @@ public class JAddButton extends JComponent implements MouseMotionListener {
 
     }
 
-    
-    /** Färbt die Komponente neu ein
+    /**
+     * Färbt die Komponente neu ein
+     * 
      * @param styleClass
      */
     public void recolor(StyleClass styleClass) {
         bg = styleClass.SIDEBAR_BG_COLOR;
         defaultButtonBgCol = styleClass.SIDEBAR_ADD_BUTTON_BG;
         defaultButtonCrossColor = styleClass.SIDEBAR_ADD_BUTTON_FG;
+        hoverButtonBgCol = defaultButtonBgCol.darker();
+        currentButtonBgCol = defaultButtonBgCol;
+        currentCrossCol = defaultButtonCrossColor;
+        hoverButtonCrossCol = defaultButtonCrossColor.darker();
         repaint();
     }
 

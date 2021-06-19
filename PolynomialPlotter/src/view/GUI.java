@@ -46,7 +46,7 @@ public class GUI extends JFrame implements IGUI{
     public GUI(Settings settings) throws FileNotFoundException, IOException {
         super();
         this.settings = settings;
-        this.styleClass = new StyleClass("src/view/style2.properties");
+        this.styleClass = new StyleClass("src/view/style.properties");
         // Add custom icon
         URL iconURL = getClass().getResource("../data/icon.png");
         ImageIcon icon = new ImageIcon(iconURL);

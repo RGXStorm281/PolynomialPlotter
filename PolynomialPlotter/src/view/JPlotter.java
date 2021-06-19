@@ -207,6 +207,10 @@ public class JPlotter extends JPanel {
         }
     }
 
+    
+    /** 
+     * @param g
+     */
     public void paint(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         // Antialiasing für bessere Diagonalen
@@ -224,6 +228,10 @@ public class JPlotter extends JPanel {
         // drawFunction(g2d, x -> (float) (Math.sin(x) * x * x), Color.BLUE);
     }
 
+    
+    /** 
+     * @param g2d
+     */
     private void drawFunctions(Graphics2D g2d) {
         if(drawingInformation == null)return;
         // Um es wirklich an den canvas anzupassen, benötige ich entweder daten über den zoom+origin, oder den
@@ -414,15 +422,31 @@ public class JPlotter extends JPanel {
         origin.translate(dPoint.x, dPoint.y);
     }
 
+    
+    /** 
+     * @param factor
+     */
     public void moveUp(float factor){
         moveOrigin(new Point(0,(int)factor));
     }
+    
+    /** 
+     * @param factor
+     */
     public void moveDown(float factor){
         moveOrigin(new Point(0,(int)-factor));
     }
+    
+    /** 
+     * @param factor
+     */
     public void moveRight(float factor){
         moveOrigin(new Point((int)-factor,0));
     }
+    
+    /** 
+     * @param factor
+     */
     public void moveLeft(float factor){
         moveOrigin(new Point((int)factor,0));
     }
@@ -482,6 +506,10 @@ public class JPlotter extends JPanel {
         origin = new Point(0, 0);
     }
 
+    
+    /** Fügt einen PlotListener an das Event an
+     * @param plotListener
+     */
     public void addPlotListener(PlotListener plotListener) {
         plotListeners.add(plotListener);
     }

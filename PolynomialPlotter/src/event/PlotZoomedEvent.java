@@ -9,6 +9,10 @@ public class PlotZoomedEvent extends PlotEvent{
         this.zoomAmount = zoomAmount;
     }
 
+    
+    /** Gibt die zoomAmount des Events zurück
+     * @return float
+     */
     public float getZoomAmount(){
         return this.zoomAmount;
     }

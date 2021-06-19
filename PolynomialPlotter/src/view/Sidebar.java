@@ -64,13 +64,22 @@ public class Sidebar extends JPanel {
         renderJFunctionComponents();
     }
 
+    
+    /** Fügt ein JFunctionComponent hinzu
+     * @param functionChar Funktions-Identifier
+     * @param functionString Funktions-String
+     * @param functionColor Funkctions-Farbe
+     */
     public void addJFunctionComponent(char functionChar,String functionString, Color functionColor){
         JFunctionComponent jfc = new JFunctionComponent(this.styleClass,functionChar, functionString, functionColor);
         for(FunctionListener functionListener: functionListeners)jfc.addFunctionListener(functionListener);
         functionList.add(jfc);
-        // renderJFunctionComponents();
+        renderJFunctionComponents();
     }
 
+    /**
+     * Rendert alle JFunctionComponenten der JFunctionComponent-ArrayList
+     */
     public void renderJFunctionComponents(){
         vFunctionsBox.removeAll();
         vFunctionsBox.add(heading);
@@ -82,29 +91,46 @@ public class Sidebar extends JPanel {
         repaint();
     }
 
-	public void onElementRemove(HFunctionBox box) {
-        // Gets triggered when an element is removed
-	}
-
+    
+    /** 
+     * @return String
+     */
     public String getFunction() {
         return functionDialog.getFunctionString();
     }
 
+    
+    /** 
+     * @return FunctionDialog
+     */
     public FunctionDialog getFunctionDialog() {
         return this.functionDialog;
     }
 
+    
+    /** fügt ein FunctionListener hinzu
+     * @param functionListener
+     */
     public void addFunctionListener(FunctionListener functionListener){
         functionListeners.add(functionListener);
         for(JFunctionComponent jfc: functionList)jfc.addFunctionListener(functionListener);
         functionDialog.addFunctionListener(functionListener);
     }
 
+    
+    /** Entfernt ein JFunctionComponent von der JFunction-ArrayList und rendert die Components neu
+     * @param jFunctionComponent
+     */
     public void removeJFunctionComponent(JFunctionComponent jFunctionComponent) {
         functionList.remove(jFunctionComponent);
+        jFunctionComponent = null; // Damit sich kein Müll ansammelt.
         renderJFunctionComponents();
     }
 
+    
+    /** Färbt die Komponente neu ein
+     * @param styleClass
+     */
     public void recolor(StyleClass styleClass) {
         this.styleClass = styleClass;
         setBackground(this.styleClass.SIDEBAR_BG_COLOR);

@@ -53,11 +53,15 @@ public interface IGUI{
 
 
     /**
-     * Fügt einen ActionListener, für das Handlen von Eingabe und Änderungen hinzu
-     * @param actionListener ActionListener 
+     * Fügt einen FunctionListener hinzu
+     * @param functionListener
      */
     void addFunctionListener(FunctionListener functionListener);
 
+    /**
+     * Fügt einen PlotListener hinzu
+     * @param plotListener
+     */
     void addPlotListener(PlotListener plotListener);
     
     int getPlotWidth();

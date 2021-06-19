@@ -124,9 +124,13 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
         });
     }
 
+    /**
+     * Enternt sich selbst aus seinem Parent und löscht das Objekt
+     */
     protected void destroy() {
         ((Sidebar) getParent().getParent()).removeJFunctionComponent(this);
     }
+
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -149,6 +153,10 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
         paintEditButton(g2d);
     }
 
+    
+    /** Malt den Editier-Button
+     * @param g2d
+     */
     private void paintEditButton(Graphics2D g2d) {
         int rectY = (int) (cardVMargin + editButtonCircleMargin * 3.5);
         int width = (int) (2 * (3 * editButtonCircleRadii + editButtonCircleMargin));
@@ -161,9 +169,13 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
 
     }
 
+    
+    /** malt den Close Button
+     * @param g2d
+     */
     private void paintCloseButton(Graphics2D g2d) {
         g2d.translate(-getWidth() / 2, -getHeight() / 2);
-        if (closeCrossPath == null) {
+        if (closeCrossPath == null) { // Speichert einen Pfad nach dem ersten berechnen ab (Spart etwas Rechenzeit ein)
             closeCrossPath = new GeneralPath();
             System.out.println("redo path");
             int x1 = (int) (Math.sin(0.25 * Math.PI) * closeButtonRadius * closeButtonCrossLenghtFactor + cardMargins
@@ -196,6 +208,10 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
 
     }
 
+    
+    /** Malt den Funktions-String
+     * @param g2d
+     */
     private void paintFunctionString(Graphics2D g2d) {
         g2d.setColor(Color.BLACK);
         g2d.setFont(GUI.getFont(FontFamily.ROBOTO, FontStyle.REGULAR, 20));
@@ -205,6 +221,10 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
                 (int) (height / 2));
     }
 
+    
+    /** Malt den Farb-Kreis
+     * @param g2d
+     */
     private void paintColorCircle(Graphics2D g2d) {
         g2d.setColor(circleColor);
         g2d.fillOval((int) (-cardWidth / 2 + closeButtonMargin * 2 + closeButtonRadius * 2), (int) (-circleRadius),
@@ -212,6 +232,9 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
 
     }
 
+    /**
+     * Wird benötigt um den Style zu resetten, falls ein MouseMoved Event zu langsam war und einen Style nicht resetten konnte
+     */
     protected void resetAllStyles() {
         currentCardBg = defaultCardBg;
         closeButtonBgCurrentColor = closeButtonBgDefaultColor;
@@ -220,6 +243,11 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
         repaint();
     }
 
+    
+    /** Prüft ob die Maus momentan den Edit-Button berührt
+     * @param e
+     * @return boolean
+     */
     private boolean isInEditButtonBounds(MouseEvent e) {
         // Trigger-Box is bigger than the actual Buttons
         int rectY = (int) (cardVMargin);
@@ -229,12 +257,21 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
         return (e.getX() > rectX && e.getX() < rectX + width) && (e.getY() > rectY && e.getY() < rectY + height);
     }
 
+    
+    /** Prüft ob die Maus momentan die Karte berührt
+     * @param e
+     * @return boolean
+     */
     private boolean isInCardBounds(MouseEvent e) {
         int x = e.getX();
         int y = e.getY();
         return (x > cardMargins && x < cardMargins + cardWidth) && (y > cardVMargin && y < getHeight() - cardVMargin);
     }
 
+    
+    /** Wird gecallt, wenn die Maus über der Karte hovert.
+     * @param hover
+     */
     public void callCardHover(boolean hover) {
         if (hover) {
             currentCardBg = hoverCardBg;
@@ -247,11 +284,19 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
         repaint();
     }
 
+    
+    /** Wird gecallt, wenn die Maus auf der Komonente gedraggt wurde
+     * @param e
+     */
     @Override
     public void mouseDragged(MouseEvent e) {
 
     }
 
+    
+    /** Wird gecallt, wenn die Maus auf der Komponente bewegt wurde
+     * @param e
+     */
     @Override
     public void mouseMoved(MouseEvent e) {
         if (isInCardBounds(e)) {
@@ -270,6 +315,10 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
         }
     }
 
+    
+    /** wird gecallt, wenn die Maus überm Close-Button hovert.
+     * @param hover
+     */
     private void callCloseButtonHover(boolean hover) {
         if (hover) {
             closeButtonBgCurrentColor = closeButtonBgHoverColor;
@@ -284,6 +333,10 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
         repaint();
     }
 
+    
+    /** wird gecallt, wenn die Maus überm Edit-Button hovert
+     * @param hover
+     */
     private void callEditButtonHover(boolean hover) {
         if (hover) {
             editButtonCurrentColor = editButtonHoverColor;
@@ -296,6 +349,11 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
         repaint();
     }
 
+    
+    /**Gibt an ob die Maus momentan über dem Close-Button der Komponente ist
+     * @param e MouseEvent
+     * @return boolean
+     */
     private boolean isInCloseButtonBounds(MouseEvent e) {
         return e.getPoint()
                 .distance(new Point(
@@ -303,11 +361,19 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
                         (int) cardVMargin + closeButtonMargin + closeButtonRadius)) < closeButtonRadius;
     }
 
+    
+    /** Fügt einen FunctionListener hinzu
+     * @param functionListener
+     */
     public void addFunctionListener(FunctionListener functionListener) {
         functionDialog.addFunctionListener(functionListener);
         functionListeners.add(functionListener);
     }
 
+    
+    /** Färbt die Komponente neu ein
+     * @param styleClass
+     */
     public void recolor(StyleClass styleClass) {
         defaultCardBg = styleClass.FUNCTION_CARD_BG;
         hoverCardBg = styleClass.FUNCTION_CARD_BG_HOVER;

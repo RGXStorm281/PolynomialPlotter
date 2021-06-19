@@ -102,7 +102,7 @@ public class FunctionDialog extends JFrame {
                 for(FunctionListener listener: functionListeners)legalFunction = ((FunctionListener)listener).functionAdded(new FunctionEvent(e.getSource(), colorPanel.getBackground(), functionInput.getText().trim(), functionInput.getText().trim().toCharArray()[0]));
                 if(legalFunction){
                     //Add the function
-                    disableWarn();
+                    hideWarn();
                     closeDialog();
                 }else{
                     enableWarn("Eingegebene Funktion ist nicht valide");
@@ -118,7 +118,7 @@ public class FunctionDialog extends JFrame {
                 for(FunctionListener listener: functionListeners)legalFunction = ((FunctionListener)listener).functionEdited(new FunctionEditedEvent(e.getSource(), colorPanel.getBackground(), functionInput.getText().trim(), functionInput.getText().trim().toCharArray()[0],lastFunctionChar));
                 if(legalFunction){
                     //Add the function
-                    disableWarn();
+                    hideWarn();
                     closeDialog();
                 }else{
                     enableWarn("Eingegebene Funktion ist nicht valide");
@@ -196,7 +196,7 @@ public class FunctionDialog extends JFrame {
         pack();
     }
 
-    protected void disableWarn() {
+    protected void hideWarn() {
         functionErrorLabel.setVisible(false);
         colorLabel.setBounds(10, 71, 53, 20);
         colorPanel.setBounds(60, 68, 26, 26);
@@ -204,6 +204,10 @@ public class FunctionDialog extends JFrame {
         pack();
     }
     
+    
+    /** Zeigt eine Warnung unter dem InputFeld an
+     * @param msg Fehlermeldung
+     */
     protected void enableWarn(String msg) {
         functionErrorLabel.setText(msg);
         colorLabel.setBounds(10, 71+functionErrorLabel.getHeight(), 53, 20);
@@ -213,19 +217,34 @@ public class FunctionDialog extends JFrame {
         pack();
     }
 
+    
+    /**Gibt den Funktionsstring zurück 
+     * @return String
+     */
     public String getFunctionString(){
         return functionInput.getText();
     }
 
+    
+    /** gibt die Farbe des Dialogs zurück [Wird übers colorPanel gemacht, spart Speicherplatz]
+     * @return Color
+     */
     public Color getColor(){
         return colorPanel.getBackground();
     }
     
+    /**
+     * Schließt den Dialog
+     */
     public void closeDialog(){
         dispose();
     }
 
 
+    
+    /** generiert eine zufällge Farbe (für den Color-Chooser)
+     * @return Color
+     */
     public static Color randomColor(){
         Color col =  new Color((int)(Math.random()*256d),(int)(Math.random()*256d),(int)(Math.random()*256d));
         if(col == new Color(241,241,241)){
@@ -235,23 +254,41 @@ public class FunctionDialog extends JFrame {
         }
     }
 
+    
+    /** 
+     * @param functionListener
+     */
     public void addFunctionListener(FunctionListener functionListener) {
         functionListeners.add(functionListener);
     }
 
+    /**
+     * Startet den Dialog
+     */
     public void start() {
         setVisible(true);
     }
 
+    
+    /** Ändert den Funktionsstring im Eingabefeld [Fürs Editieren wichtig]
+     * @param functionString
+     */
     public void setFunctionString(String functionString) {
         functionInput.setText(functionString);
-
     }
 
+    
+    /** Ändert die intiale Farbe des ColorChooser (Wird über das Color-Panel gehandelt [spart Speicherplatz])
+     * @param circleColor
+     */
     public void setColor(Color circleColor) {
         colorPanel.setBackground(circleColor);
     }
 
+    
+    /** Wenn der Dialog als Edit-Dialog gecallt wird, dann soll am anfang der alte Character mitgegeben werden
+     * @param functionChar
+     */
     public void setLastFunctionChar(char functionChar) {
         this.lastFunctionChar = functionChar;
     }

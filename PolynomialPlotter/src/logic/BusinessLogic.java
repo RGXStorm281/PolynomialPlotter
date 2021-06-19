@@ -131,7 +131,6 @@ public class BusinessLogic {
         intervallSizeX *= 1 + scale;
         intervallSizeY *= 1 + scale;
         debugIntervallSize();
-        
         calculateAndDraw();
     }
     

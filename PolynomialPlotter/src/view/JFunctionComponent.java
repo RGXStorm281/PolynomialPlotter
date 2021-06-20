@@ -231,7 +231,7 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
         g2d.setColor(functionStringColor);
         g2d.setFont(GUI.getFont(FontFamily.ROBOTO, FontStyle.REGULAR, 20));
         double height = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), "f").getVisualBounds().getHeight();
-        g2d.drawString(functionString,
+        g2d.drawString(GUI.decorate(functionString),
                 (int) (-cardWidth / 2 + closeButtonRadius * 2 + 2 * circleMargin + circleRadius * 2),
                 (int) (height / 2));
     }

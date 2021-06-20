@@ -196,7 +196,6 @@ public class GUI extends JFrame implements IGUI {
         boolean superscripted = false;
         String res = "";
         for (int i = 0; i < chars.length; i++) {
-            System.out.println(chars[i] + " : " + (int) chars[i]);
             int uni = (int) chars[i];
             if (uni == 178 || uni == 179) {
                 if (!superscripted) {
@@ -245,7 +244,6 @@ public class GUI extends JFrame implements IGUI {
             }
             if (superscripted) {
                 if (uni >= 48 && uni <= 57) {
-                    System.out.println(chars[i] + ":" + uni + " - super: " + superscripted);
                     switch (chars[i]) {
                         case '0':
                             res += '⁰';

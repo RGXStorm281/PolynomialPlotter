@@ -5,11 +5,20 @@ import java.net.URL;
 import java.awt.Font;
 import java.awt.Color;
 import java.awt.FontFormatException;
+import java.awt.event.ActionEvent;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+
+import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 
 import event.FunctionListener;
 import event.PlotListener;
@@ -46,7 +55,7 @@ public class GUI extends JFrame implements IGUI{
     public GUI(Settings settings) throws FileNotFoundException, IOException {
         super();
         this.settings = settings;
-        this.styleClass = new StyleClass("src/view/style.properties");
+        this.styleClass = new StyleClass("src/view/dcdark.properties");
         // Add custom icon
         URL iconURL = getClass().getResource("../data/icon.png");
         ImageIcon icon = new ImageIcon(iconURL);
@@ -56,22 +65,35 @@ public class GUI extends JFrame implements IGUI{
         // Split up in 2 Panes
         sidebar_panel = new Sidebar(styleClass);
         plotter_panel = new JPlotter(this.settings);
+        sidebar_panel.addKeyListener(new KeyAdapter(){
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if(e.getKeyCode() == 116){
+                    updateTheme();
+                }
+            }
+        });
         getContentPane().add(sidebar_panel, BorderLayout.WEST);
         getContentPane().add(plotter_panel, BorderLayout.CENTER);
-        plotter_panel.requestFocus();
-        
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
         pack();
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setTitle("Polynomial plotter");
+        setLocationRelativeTo(null);
+      
         
 
+    }
+
+    public void updateTheme(){
+        styleClass.update();
+        sidebar_panel.recolor();
     }
 
     public void changeTheme(String newPath){
         try {
             this.styleClass = new StyleClass(newPath);
-            sidebar_panel.recolor(this.styleClass);
+            sidebar_panel.recolor();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -161,6 +183,10 @@ public class GUI extends JFrame implements IGUI{
     public void addPlotListener(PlotListener plotListener) {
         this.plotter_panel.addPlotListener(plotListener);
         
+    }
+
+    public void addJFunctionComponent(char functionChar, String functionString, Color functionColor) {
+        sidebar_panel.addJFunctionComponent(functionChar, functionString, functionColor);
     }
 
 

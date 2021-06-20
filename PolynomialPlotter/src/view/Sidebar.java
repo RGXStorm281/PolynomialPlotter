@@ -31,14 +31,22 @@ public class Sidebar extends JPanel {
     private JLabel headingText;
 
     public Sidebar(StyleClass styleClass) {
+        addMouseListener(new MouseAdapter(){
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                requestFocus();
+            }
+        });
         this.styleClass = styleClass;
         setBackground(this.styleClass.SIDEBAR_BG_COLOR);
-        functionDialog = new FunctionDialog(DialogType.ADD);
+        functionDialog = new FunctionDialog(DialogType.ADD,styleClass);
+        functionDialog.setLocationRelativeTo(this);
         addFunctionButton = new JAddButton(this.styleClass);
         addFunctionButton.addMouseListener(new MouseAdapter(){
             @Override
             public void mouseClicked(MouseEvent e) {
-                if(addFunctionButton.isOverButton(e))functionDialog.start();
+
+                if(e.getButton() == 1 && addFunctionButton.isOverButton(e))functionDialog.start();
             }
         });
         vFunctionsBox = Box.createVerticalBox();
@@ -61,7 +69,6 @@ public class Sidebar extends JPanel {
         layout.setVgap(0);
         addJFunctionComponent('g', "g(x) = 4x+3", Color.decode("0x252632"));
         addJFunctionComponent('f', "f(x) = x²+5", Color.decode("0xDE425C"));
-        renderJFunctionComponents();
     }
 
     
@@ -131,14 +138,14 @@ public class Sidebar extends JPanel {
     /** Färbt die Komponente neu ein
      * @param styleClass
      */
-    public void recolor(StyleClass styleClass) {
-        this.styleClass = styleClass;
+    public void recolor() {
         setBackground(this.styleClass.SIDEBAR_BG_COLOR);
         addFunctionButton.recolor(this.styleClass);
         headingText.setForeground(this.styleClass.HEADING_FG_COLOR); 
         heading.setBackground(this.styleClass.HEADING_BG_COLOR);
+        functionDialog.recolor();
         for(JFunctionComponent fc: functionList){
-            fc.recolor(styleClass);
+            fc.recolor();
         }
 
     }

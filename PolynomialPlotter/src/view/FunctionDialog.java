@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.awt.Color;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 import event.FunctionEditedEvent;
 import event.FunctionEvent;
@@ -34,6 +35,10 @@ public class FunctionDialog extends JFrame {
         EDIT
     }
 
+    private Color buttonBackground;
+    private Color buttonForeground;
+
+
     private JButton okButton;
     private JButton cancelButton;
 
@@ -45,15 +50,20 @@ public class FunctionDialog extends JFrame {
 
     private JLabel colorLabel;
 
+    private StyleClass styleClass;
     private JPanel colorPanel;
     private List<FunctionListener> functionListeners = new ArrayList<FunctionListener>();
 
-    FunctionDialog(DialogType dialogType) {
+    FunctionDialog(DialogType dialogType, StyleClass styleClass) {
+        this.styleClass = styleClass;
+        buttonBackground = this.styleClass.BUTTON_BG;
+        buttonForeground = this.styleClass.BUTTON_FG;
+        getContentPane().setBackground(this.styleClass.DIALOG_BG);
+        getContentPane().setForeground(this.styleClass.DIALOG_FG);
         URL iconURL = getClass().getResource("../data/functionDialogIcon.png");
         ImageIcon icon = new ImageIcon(iconURL);
         setIconImage(icon.getImage());
         Font font = GUI.getFont(FontFamily.ROBOTO,FontStyle.REGULAR,16);
-        getContentPane().setBackground(new Color(241,241,241));
         setFont(font);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setPreferredSize(new Dimension(476, 150));
@@ -62,16 +72,23 @@ public class FunctionDialog extends JFrame {
         getContentPane().setLayout(null);
         functionInput = new JTextField();
         functionInput.setFont(font);
+        functionInput.setForeground(this.styleClass.DIALOG_FG);
         functionInput.setBounds(10, 25, 345, 33);
+        functionInput.setCaretColor(this.styleClass.DIALOG_FG);
         getContentPane().add(functionInput);
         functionInput.setColumns(10);
-        functionInput.setBorder(BorderFactory.createLineBorder(Color.decode("0xFFFFFF")));
+        functionInput.setBackground(this.styleClass.DIALOG_BG);
+        functionInput.setBorder(BorderFactory.createLineBorder(this.styleClass.DIALOG_BG));
         functionInput.setBorder(BorderFactory.createCompoundBorder(
-        functionInput.getBorder(), 
-        BorderFactory.createEmptyBorder(0, 10, 0, 10)));
+            functionInput.getBorder(),BorderFactory.createEmptyBorder(0,0,0,0)
+        ));
+        functionInput.setBorder(BorderFactory.createCompoundBorder(
+            functionInput.getBorder(),BorderFactory.createMatteBorder(0, 0, 1, 0, this.styleClass.DIALOG_FG)
+        ));
 
         functionInputLabel = new JLabel("Funktionausdruck");
         functionInputLabel.setFont(font.deriveFont(11f));
+        functionInputLabel.setForeground(this.styleClass.DIALOG_FG);
         functionInputLabel.setBounds(10, 10, 132, 14);
         getContentPane().add(functionInputLabel);
 
@@ -84,13 +101,15 @@ public class FunctionDialog extends JFrame {
 
         colorLabel = new JLabel("Farbe:");
         colorLabel.setFont(font.deriveFont(15f));
+        colorLabel.setForeground(this.styleClass.DIALOG_FG);
         colorLabel.setBounds(10, 71, 53, 20);
         getContentPane().add(colorLabel);
 
         okButton = new JButton("O.K.");
         okButton.setBounds(365, 25, 89, 33);
-        okButton.setBackground(Color.decode("0xDEDEDE"));
-        okButton.setBorder(BorderFactory.createLineBorder(Color.decode("0xDEDEDE")));
+        okButton.setBackground(buttonBackground);
+        okButton.setForeground(buttonForeground);
+        okButton.setBorder(BorderFactory.createLineBorder(buttonBackground));
         okButton.setFont(font.deriveFont(15f));
 
         switch(dialogType){
@@ -104,6 +123,8 @@ public class FunctionDialog extends JFrame {
                     //Add the function
                     hideWarn();
                     closeDialog();
+                    functionInput.setText("");
+                    colorPanel.setBackground(randomColor());
                 }else{
                     enableWarn("Eingegebene Funktion ist nicht valide");
                 }
@@ -129,33 +150,38 @@ public class FunctionDialog extends JFrame {
         okButton.addMouseListener(new MouseAdapter(){
             @Override
             public void mouseEntered(MouseEvent e) {
-                okButton.setBackground(Color.decode("0xABABAB"));
+                okButton.setBackground(buttonBackground.darker());
+                okButton.setBorder(BorderFactory.createLineBorder(buttonBackground.darker()));
                 
             }
             
             @Override
             public void mouseExited(MouseEvent e) {
-                okButton.setBackground(Color.decode("0xDEDEDE"));
+                okButton.setBackground(buttonBackground);
+                okButton.setBorder(BorderFactory.createLineBorder(buttonBackground));
             }
 
         });
         getContentPane().add(okButton);
         cancelButton = new JButton("Cancel");
         cancelButton.setBounds(365, 25, 89, 33);
-        cancelButton.setBackground(Color.decode("0xDEDEDE"));
-        cancelButton.setBorder(BorderFactory.createLineBorder(Color.decode("0xDEDEDE")));
+        cancelButton.setBackground(buttonBackground);
+        cancelButton.setForeground(buttonForeground);
+        cancelButton.setBorder(BorderFactory.createLineBorder(buttonBackground));
         cancelButton.setFont(font.deriveFont(15f));
         cancelButton.setBounds(365, 69, 89, 33);
         cancelButton.addMouseListener(new MouseAdapter(){
             @Override
             public void mouseEntered(MouseEvent e) {
-                cancelButton.setBackground(Color.decode("0xABABAB"));
+                cancelButton.setBackground(buttonBackground.darker());
+                cancelButton.setBorder(BorderFactory.createLineBorder(buttonBackground.darker()));
                 
             }
             
             @Override
             public void mouseExited(MouseEvent e) {
-                cancelButton.setBackground(Color.decode("0xDEDEDE"));
+                cancelButton.setBackground(buttonBackground);
+                cancelButton.setBorder(BorderFactory.createLineBorder(buttonBackground));
             }
 
         });
@@ -163,7 +189,7 @@ public class FunctionDialog extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e){
-                cancelButton.setBackground(Color.decode("0xDEDEDE"));
+                cancelButton.setBackground(buttonBackground);
                 dispose();
             }
         });
@@ -194,6 +220,8 @@ public class FunctionDialog extends JFrame {
         });
         getContentPane().add(colorPanel);
         pack();
+        revalidate();
+        repaint();
     }
 
     protected void hideWarn() {
@@ -237,6 +265,8 @@ public class FunctionDialog extends JFrame {
      * Schließt den Dialog
      */
     public void closeDialog(){
+        okButton.setBackground(buttonBackground);
+        cancelButton.setBackground(buttonBackground);
         dispose();
     }
 
@@ -266,7 +296,16 @@ public class FunctionDialog extends JFrame {
      * Startet den Dialog
      */
     public void start() {
-        setVisible(true);
+        SwingUtilities.invokeLater(new Runnable(){
+            
+        
+
+            @Override
+            public void run() {
+                setVisible(true);
+            }
+            });
+        
     }
 
     
@@ -291,6 +330,31 @@ public class FunctionDialog extends JFrame {
      */
     public void setLastFunctionChar(char functionChar) {
         this.lastFunctionChar = functionChar;
+    }
+
+    public void recolor() {
+        buttonBackground = styleClass.BUTTON_BG;
+        buttonForeground = styleClass.BUTTON_FG;
+        functionInputLabel.setForeground(this.styleClass.DIALOG_FG);
+        colorLabel.setForeground(this.styleClass.DIALOG_FG);
+        functionInput.setForeground(this.styleClass.DIALOG_FG);
+        functionInput.setCaretColor(this.styleClass.DIALOG_FG);
+        okButton.setBackground(buttonBackground);
+        okButton.setForeground(buttonForeground);
+        cancelButton.setBackground(buttonBackground);
+        cancelButton.setForeground(buttonForeground);
+        okButton.setBorder(BorderFactory.createLineBorder(buttonBackground));
+        cancelButton.setBorder(BorderFactory.createLineBorder(buttonBackground));
+        functionInput.setBackground(this.styleClass.DIALOG_BG);
+        functionInput.setBorder(BorderFactory.createLineBorder(this.styleClass.DIALOG_BG));
+        functionInput.setBorder(BorderFactory.createCompoundBorder(
+            functionInput.getBorder(),BorderFactory.createEmptyBorder(0,0,0,0)
+        ));
+        functionInput.setBorder(BorderFactory.createCompoundBorder(
+            functionInput.getBorder(),BorderFactory.createMatteBorder(0, 0, 1, 0, this.styleClass.DIALOG_FG)
+        ));
+        revalidate();
+        repaint();
     }
 
 

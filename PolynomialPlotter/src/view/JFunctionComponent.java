@@ -22,6 +22,8 @@ import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.awt.event.MouseAdapter;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 public class JFunctionComponent extends JComponent implements MouseMotionListener {
@@ -29,6 +31,8 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
     private String functionString;
     private char functionChar;
 
+    private JFunctionContextMenu contextMenu;
+    private StyleClass styleClass;
     private FunctionDialog functionDialog;
 
     private Color currentCardBg;
@@ -64,17 +68,21 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
     private int editButtonCircleMargin;
 
     private int cardMargins; // Margin left and right to the border
+    private Color functionStringColor;
 
     public JFunctionComponent(StyleClass styleClass, char functionChar, String functionString, Color circleColor) {
         super();
         this.circleColor = circleColor;
         this.functionString = functionString;
         this.functionChar = functionChar;
-
-        functionDialog = new FunctionDialog(DialogType.EDIT);
+        this.styleClass = styleClass;
+        contextMenu = new JFunctionContextMenu();
+        functionStringColor = styleClass.FUNCTION_CARD_FG;
+        functionDialog = new FunctionDialog(DialogType.EDIT,styleClass);
         functionDialog.setFunctionString(functionString);
         functionDialog.setColor(circleColor);
         functionDialog.setLastFunctionChar(this.functionChar);
+        functionDialog.setLocationRelativeTo(this);
 
         defaultCardBg = styleClass.FUNCTION_CARD_BG;
         currentCardBg = defaultCardBg;
@@ -112,16 +120,20 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (isInCloseButtonBounds(e)) {
-                    for (FunctionListener listener : functionListeners)
-                        ((FunctionListener) listener).functionDeleted(
-                                new FunctionEvent(e.getSource(), circleColor, functionString, functionChar));
-                    destroy();
-                } else if (isInEditButtonBounds(e)) {
-                    functionDialog.start();
+                if (isInCardBounds(e)) {
+                    requestFocus();
+                    if (isInCloseButtonBounds(e)) {
+                        for (FunctionListener listener : functionListeners)
+                            ((FunctionListener) listener).functionDeleted(
+                                    new FunctionEvent(e.getSource(), circleColor, functionString, functionChar));
+                        destroy();
+                    } else{
+                        functionDialog.start();
+                    }
                 }
             }
         });
+       
     }
 
     /**
@@ -130,7 +142,6 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
     protected void destroy() {
         ((Sidebar) getParent().getParent()).removeJFunctionComponent(this);
     }
-
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -150,11 +161,12 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
         paintColorCircle(g2d);
         paintFunctionString(g2d);
         paintCloseButton(g2d);
-        paintEditButton(g2d);
+        // paintEditButton(g2d);
     }
 
-    
-    /** Malt den Editier-Button
+    /**
+     * Malt den Editier-Button
+     * 
      * @param g2d
      */
     private void paintEditButton(Graphics2D g2d) {
@@ -169,13 +181,15 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
 
     }
 
-    
-    /** malt den Close Button
+    /**
+     * malt den Close Button
+     * 
      * @param g2d
      */
     private void paintCloseButton(Graphics2D g2d) {
         g2d.translate(-getWidth() / 2, -getHeight() / 2);
-        if (closeCrossPath == null) { // Speichert einen Pfad nach dem ersten berechnen ab (Spart etwas Rechenzeit ein)
+        if (closeCrossPath == null) { // Speichert einen Pfad nach dem ersten berechnen ab (Spart etwas Rechenzeit
+                                      // ein)
             closeCrossPath = new GeneralPath();
             System.out.println("redo path");
             int x1 = (int) (Math.sin(0.25 * Math.PI) * closeButtonRadius * closeButtonCrossLenghtFactor + cardMargins
@@ -208,12 +222,13 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
 
     }
 
-    
-    /** Malt den Funktions-String
+    /**
+     * Malt den Funktions-String
+     * 
      * @param g2d
      */
     private void paintFunctionString(Graphics2D g2d) {
-        g2d.setColor(Color.BLACK);
+        g2d.setColor(functionStringColor);
         g2d.setFont(GUI.getFont(FontFamily.ROBOTO, FontStyle.REGULAR, 20));
         double height = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), "f").getVisualBounds().getHeight();
         g2d.drawString(functionString,
@@ -221,8 +236,9 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
                 (int) (height / 2));
     }
 
-    
-    /** Malt den Farb-Kreis
+    /**
+     * Malt den Farb-Kreis
+     * 
      * @param g2d
      */
     private void paintColorCircle(Graphics2D g2d) {
@@ -233,18 +249,21 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
     }
 
     /**
-     * Wird benötigt um den Style zu resetten, falls ein MouseMoved Event zu langsam war und einen Style nicht resetten konnte
+     * Wird benötigt um den Style zu resetten, falls ein MouseMoved Event zu langsam
+     * war und einen Style nicht resetten konnte
      */
     protected void resetAllStyles() {
         currentCardBg = defaultCardBg;
         closeButtonBgCurrentColor = closeButtonBgDefaultColor;
         closeButtonCrossCurrentColor = closeButtonCrossDefaultColor;
         editButtonCurrentColor = editButtonDefaultColor;
+        setCursor(Cursor.getDefaultCursor());
         repaint();
     }
 
-    
-    /** Prüft ob die Maus momentan den Edit-Button berührt
+    /**
+     * Prüft ob die Maus momentan den Edit-Button berührt
+     * 
      * @param e
      * @return boolean
      */
@@ -257,8 +276,9 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
         return (e.getX() > rectX && e.getX() < rectX + width) && (e.getY() > rectY && e.getY() < rectY + height);
     }
 
-    
-    /** Prüft ob die Maus momentan die Karte berührt
+    /**
+     * Prüft ob die Maus momentan die Karte berührt
+     * 
      * @param e
      * @return boolean
      */
@@ -268,24 +288,24 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
         return (x > cardMargins && x < cardMargins + cardWidth) && (y > cardVMargin && y < getHeight() - cardVMargin);
     }
 
-    
-    /** Wird gecallt, wenn die Maus über der Karte hovert.
+    /**
+     * Wird gecallt, wenn die Maus über der Karte hovert.
+     * 
      * @param hover
      */
     public void callCardHover(boolean hover) {
         if (hover) {
             currentCardBg = hoverCardBg;
-            setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         } else {
             currentCardBg = defaultCardBg;
-            setCursor(Cursor.getDefaultCursor());
         }
         repaint();
     }
 
-    
-    /** Wird gecallt, wenn die Maus auf der Komonente gedraggt wurde
+    /**
+     * Wird gecallt, wenn die Maus auf der Komonente gedraggt wurde
+     * 
      * @param e
      */
     @Override
@@ -293,8 +313,9 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
 
     }
 
-    
-    /** Wird gecallt, wenn die Maus auf der Komponente bewegt wurde
+    /**
+     * Wird gecallt, wenn die Maus auf der Komponente bewegt wurde
+     * 
      * @param e
      */
     @Override
@@ -315,8 +336,9 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
         }
     }
 
-    
-    /** wird gecallt, wenn die Maus überm Close-Button hovert.
+    /**
+     * wird gecallt, wenn die Maus überm Close-Button hovert.
+     * 
      * @param hover
      */
     private void callCloseButtonHover(boolean hover) {
@@ -333,8 +355,9 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
         repaint();
     }
 
-    
-    /** wird gecallt, wenn die Maus überm Edit-Button hovert
+    /**
+     * wird gecallt, wenn die Maus überm Edit-Button hovert
+     * 
      * @param hover
      */
     private void callEditButtonHover(boolean hover) {
@@ -349,8 +372,9 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
         repaint();
     }
 
-    
-    /**Gibt an ob die Maus momentan über dem Close-Button der Komponente ist
+    /**
+     * Gibt an ob die Maus momentan über dem Close-Button der Komponente ist
+     * 
      * @param e MouseEvent
      * @return boolean
      */
@@ -361,8 +385,9 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
                         (int) cardVMargin + closeButtonMargin + closeButtonRadius)) < closeButtonRadius;
     }
 
-    
-    /** Fügt einen FunctionListener hinzu
+    /**
+     * Fügt einen FunctionListener hinzu
+     * 
      * @param functionListener
      */
     public void addFunctionListener(FunctionListener functionListener) {
@@ -370,11 +395,13 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
         functionListeners.add(functionListener);
     }
 
-    
-    /** Färbt die Komponente neu ein
+    /**
+     * Färbt die Komponente neu ein
+     * 
      * @param styleClass
      */
-    public void recolor(StyleClass styleClass) {
+    public void recolor() {
+        functionStringColor = styleClass.FUNCTION_CARD_FG;
         defaultCardBg = styleClass.FUNCTION_CARD_BG;
         hoverCardBg = styleClass.FUNCTION_CARD_BG_HOVER;
         closeButtonBgDefaultColor = styleClass.FUNCTION_CARD_CLOSE_BUTTON_BG;
@@ -387,7 +414,17 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
         closeButtonCrossCurrentColor = closeButtonCrossDefaultColor;
         editButtonCurrentColor = editButtonDefaultColor;
         editButtonHoverColor = editButtonDefaultColor.darker();
+        functionDialog.recolor();
         repaint();
+    }
+
+    public static Color LerpRGB(Color a, Color b, float t) {
+        // Reference: https://www.alanzucconi.com/2016/01/06/colour-interpolation/
+        int red = (int) (a.getRed() + (b.getRed() - a.getRed()) * t);
+        int green = (int) (a.getGreen() + (b.getGreen() - a.getGreen()) * t);
+        int blue = (int) (a.getBlue() + (b.getBlue() - a.getBlue()) * t);
+        int alpha = (int) (a.getAlpha() + (b.getAlpha() - a.getAlpha()) * t);
+        return new Color(red, green, blue, alpha);
     }
 
 }

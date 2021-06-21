@@ -5,7 +5,6 @@ import java.net.URL;
 import java.awt.Font;
 import java.awt.Color;
 import java.awt.FontFormatException;
-import java.awt.event.ActionEvent;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -13,12 +12,8 @@ import java.io.IOException;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.KeyStroke;
 
 import event.FunctionListener;
 import event.PlotListener;
@@ -32,11 +27,11 @@ import startup.Settings;
 public class GUI extends JFrame implements IGUI {
 
     enum FontFamily {
-        RUBIK, ROBOTO,
+        RUBIK, ROBOTO, INCONSOLATA, ASAP
     }
 
     enum FontStyle {
-        THIN, ITALIC, BOLD, REGULAR
+        THIN, ITALIC, BOLD, REGULAR, LIGHT
     }
 
     private JPlotter plotter_panel;
@@ -116,6 +111,42 @@ public class GUI extends JFrame implements IGUI {
                                             Sidebar.class.getResourceAsStream("../data/Roboto/Roboto-Regular.ttf"))
                                     .deriveFont(f);
                     }
+                case INCONSOLATA:
+                    switch(fs){
+                        case BOLD:
+                        return Font
+                        .createFont(Font.TRUETYPE_FONT,
+                                Sidebar.class.getResourceAsStream("../data/Asap/Asap-Bold.ttf"))
+                        .deriveFont(f);
+                        case ITALIC:
+                        return Font
+                        .createFont(Font.TRUETYPE_FONT,
+                                Sidebar.class.getResourceAsStream("../data/Asap/Asap-Italic.ttf"))
+                        .deriveFont(f);
+                        default:
+                        return Font
+                        .createFont(Font.TRUETYPE_FONT,
+                                Sidebar.class.getResourceAsStream("../data/Asap/Asap-Regular.ttf"))
+                        .deriveFont(f);
+                    }
+                case ASAP:
+                switch(fs){
+                    case BOLD:
+                    return Font
+                    .createFont(Font.TRUETYPE_FONT,
+                            Sidebar.class.getResourceAsStream("../data/Inconsolata/Inconsolata-Bold.ttf"))
+                    .deriveFont(f);
+                    case LIGHT:
+                    return Font
+                    .createFont(Font.TRUETYPE_FONT,
+                            Sidebar.class.getResourceAsStream("../data/Inconsolata/Inconsolata-Light.ttf"))
+                    .deriveFont(f);
+                    default:
+                    return Font
+                    .createFont(Font.TRUETYPE_FONT,
+                            Sidebar.class.getResourceAsStream("../data/Inconsolata/Inconsolata-Regular.ttf"))
+                    .deriveFont(f);
+                    }
                 default:
                     switch (fs) {
                         case BOLD:
@@ -191,6 +222,12 @@ public class GUI extends JFrame implements IGUI {
         sidebar_panel.addJFunctionComponent(functionChar, functionString, functionColor);
     }
 
+    /**
+     * Funktion um einen "dekorierten" Polynominal-Ausdruck, in einen undekorierten String zu verwandeln.
+     * z.B.: 4x³+2x²+x+1 wird zu 4x^3+2x^2+x+1
+     * @param str dekorierter String
+     * @return undekorierter String
+     */
     public static String undecorate(String str) {
         char[] chars = str.toCharArray();
         boolean superscripted = false;
@@ -231,14 +268,20 @@ public class GUI extends JFrame implements IGUI {
 
         return res;
     }
-
+    /**
+     * Funktion um einen "undekorierten" Polynominal-Ausdruck, in einen dekorierten String zu verwandeln.
+     * z.B.: 4x^3+2x^2+x+1 wird zu 4x³+2x²+x+1 
+     * @param str undekorierter String
+     * @return dekorierter String
+     */
     public static String decorate(String str) {
         char[] chars = str.toCharArray();
+        if(chars.length == 0)return "";
         boolean superscripted = false;
         String res = "";
         for (int i = 0; i < chars.length; i++) {
             int uni = (int) chars[i];
-            if (uni == 94) {
+            if (uni == 94 ) {
                 superscripted = !superscripted;
                 continue;
             }
@@ -284,6 +327,7 @@ public class GUI extends JFrame implements IGUI {
                 res += chars[i];
             }
         }
+        if(chars[chars.length-1] == '^') res+='^';
         return res;
     }
 }

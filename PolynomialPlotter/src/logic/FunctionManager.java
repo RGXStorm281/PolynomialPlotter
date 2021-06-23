@@ -30,7 +30,7 @@ public class FunctionManager {
     }
     
     /**
-     * Prüft, ob functionName bereits existiert.
+     * PrÃ¼ft, ob functionName bereits existiert.
      * @param functionName
      * @return functionName hinterlegt.
      */
@@ -47,7 +47,7 @@ public class FunctionManager {
     }
     
     /** 
-     * Fügt die mitgegebene function zu der functionMap hinzu, gibt ihr dabei einen Namen.
+     * FÃ¼gt die mitgegebene function zu der functionMap hinzu, gibt ihr dabei einen Namen.
      * @param functionString
      * @return functionName.
      */
@@ -64,7 +64,7 @@ public class FunctionManager {
     }
     
     /** 
-     * Fügt die mitgegebene function zu der functionMap hinzu.
+     * FÃ¼gt die mitgegebene function zu der functionMap hinzu.
      * @param functionString
      * @return functionName.
      */
@@ -81,9 +81,9 @@ public class FunctionManager {
     }
     
     /**
-     * Löscht die function mit dem functionName.
+     * LÃ¶scht die function mit dem functionName.
      * @param functionName
-     * @return function gelöscht.
+     * @return function gelÃ¶scht.
      */
     public boolean delete (String functionName) {
     	if(this.functionNameExists(functionName)) {

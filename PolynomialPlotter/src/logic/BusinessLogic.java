@@ -32,39 +32,44 @@ public class BusinessLogic {
     private double step;
     
     private Point mousePoint;
+    private int cachedCanvasHeight;
+    private int cachedCanvasWidth;
 
     public BusinessLogic(IGUI gui, FunctionManager functionManager, Settings settings) {
         this.gui = gui;
         this.functionManager = functionManager;
         this.settings = settings;
         
-        this.positionX = 0;
-        this.positionY = 0;
+        initPositon(settings);
     }
     
+    /**
+     * Initialisisiert die Positionsdaten.
+     * @param settings Die App-Settings.
+     */
     private void initPositon(Settings settings){
         // Startposition (0|0).
         this.positionX = settings.INITIAL_ORIGIN_X;
         this.positionY = settings.INITIAL_ORIGIN_Y;
         
-        // Ab Start sichtbare Intervalle in X-/Y-Richtung.
-        this.intervallSizeX = settings.INITIAL_PLOT_WIDTH / settings.INITIAL_PIXEL_TO_UNIT_RATIO;
-        this.intervallSizeY = settings.INITIAL_PLOT_HEIGHT / settings.INITIAL_PIXEL_TO_UNIT_RATIO;
+        // Für eventuelles Resizing zwischenspeichern.
+        this.cachedCanvasWidth = settings.INITIAL_PLOT_WIDTH;
+        this.cachedCanvasHeight = settings.INITIAL_PLOT_HEIGHT;
         
-        this.step = evaluateStep(settings.INITIAL_PLOT_WIDTH);
+        // Ab Start sichtbare Intervalle in X-/Y-Richtung.
+        this.intervallSizeX = cachedCanvasWidth / settings.INITIAL_PIXEL_TO_UNIT_RATIO;
+        this.intervallSizeY = cachedCanvasHeight / settings.INITIAL_PIXEL_TO_UNIT_RATIO;
+        
+        evaluateStep();
     }
     
     /**
-     * Berechnet die Schrittweite der Funktions-Wertetabelle, ausgehend von intervallSizeX.
-     * @param screenWidthPixels die aktuelle Breite des Bildes in Pixeln.
-     * @return die Schrittweite.
+     * Berechnet die Schrittweite der Funktions-Wertetabelle, ausgehend von intervallSizeX und der gecacheten Bildbreite.
      */
-    private double evaluateStep(int screenWidthPixels){
-        double numberOfCalculations = Math.ceil((double)screenWidthPixels / settings.CALCULATE_EVERY_X_PIXELS);
-        double step = intervallSizeX / numberOfCalculations;
-        return step;
+    private void evaluateStep(){
+        double numberOfCalculations = (double)cachedCanvasWidth / settings.CALCULATE_EVERY_X_PIXELS;
+        this.step = intervallSizeX / numberOfCalculations;
     }
-    
     
     public void addFunction(String function){
         functionManager.parseAndAddFunction(function);
@@ -74,7 +79,6 @@ public class BusinessLogic {
         
     }
     
-    
     public void setMousePoint(Point mousePoint){
         this.mousePoint = mousePoint;
     }
@@ -83,17 +87,58 @@ public class BusinessLogic {
         return mousePoint;
     }
     
+    /**
+     * Bewegt die Position des sichtbaren Intervalls und zeichnet neu.
+     * Achtung: X und Y werden positiv addiert. Wenn mit der Maus "gezogen" wird, dann muss hier der Gegenvektor zum "Ziehen" mitgegeben werden.
+     * @param dx Die X-Komponente des Verschiebungsvektors.
+     * @param dy Die Y-Komponente des Verschiebungsvektors.
+     */
     public void moveCanvas(float dx, float dy){
-        var width = gui.getPlotWidth();
+        positionX += dx;
+        positionY += dy;
+        debugPosition();
         
+        calculateAndDraw();
     }
     
+    /**
+     * Aktualisiert die Intervallgröße zur Anpassung an die Fenstergröße und zeichnet neu.
+     */
     public void resize(){
+        var newCanvasWidth = gui.getPlotWidth();
+        var newCanvasHeight = gui.getPlotHeight();
         
+        if(newCanvasWidth == 0 || newCanvasHeight == 0){
+            return;
+        }
+        
+        intervallSizeX *= (double)newCanvasWidth / cachedCanvasWidth;
+        intervallSizeY *= (double)newCanvasHeight / cachedCanvasHeight;
+        debugIntervallSize();
+        
+        cachedCanvasWidth = newCanvasWidth;
+        cachedCanvasHeight = newCanvasHeight;
+        
+        evaluateStep();
+        calculateAndDraw();
     }
     
+    /**
+     * Passt die berechneten Intervalle an, um dem Zoomfaktor gerecht zu werden.
+     * @param scale Der Wert, mit dem die Intervalle skaliert werden.
+     */
     public void zoom(float scale){
-        
+        intervallSizeX *= 1 + scale;
+        intervallSizeY *= 1 + scale;
+        debugIntervallSize();
+        calculateAndDraw();
+    }
+    
+    private void debugIntervallSize(){
+        System.out.println("Intervall X: " + intervallSizeX + "; Intervall Y: " + intervallSizeY);
+    }
+    private void debugPosition(){
+        System.out.println("Position X: " + positionX + "; Position Y: " + positionY);
     }
     
     /**

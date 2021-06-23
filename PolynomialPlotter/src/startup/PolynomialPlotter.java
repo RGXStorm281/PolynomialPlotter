@@ -13,11 +13,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.SwingUtilities;
+import java.awt.Color;
 
-import events.*;
-import events.plot.*;
+import event.*;
 import logic.BusinessLogic;
 import logic.FunctionManager;
+import model.Koordinate;
 import view.GUI;
 
 /**
@@ -38,10 +39,54 @@ public class PolynomialPlotter {
             BusinessLogic logic = new BusinessLogic(view, model, settings);
 
             // Events Setzen
-            view.addFunctionInputListener(new FunctionAddedListener(view,logic));
-            view.addPlotMouseListeners(new PlotMouseDraggedListener(view, logic), new PlotMouseListener(view, logic));
-            view.addPlotZoomedListener(new PlotZoomedListener(view, logic));
-            view.addPlotResizedListener(new PlotResizedListener(view, logic));
+            view.addFunctionListener(new FunctionListener(){
+
+                @Override
+                public boolean functionAdded(FunctionEvent e) {
+                    String functionString = e.getFunctionString();
+                    Color functionColor = e.getFunctionColor();    
+                    char functionChar = e.getFunctionChar();
+                    System.out.println("New function \""+functionChar+"\" with: "+functionString+" and the Color"+functionColor);
+                    view.addJFunctionComponent(functionChar,functionString, functionColor);
+                    view.updateTheme();
+                    return true; // Return ob gegebene funktion legal war
+                    
+                }
+
+                @Override
+                public boolean functionEdited(FunctionEditedEvent e) {
+                    System.out.println(e.getOldFunctionChar()+"-Function was edited to: "+e.getFunctionString()+" with the color: "+e.getFunctionColor());
+                    return true; // Return ob der Edit einen Fehler verursach / Legal war
+                }
+
+                @Override
+                public void functionDeleted(FunctionEvent e) {
+                    System.out.println("Event Triggered: Function Delete \""+e.getFunctionString()+"\"");
+                }
+                
+            });
+
+            view.addPlotListener(new PlotListener(){
+
+                @Override
+                public void plotResized(PlotEvent e) {
+                    logic.resize();
+                    
+                }
+
+                @Override
+                public void plotZoomed(PlotZoomedEvent e) {
+                    logic.zoom(e.getZoomAmount());
+                    
+                }
+
+                @Override
+                public void plotMoved(PlotMovedEvent e) {
+                    Koordinate moveDistance = e.getDist();
+                    System.out.println(moveDistance);
+                }
+                
+            });
             // Applikation starten
             SwingUtilities.invokeLater(new Runnable(){
                 @Override 

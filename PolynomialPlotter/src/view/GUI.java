@@ -5,18 +5,24 @@ import java.net.URL;
 import java.awt.Font;
 import java.awt.Color;
 import java.awt.FontFormatException;
+import java.awt.event.ActionEvent;
+
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
-import events.FunctionAddedListener;
-import events.plot.PlotMouseDraggedListener;
-import events.plot.PlotMouseListener;
-import events.plot.PlotResizedListener;
-import events.plot.PlotZoomedListener;
+import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.KeyStroke;
+
+import event.FunctionListener;
+import event.PlotListener;
 import model.DrawingInformationContainer;
-import model.UniversalFunction;
 import startup.Settings;
 
 
@@ -27,19 +33,29 @@ import startup.Settings;
 
 public class GUI extends JFrame implements IGUI{
 
+    enum FontFamily{
+        RUBIK,
+        ROBOTO,
+    }
+
+    enum FontStyle{
+        THIN,
+        ITALIC,
+        BOLD,
+        REGULAR
+    }
     private JPlotter plotter_panel;
     private Sidebar sidebar_panel;
 
     private final Settings settings; 
-
-    // Color palette
-    public static final Color aktzent1 = new Color(226,0,26);
+    private StyleClass styleClass;
   
 
 
-    public GUI(Settings settings) {
+    public GUI(Settings settings) throws FileNotFoundException, IOException {
         super();
         this.settings = settings;
+        this.styleClass = new StyleClass("src/view/dcdark.properties");
         // Add custom icon
         URL iconURL = getClass().getResource("../data/icon.png");
         ImageIcon icon = new ImageIcon(iconURL);
@@ -47,29 +63,69 @@ public class GUI extends JFrame implements IGUI{
         pack();
         
         // Split up in 2 Panes
-        sidebar_panel = new Sidebar();
+        sidebar_panel = new Sidebar(styleClass);
         plotter_panel = new JPlotter(this.settings);
+        sidebar_panel.addKeyListener(new KeyAdapter(){
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if(e.getKeyCode() == 116){
+                    updateTheme();
+                }
+            }
+        });
         getContentPane().add(sidebar_panel, BorderLayout.WEST);
         getContentPane().add(plotter_panel, BorderLayout.CENTER);
-        plotter_panel.requestFocus();
-        
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
         pack();
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setTitle("Polynomial plotter");
+        setLocationRelativeTo(null);
+      
         
 
     }
 
+    public void updateTheme(){
+        styleClass.update();
+        sidebar_panel.recolor();
+    }
+
+    public void changeTheme(String newPath){
+        try {
+            this.styleClass = new StyleClass(newPath);
+            sidebar_panel.recolor();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public void start() {
         if (!isVisible())
             setVisible(true);
     }
 
-    public static Font getFont(float f){
+    public static Font getFont(FontFamily ft,FontStyle fs, float f){
         try {
-			return Font.createFont(Font.TRUETYPE_FONT, Sidebar.class.getResourceAsStream("../data/Rubik/Rubik-Regular.ttf")).deriveFont(f); // Looks for The Font and returns the font with the size f
+            switch(ft){
+                case ROBOTO:
+                switch(fs){
+                    case BOLD:
+                    return Font.createFont(Font.TRUETYPE_FONT, Sidebar.class.getResourceAsStream("../data/Roboto/Roboto-Bold.ttf")).deriveFont(f);
+                    case THIN:
+                    return Font.createFont(Font.TRUETYPE_FONT, Sidebar.class.getResourceAsStream("../data/Roboto/Roboto-Thin.ttf")).deriveFont(f);
+                    default:
+                    return Font.createFont(Font.TRUETYPE_FONT, Sidebar.class.getResourceAsStream("../data/Roboto/Roboto-Regular.ttf")).deriveFont(f);
+                }
+                default:
+                switch(fs){
+                    case BOLD:
+                    return Font.createFont(Font.TRUETYPE_FONT, Sidebar.class.getResourceAsStream("../data/Rubik/Rubik-Bold.ttf")).deriveFont(f); // Looks for The Font and returns the font with the size f
+                    case ITALIC:
+                    return Font.createFont(Font.TRUETYPE_FONT, Sidebar.class.getResourceAsStream("../data/Rubik/Rubik-ITALIC.ttf")).deriveFont(f); // Looks for The Font and returns the font with the size f
+                    default:
+                    return Font.createFont(Font.TRUETYPE_FONT, Sidebar.class.getResourceAsStream("../data/Rubik/Rubik-Regular.ttf")).deriveFont(f); // Looks for The Font and returns the font with the size f
+                }
+            }
 		} catch (FontFormatException | IOException e) {
 			e.printStackTrace();
 			return Font.getFont(Font.SANS_SERIF); // If the Font is not found, return a Sans-Serif Font
@@ -93,7 +149,8 @@ public class GUI extends JFrame implements IGUI{
 
     @Override
     public void drawFunctions(DrawingInformationContainer drawingInformation) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // TODO RS von RE: Wäre wichtig das hier rüber zu zeichnen, damit ich testen kann.
+        plotter_panel.updateDrawingInformation(drawingInformation);
     }
 
 
@@ -111,8 +168,8 @@ public class GUI extends JFrame implements IGUI{
 
 
     @Override
-    public void addFunctionInputListener(FunctionAddedListener fa) {
-        this.sidebar_panel.getFunctionDialog().addInputListener(fa);
+    public void addFunctionListener(FunctionListener functionListener) {
+        this.sidebar_panel.addFunctionListener(functionListener);
         
     }
 
@@ -123,24 +180,13 @@ public class GUI extends JFrame implements IGUI{
 
 
     @Override
-    public void addPlotMouseListeners(PlotMouseDraggedListener pmd, PlotMouseListener pml) {
-        plotter_panel.addMouseMotionListener(pmd);
-        plotter_panel.addMouseListener(pml);
+    public void addPlotListener(PlotListener plotListener) {
+        this.plotter_panel.addPlotListener(plotListener);
         
     }
 
-
-    @Override
-    public void addPlotResizedListener(PlotResizedListener pr) {
-        addComponentListener(pr);
-        
-    }
-
-
-    @Override
-    public void addPlotZoomedListener(PlotZoomedListener pz) {
-        plotter_panel.addMouseWheelListener(pz);
-        
+    public void addJFunctionComponent(char functionChar, String functionString, Color functionColor) {
+        sidebar_panel.addJFunctionComponent(functionChar, functionString, functionColor);
     }
 
 

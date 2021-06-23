@@ -62,8 +62,71 @@ public class HornerParser implements IParser {
 		return null;
 	}
 	
-	// TODO TV private
-	public PolyRechenobjekt innerParse(char[] function, int rekCounter) throws Exception {
+	/**
+	 * Dient den UnitTests bis das endgültige AusgabeObjekt existiert
+	 * @param function
+	 * @return
+	 * @throws Exception
+	 */
+	public PolyRechenobjekt parseTest(String function) throws Exception {
+		String fnct = function.replaceAll("\\s", "");
+		
+		// Entfernt ggf. den FunctionName
+		String[] functionTempArray = fnct.split("\\=");
+		if(functionTempArray.length == 2){
+			fnct = functionTempArray[1];
+		}
+
+		// Prüft, ob Funktion korrekt beginnt
+		if(!Character.isDigit(fnct.charAt(0))
+				&& fnct.charAt(0) != 'x'
+				&& fnct.charAt(0) != '+'
+				&& fnct.charAt(0) != '-'
+				&& fnct.charAt(0) != '(') {
+			throw new Exception("Startwert '" + fnct.charAt(0) + "' ungültig");
+		}
+		
+		PolyRechenobjekt pRo = innerParse(fnct.toCharArray(), 0);
+		pRo = this.cleanup(pRo);
+		return pRo;
+	}
+	
+	/**
+	 * Erstellt aus einer vorsortierten Liste eine Liste mit jedem Grad von 0 bis maxGrad
+	 * @param pRo
+	 * @return
+	 */
+	private PolyRechenobjekt cleanup(PolyRechenobjekt pRo) {
+		PolyRechenobjekt pRoClone = pRo.clone();
+		pRoClone.bucketSort();
+		int potenzMax = pRo.getPotenz();
+		PolyRechenobjekt pRoNew = new PolyRechenobjekt(pRoClone.getFaktor(), pRoClone.getPotenz());
+		pRoClone = pRoClone.getChild();
+		for(int currentPotenz = potenzMax - 1; currentPotenz >= 0; currentPotenz--) {
+			
+			// fügt für jeden Grad < potenzMax einen Eintrag hinzu, ggf. mit Faktor 0
+			if(pRoClone == null 
+				|| pRoClone.getPotenz() < currentPotenz) {
+				// faktor = 0, da für diesen Grad kein Eintrag ermittelt wurde
+				pRoNew.addTail(new PolyRechenobjekt(0, currentPotenz));
+			}
+			else {
+				pRoNew.addTail(new PolyRechenobjekt(pRoClone));
+				pRoClone = pRoClone.getChild();
+			}
+		}
+		
+		return pRoNew;
+	}
+
+	/**
+	 * Berechnet Rekursiv das PolyRechenobjekt
+	 * @param function
+	 * @param rekCounter
+	 * @return
+	 * @throws Exception
+	 */
+	private PolyRechenobjekt innerParse(char[] function, int rekCounter) throws Exception {
 		
 		// Notfallabbruch
 		if(rekCounter > 500) {
@@ -205,7 +268,7 @@ public class HornerParser implements IParser {
 	}
 	
 	/**
-	 * Parsed das CharArray zu einem PolyRechenobjekt;
+	 * Parsed das CharArray konkret zu einem PolyRechenobjekt (nur wenn diese x, bzw double ist)
 	 * @param function
 	 * @return
 	 * @throws Exception 
@@ -221,16 +284,13 @@ public class HornerParser implements IParser {
 			return new PolyRechenobjekt(1, 1);
 		}
 		
-		// Prüft, ob function nur aus Zahlen besteht
-		for(char character:
-			function) {
-			if(!Character.isDigit(character)) {
-				throw new Exception("String konnte nicht geparsed werden: '" + new String(function) + "'");
-			}
+		try {
+			// gibt Rechenobjekt "faktor*x^0" zurück
+			return new PolyRechenobjekt(Double.parseDouble(new String(function)), 0);
 		}
-		
-		// gibt Rechenobjekt "faktor*x^0" zurück
-		return new PolyRechenobjekt(Double.parseDouble(new String(function)), 0);
+		catch(Exception e) {
+			throw new Exception("String konnte nicht geparsed werden: '" + new String(function) + "'");
+		}
 	}
 	
 	/**
@@ -277,10 +337,24 @@ public class HornerParser implements IParser {
 		}
 		
 		/**
-		 * Addiert das polyRechenobjekt zu dem aktuellen Polyrechenobjekt (zerstört das mitgegebene Objekt)
+		 * Fügt das objekt als TAIL an die Liste an
+		 * @param newChild
+		 */
+		public void addTail(PolyRechenobjekt newChild) {
+			if(this.child == null) {
+				this.child = newChild;
+			}
+			else {
+				this.child.addTail(newChild);
+			}
+		}
+		
+		/**
+		 * Addiert das polyRechenobjekt zu dem aktuellen Polyrechenobjekt (zerstört mitgegebenes Objekt)
+		 * Optimiert Liste automatisch (addieren zweier vorsortierter Listen resultiert in sortierter Liste)
 		 */
 		public void add(PolyRechenobjekt polyRechenobjekt) {
-			
+
 			while (polyRechenobjekt != null) {
 				
 				// addiert nur, wenn neues Objekt Faktor != 0 hat
@@ -309,12 +383,12 @@ public class HornerParser implements IParser {
 							this.child = this.child.getChild();
 						}
 						else {
-							this.child.add(polyRechenobjekt);
+							this.child.add(new PolyRechenobjekt(polyRechenobjekt));
 						}
 					}
 					else {
 						// Wenn kein weiteres addiertes Objekt existiert wird das Objekt als neuer TAIL angefügt
-						this.child = polyRechenobjekt;
+						this.child = new PolyRechenobjekt(polyRechenobjekt);
 					}
 				}
 				
@@ -442,6 +516,7 @@ public class HornerParser implements IParser {
 		/**
 		 * Erstellt ein neues PolyRechenobjekt mit den gleichen Werten
 		 */
+		@Override
 		public PolyRechenobjekt clone() {
 			if(this.child == null) {
 				return new PolyRechenobjekt(this);
@@ -449,6 +524,18 @@ public class HornerParser implements IParser {
 			else {
 				return new PolyRechenobjekt(this.faktorValue, this.potenzValue, this.child.clone());
 			}
+		}
+		
+		/**
+		 * Gibt Horner Schema mit fehlenden Klammern am Anfang aus
+		 */
+		@Override
+		public String toString() {
+			if(this.child != null) {
+				return this.faktorValue + ")x + " + this.child.toString();
+			}
+			
+			return this.faktorValue + "";
 		}
 	}
 }

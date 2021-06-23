@@ -1,14 +1,17 @@
 package logic;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import model.IFunction;
 
 public class HornerParser implements IParser {
 		
+	/*
+	 * Enum der Operatoren. 
+	 * Reihenfolge muss der umgekehrten Priorisierung entsprechen
+	 */
 	private enum operator {
-		DEFAULT,
 		addition,
 		subtraktion,
 		multiplikation,
@@ -38,6 +41,7 @@ public class HornerParser implements IParser {
 		if(functionTempArray.length != 2){
 			return null;
 		}
+		function = functionTempArray[1];
 		
 		// Prüft, ob Funktion korrekt beginnt
 		if(!Character.isDigit(function.charAt(0))
@@ -48,7 +52,7 @@ public class HornerParser implements IParser {
 		}
 		
 		try {
-			var a = innerParse(function.toCharArray(), operator.addition, 0);
+			var parsedObject = innerParse(function.toCharArray(), 0);
 		}
 		catch(Exception e) {
 			// TODO TV Exceptionhandlling
@@ -58,121 +62,117 @@ public class HornerParser implements IParser {
 		return null;
 	}
 	
-	private PolyRechenobjekt innerParse(char[] function, operator op, int rekCounter) throws Exception {
+	// TODO TV private
+	public PolyRechenobjekt innerParse(char[] function, int rekCounter) throws Exception {
 		
-		// Wenn alle Operatoren durchgearbeitet wurden kann versucht werden das Objekt zu parsen
-		if(op == operator.DEFAULT) {
-			return getRechenobjFromArray(function);
-		}
-
 		// Notfallabbruch
 		if(rekCounter > 500) {
 			throw new Exception("Es wurden zu viele Rekursionsstufen benötigt. Rest-String: '" + new String(function) + "'");
 		}
 		rekCounter++;
 		
-		// Rekursives zwerteilen der function in atomare Teile
+		// Prüft, ob function bereits nur Zahlen oder x, versucht ggf. direkt zu parsen
+		boolean isDigitsOnly = true;
+		for(char character:
+			function) {
+			if(!Character.isDigit(character)) {
+				isDigitsOnly = false;
+				break;
+			}
+		}
+		if(function.length == 0
+			|| (function.length == 1 && function[0] == 'x')
+			|| isDigitsOnly) {
+			return getRechenobjFromArray(function);
+		}
 		
-		// gibt an, wie tief der aktuelle Punkt in Klammern ist
-		int klammerZahl = 0;
-		// gibt die Anzahl der Character an, für die KlammerZahl != null gilt um zu ermitteln, wann Klammer aufgelöst werden kann
-		int charsInKlammern = 0;
-		
-		for(int i = 0; i < function.length; i++) {
+		// Rekursives zerteilen der function in atomare Teile entsprechend des Operators
+		for(operator op:
+				operator.values()) {
+			char operatorChar;
+			switch (op) {
+				case addition:
+					operatorChar = '+';
+					break;
+				case subtraktion:
+					operatorChar = '-';
+					break;
+				case multiplikation:
+					operatorChar = '*';
+					break;
+				case division:
+					operatorChar = '/';
+					break;
+				default:
+					operatorChar = '^';
+					break;
+			}
 			
-			if(function[i] == '(') {
-				klammerZahl++;
-			}
-			else if(function[i] == ')') {
-				klammerZahl--;
-			}
+			// gibt an, wie tief der aktuelle Punkt in Klammern ist
+			int klammerZahl = 0;
+			// gibt die Anzahl der Character an, welche nicht von Klammern eingeschlossen sind
+			int unumklammertCount = 0;
+			
+			for(int i = 0; i < function.length; i++) {
+				
+				// reduziert ggf. klammerEbene
+				if(function[i] == ')') {
+					klammerZahl--;
+				}
+				
+				// Funktion darf nur außerhalb einer Klammer getrennt werden
+				if(klammerZahl == 0) {
 
-			// Funktion darf nur außerhalb einer Klammer getrennt werden
-			if(klammerZahl == 0) {
-				char operatorChar;
-				switch (op) {
-					case addition:
-						operatorChar = '+';
-						break;
-					case subtraktion:
-						operatorChar = '-';
-						break;
-					case multiplikation:
-						operatorChar = '*';
-						break;
-					case division:
-						operatorChar = '/';
-						break;
-					default:
-						operatorChar = '^';
-						break;
+					// prüft, ob der aktuell zu bearbeitende Operator der aktuelle char ist
+					if(function[i] == operatorChar) {
+						// parsed rekursiv alles links und rechts vom Operator
+						
+						// linkes Objekt kann mit nächstem Operator bearbeitet werden, da der aktuelle Operator nicht mehr existiert
+						PolyRechenobjekt polyRoLeft = innerParse(Arrays.copyOfRange(function, 0, i), rekCounter);
+						
+						// rechtes Objekt wird weiter auf aktuellen Operator geprüft
+						PolyRechenobjekt polyRoRight = innerParse(Arrays.copyOfRange(function, i + 1, function.length), rekCounter);
+						
+						return combineRechenobjekte(polyRoLeft, polyRoRight, op);
+					}
+					// Prüft ggf., ob eine ungeschriebene Multiplikation vorliegt 
+					else if(op == operator.multiplikation
+							&& i > 0
+							&& (function[i-1] == 'x' && (Character.isDigit(function[i]) || function[i] == '(' || function[i] == 'x')
+								|| Character.isDigit(function[i-1]) && (function[i] == 'x' || function[i] == '(')
+								|| function[i-1] == ')' && (Character.isDigit(function[i]) || function[i] == 'x' || function[i] == '('))){
+
+						// parsed rekursiv alles links und rechts vom ungeschriebenen Operator
+						
+						// linkes Objekt kann mit nächstem Operator bearbeitet werden, da der aktuelle Operator nicht mehr existiert
+						PolyRechenobjekt polyRoLeft = innerParse(Arrays.copyOfRange(function, 0, i), rekCounter);
+						
+						// rechtes Objekt wird weiter auf aktuellen Operator geprüft
+						PolyRechenobjekt polyRoRight = innerParse(Arrays.copyOfRange(function, i, function.length), rekCounter);
+						
+						return combineRechenobjekte(polyRoLeft, polyRoRight, op);
+					}
+					
+					// erhöht die Anzahl der sich nicht innerhalb Klammern befindlichen Character
+					unumklammertCount++;
 				}
 
-				// prüft, ob der aktuell zu bearbeitende Operator der aktuelle char ist
-				if(function[i] == operatorChar) {
-					// parsed rekursiv alles links und rechts vom Operator
-					
-					// linkes Objekt kann mit nächstem Operator bearbeitet werden, da der aktuelle Operator nicht mehr existiert
-					PolyRechenobjekt polyRoLeft = innerParse(Arrays.copyOfRange(function, 0, i - 1), getNextOperator(op), rekCounter);
-					
-					// rechtes Objekt wird weiter auf aktuellen Operator geprüft
-					PolyRechenobjekt polyRoRight = innerParse(Arrays.copyOfRange(function, i + 1, function.length - 1), op, rekCounter);
-					
-					return combineRechenobjekte(polyRoLeft, polyRoRight, op);
-				}
-				// Prüft ggf., ob eine ungeschriebene Multiplikation vorliegt 
-				else if(op == operator.multiplikation
-						&& i > 0
-						&& (function[i-1] == 'x' && (Character.isDigit(function[i]) || function[i] == '(' || function[i] == 'x')
-							|| Character.isDigit(function[i-1]) && (function[i] == 'x' || function[i] == '(')
-							|| function[i-1] == ')' && (Character.isDigit(function[i]) || function[i] == 'x' || function[i] == '('))){
-
-					// parsed rekursiv alles links und rechts vom ungeschriebenen Operator
-					
-					// linkes Objekt kann mit nächstem Operator bearbeitet werden, da der aktuelle Operator nicht mehr existiert
-					PolyRechenobjekt polyRoLeft = innerParse(Arrays.copyOfRange(function, 0, i - 1), getNextOperator(op), rekCounter);
-					
-					// rechtes Objekt wird weiter auf aktuellen Operator geprüft
-					PolyRechenobjekt polyRoRight = innerParse(Arrays.copyOfRange(function, i, function.length - 1), op, rekCounter);
-					
-					return combineRechenobjekte(polyRoLeft, polyRoRight, op);
+				// erhöht ggf. klammerEbene
+				if(function[i] == '(') {
+					klammerZahl++;
 				}
 			}
-			else {
-				// erhöht die Anzahl der in der Klammer befindlichen Character
-				charsInKlammern++;
-			}
+			
+			// Wenn komplette function in Klammern können diese Klammern aufgelöst werden
+			if(unumklammertCount == 2
+					&& function[0] == '('
+					&& function[function.length - 1] == ')') {
+				return innerParse(Arrays.copyOfRange(function, 1, function.length - 1), rekCounter);
+			}			
 		}
 		
-		// Wenn komplette function in Klammern kann diese aufgelöst werden
-		if(charsInKlammern == function.length - 1
-				&& function[0] == '('
-				&& function[function.length - 1] == ')') {
-			return innerParse(Arrays.copyOfRange(function, 1, function.length - 2), operator.addition, rekCounter);
-		}
-		
-		// Wenn komplette function durchgegangen ohne zu trennen wird ggf. mit nächstem Operator versucht
-		return innerParse(function, getNextOperator(op), rekCounter);
-	}
-	
-	/**
-	 * gibt den folgenden Operator zurück
-	 * @param op
-	 * @return
-	 */
-	private operator getNextOperator(operator op) {
-		switch (op) {
-			case addition:
-				return operator.subtraktion;
-			case subtraktion:
-				return operator.multiplikation;
-			case multiplikation:
-				return operator.division;
-			case division:
-				return operator.potenz;
-			default:
-				return operator.DEFAULT;
-		}
+		// Wenn alle Operatoren erfolglos durchgearbeitet wurden kann versucht werden das Objekt zu parsen
+		return getRechenobjFromArray(function);
 	}
 	
 	/**
@@ -182,7 +182,7 @@ public class HornerParser implements IParser {
 	 * @param op
 	 * @return
 	 */
-	private PolyRechenobjekt combineRechenobjekte(PolyRechenobjekt polyRoLeft, PolyRechenobjekt polyRoRight, operator op) {
+	private static PolyRechenobjekt combineRechenobjekte(PolyRechenobjekt polyRoLeft, PolyRechenobjekt polyRoRight, operator op) {
 		switch (op) {
 			case addition:
 				polyRoLeft.add(polyRoRight);
@@ -239,27 +239,29 @@ public class HornerParser implements IParser {
 	 * @author timo.vollert
 	 *
 	 */
-	private class PolyRechenobjekt{
+	public class PolyRechenobjekt{
+		// TODO private machen
+		
 		private double faktorValue;
 		private int potenzValue;
-		private PolyRechenobjekt addedObjekt;
+		private PolyRechenobjekt child; // via Addition verknüpft
 		
 		public PolyRechenobjekt(double faktor, int potenz, PolyRechenobjekt addedPolyRechenobjekt) {
 			this.faktorValue = faktor;
 			this.potenzValue = potenz;
-			this.addedObjekt = addedPolyRechenobjekt;
+			this.child = addedPolyRechenobjekt;
 		}
 
 		public PolyRechenobjekt(double faktor, int potenz) {
 			this.faktorValue = faktor;
 			this.potenzValue = potenz;
-			this.addedObjekt = null;
+			this.child = null;
 		}
 		
 		public PolyRechenobjekt(PolyRechenobjekt polyRechenobjekt) {
 			this.faktorValue = polyRechenobjekt.getFaktor();
 			this.potenzValue = polyRechenobjekt.getPotenz();
-			this.addedObjekt = null;
+			this.child = null;
 		}
 		
 		public double getFaktor() {
@@ -270,8 +272,8 @@ public class HornerParser implements IParser {
 			return this.potenzValue;
 		}
 		
-		public PolyRechenobjekt getAddedObjekt() {
-			return this.addedObjekt;
+		public PolyRechenobjekt getChild() {
+			return this.child;
 		}
 		
 		/**
@@ -281,27 +283,43 @@ public class HornerParser implements IParser {
 			
 			while (polyRechenobjekt != null) {
 				
-				if(polyRechenobjekt.getPotenz() > this.potenzValue) {
-					// das neue Objekt hat eine höhere Potenz, wird deshalb neuer HEAD des Objekts
-					this.addedObjekt =  new PolyRechenobjekt(this.faktorValue, this.potenzValue, this.addedObjekt);
-					this.faktorValue = polyRechenobjekt.getFaktor();
-					this.potenzValue = polyRechenobjekt.getPotenz();
-				}
-				else if(this.potenzValue == polyRechenobjekt.getPotenz()) {
-					// Wenn zu addierendes Objekt gleichePotenz können einfach die Faktoren der objekte addiert werden
-					this.faktorValue += polyRechenobjekt.getFaktor();
-				}
-				else if(this.addedObjekt != null) {
-					// Wenn noch weitere addierte objekte existieren wird versucht mit ihnen zu addieren
-					this.addedObjekt.add(polyRechenobjekt);
-				}
-				else {
-					// Wenn kein weiteres addiertes Objekt existiert wird das Objekt als neuer TAIL angefügt
-					this.addedObjekt = polyRechenobjekt;
+				// addiert nur, wenn neues Objekt Faktor != 0 hat
+				if(polyRechenobjekt.getFaktor() != 0) {
+					
+					// Fallunterscheidung
+					if(polyRechenobjekt.getPotenz() > this.potenzValue) {
+						// das neue Objekt hat eine höhere Potenz, wird deshalb neuer HEAD des Objekts
+						// Wenn der Faktor des aktuellen Objekts 0 ist wird dieses verworfen
+						if(this.faktorValue != 0) {
+							this.child =  new PolyRechenobjekt(this.faktorValue, this.potenzValue, this.child);
+						}
+						this.faktorValue = polyRechenobjekt.getFaktor();
+						this.potenzValue = polyRechenobjekt.getPotenz();
+					}
+					else if(this.potenzValue == polyRechenobjekt.getPotenz()) {
+						// Wenn zu addierendes Objekt gleichePotenz können einfach die Faktoren der objekte addiert werden
+						this.faktorValue += polyRechenobjekt.getFaktor();
+					}
+					else if(this.child != null) {
+						// Wenn noch weitere addierte objekte existieren wird versucht mit ihnen zu addieren
+						// Wenn der Faktor des aktuellen Objekts 0 ist wird dieses verworfen
+						if(this.faktorValue == 0) {
+							this.faktorValue = this.child.getFaktor();
+							this.potenzValue = this.child.getPotenz();
+							this.child = this.child.getChild();
+						}
+						else {
+							this.child.add(polyRechenobjekt);
+						}
+					}
+					else {
+						// Wenn kein weiteres addiertes Objekt existiert wird das Objekt als neuer TAIL angefügt
+						this.child = polyRechenobjekt;
+					}
 				}
 				
 				// Wiederhole Vorgang rekursiv (durch vorsortierung kann dies in der Rekursion geschehen)
-				polyRechenobjekt = polyRechenobjekt.getAddedObjekt();
+				polyRechenobjekt = polyRechenobjekt.getChild();
 			}
 		}
 
@@ -313,7 +331,7 @@ public class HornerParser implements IParser {
 			// Dreht Vorzeichen aller Faktoren um bevor diese addiert werden
 			while (polyRechenobjekt != null) {
 				this.add(new PolyRechenobjekt(polyRechenobjekt.getFaktor() * (-1), polyRechenobjekt.getPotenz()));
-				polyRechenobjekt = polyRechenobjekt.getAddedObjekt();
+				polyRechenobjekt = polyRechenobjekt.getChild();
 			}
 		}
 		
@@ -342,59 +360,77 @@ public class HornerParser implements IParser {
 		private void bucketSort() {
 			
 			// Buckets initialisieren
-			ArrayList<PolyRechenobjekt>[] buckets = new ArrayList[this.potenzValue + 1];
-			for(ArrayList aL:
-				buckets) {
-				aL = new ArrayList();
-			}
+			List<PolyRechenobjekt>[] buckets = new List[this.potenzValue + 1];
 			
 			// Streuen
-			PolyRechenobjekt tempPolyRo = this;
+			PolyRechenobjekt tempPolyRo = this.clone();
 			while(tempPolyRo != null) {
-				buckets[tempPolyRo.getPotenz()].add(new PolyRechenobjekt(tempPolyRo));
-				tempPolyRo = tempPolyRo.getAddedObjekt();
+				int bucketIndex = tempPolyRo.getPotenz();
+				if(buckets[bucketIndex] == null) {
+					buckets[bucketIndex] = List.of(new PolyRechenobjekt(tempPolyRo));
+				}
+				else {
+					buckets[bucketIndex].add(new PolyRechenobjekt(tempPolyRo));
+				}
+				
+				tempPolyRo = tempPolyRo.getChild();
 			}
 			
 			// Sammeln (von niedrig nach hoch um Vergleiche zu minimieren)
 			tempPolyRo = new PolyRechenobjekt(0, 0);
-			for(ArrayList<PolyRechenobjekt> bucket:
+			for(List<PolyRechenobjekt> bucket:
 				buckets) {
-				for(PolyRechenobjekt polyRo:
-					bucket) {
-					tempPolyRo.add(polyRo);
+				if(bucket != null) {
+					for(PolyRechenobjekt polyRo:
+						bucket) {
+						
+						// addiert keine überflüssigen Objekte
+						if(polyRo.getFaktor() != 0) {
+							tempPolyRo.add(polyRo);
+						}
+					}
 				}
 			}
 			
 			// Speichern
 			this.faktorValue = tempPolyRo.getFaktor();
 			this.potenzValue = tempPolyRo.getPotenz();
-			this.addedObjekt = tempPolyRo.getAddedObjekt();
+			this.child = tempPolyRo.getChild();
 		}
 		
 		private void innerMult(PolyRechenobjekt polyRechenobjekt) {
 			
-			// Multipliziert jedes Rechenobjekt des ersten Objekts mit jedem Rechenobjekt des zweiten Objekts
-			while (polyRechenobjekt != null) {
-				if (this.addedObjekt != null) {
-					this.addedObjekt.innerMult(polyRechenobjekt);
-				}
-				
-				this.faktorValue = this.faktorValue * polyRechenobjekt.getFaktor();
-				this.potenzValue = this.potenzValue + polyRechenobjekt.getPotenz();
-				
-				polyRechenobjekt = polyRechenobjekt.getAddedObjekt();
+			// Führt die Multiplikation rekursiv auf jedes Child aus
+			if (this.child != null) {
+				this.child.innerMult(polyRechenobjekt);
 			}
 			
+			PolyRechenobjekt ausgabeObjekt = new PolyRechenobjekt(0, 0);
+			
+			// Multipliziert jedes Rechenobjekt des eingegebenen Objekts mit "this"
+			// Das direkte hinzufügen von 
+			while (polyRechenobjekt != null) {
+				ausgabeObjekt.add(new PolyRechenobjekt(this.faktorValue * polyRechenobjekt.getFaktor(), this.potenzValue + polyRechenobjekt.getPotenz()));
+				
+				polyRechenobjekt = polyRechenobjekt.getChild();
+			}
+			
+			// TODO TV Ausgabe garantiert sortiert?
+			ausgabeObjekt.add(this.child);
+			this.faktorValue = ausgabeObjekt.getFaktor();
+			this.potenzValue = ausgabeObjekt.getPotenz();
+			this.child = ausgabeObjekt.getChild();
 		}
 
 		/**
 		 * Potenziert das polyRechenobjekt mit dem aktuelle Polyrechenobjekt (zerstört das mitgegebene Ojekt)
 		 */
-		public void pot(PolyRechenobjekt polyRechenobjekt) {
+		public void pot(PolyRechenobjekt potenzPolyRechenobjekt) {
 			// TODO TV abfangen, wenn x hoch != 0 oder !€ N
 			
 			PolyRechenobjekt clonedPolyRo = this.clone();
-			int potenz = (int)polyRechenobjekt.getFaktor();
+			this.potenzValue = 0;
+			int potenz = (int)potenzPolyRechenobjekt.getFaktor();
 			for(int i = 0; i < potenz; i++) {
 				this.innerMult(clonedPolyRo);
 			}
@@ -407,11 +443,11 @@ public class HornerParser implements IParser {
 		 * Erstellt ein neues PolyRechenobjekt mit den gleichen Werten
 		 */
 		public PolyRechenobjekt clone() {
-			if(this.addedObjekt == null) {
+			if(this.child == null) {
 				return new PolyRechenobjekt(this);
 			}
 			else {
-				return new PolyRechenobjekt(this.faktorValue, this.potenzValue, this.addedObjekt.clone());
+				return new PolyRechenobjekt(this.faktorValue, this.potenzValue, this.child.clone());
 			}
 		}
 	}

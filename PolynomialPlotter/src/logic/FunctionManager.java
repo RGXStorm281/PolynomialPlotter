@@ -62,14 +62,13 @@ public class FunctionManager {
     }
     
     /**
-     * Speichert die parsed function in der internen FunctionMap.
-     * Erteilt neuen functionName, wenn dieser bisher null war.
+     * Speichert die parsed function in der internen FunctionMap.Erteilt neuen functionName, wenn dieser bisher null war.
      * @param functionName Name der function.
      * @param functionString zu parsender String.
      * @return (neuen) functionName.
-     * @throws Exception
+     * @throws FunctionParsingException
      */
-    public Character parseAndAddFunction(Character functionName, String functionString) throws Exception{
+    public Character parseAndAddFunction(Character functionName, String functionString) throws FunctionParsingException{
     	
         if(functionName == null) {
         	for(char tempFunctionName = 'a'; tempFunctionName <= 'z'; tempFunctionName++) {
@@ -79,7 +78,7 @@ public class FunctionManager {
         		}
         	}
         	if(functionName == null) {
-        		throw new Exception("Es existiert kein weiterer FunctionName (a-z).");
+        		throw new FunctionParsingException(ParsingResponseCode.NoMoreNamesAvailable, "Es existiert kein weiterer FunctionName (a-z).");
         	}
         }
         

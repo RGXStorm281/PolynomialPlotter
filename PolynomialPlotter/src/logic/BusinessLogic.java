@@ -9,9 +9,16 @@ import event.PlotEvent;
 import java.awt.Point;
 import startup.Settings;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.DrawingInformationContainer;
 import model.FunctionInfoContainer;
 import model.IFunction;
+import model.Koordinate;
 import model.Tuple;
 import model.Utils;
 import view.IGUI;
@@ -34,11 +41,14 @@ public class BusinessLogic {
     
     private int cachedCanvasHeight;
     private int cachedCanvasWidth;
+    
+    private final ExecutorService functionCalculationPool;
 
     public BusinessLogic(IGUI gui, FunctionManager functionManager, Settings settings) {
         this.gui = gui;
         this.functionManager = functionManager;
         this.settings = settings;
+        this.functionCalculationPool = Executors.newScheduledThreadPool(settings.CORE_THREADPOOL_SIZE);
         
         initPositon(settings);
     }
@@ -71,12 +81,19 @@ public class BusinessLogic {
         this.step = intervallSizeX / numberOfCalculations;
     }
     
-    public void addFunction(String function){
-    	
+    public void addFunction(String function) throws FunctionParsingException{
+    	try{
+            functionManager.parseAndAddFunction(null, function);
+            // TODO RE / RS: Rückmeldung an den Benutzer dass erfolgreich.
+            calculateAndDraw();
+        }catch(FunctionParsingException p){
+            // TODO RE / RS: Rückmeldung an den Benutzer welches Problem aufgetreten ist.
+        }
     }
     
-    public void deleteFunction(){
-        
+    public void deleteFunction(char functionName){
+        functionManager.delete(functionName);
+        calculateAndDraw();
     }
     
     /**
@@ -132,7 +149,7 @@ public class BusinessLogic {
     }
     
     private void debugIntervallSize(){
-        System.out.println("Intervall X: " + intervallSizeX + "; Intervall Y: " + intervallSizeY);
+        // System.out.println("Intervall X: " + intervallSizeX + "; Intervall Y: " + intervallSizeY);
     }
     private void debugPosition(){
         System.out.println("Position X: " + positionX + "; Position Y: " + positionY);
@@ -147,17 +164,59 @@ public class BusinessLogic {
         double halfIntervallY = intervallSizeY / 2;
         Tuple<Double,Double> intervallY = new Tuple<>(positionY - halfIntervallY, positionY + halfIntervallY);
         
-        ArrayList<IFunction> functions = functionManager.getFunctionList();
-        int numberOfFunctions = functions.size();
+        FunctionInfoContainer[] functionInfo;
         
-        FunctionInfoContainer[] functionInfo = new FunctionInfoContainer[numberOfFunctions];
-        for(int i = 0; i < numberOfFunctions; i++){
-            var currentFunction = functions.get(i);
-//            var functionValues = currentFunction.calculate(intervallStart, intervallEnd, step);
-//            functionInfo[i] = new FunctionInfoContainer(currentFunction, functionValues);
+        try {
+            functionInfo = calculateFunctionValues(intervallX);
+        } catch (InterruptedException | ExecutionException ex) {
+            // TODO RE Errorhandling.
+            functionInfo = new FunctionInfoContainer[0];
         }
         
         var drawingInformation = new DrawingInformationContainer(functionInfo, intervallX, intervallY, step);
         gui.drawFunctions(drawingInformation);
+    }
+    
+    // Berechnet die Funktionswerte multithreaded.
+    private FunctionInfoContainer[] calculateFunctionValues(Tuple<Double,Double> intervallX) throws InterruptedException, ExecutionException{
+        // Funktionen laden.
+        ArrayList<IFunction> functions = functionManager.getFunctionList();
+        int numberOfFunctions = functions.size();
+        
+        // Berechnungswerte vorbereiten.
+        double intervallStart = intervallX.getItem1();
+        int numberOfCalculations = (int)Math.floor(intervallSizeX / step);
+        
+        var xValues = new double[numberOfCalculations];
+        for(int i = 0; i < numberOfCalculations; i++){
+            xValues[i] = intervallStart + (i * step);
+        }
+        
+        // Berechnungsthreads starten.
+        var futureValues = new Future[numberOfFunctions][numberOfCalculations];
+        for(int i = 0; i < numberOfFunctions; i++){
+            var currentFunction = functions.get(i);
+            for(int j = 0; j < numberOfCalculations; j++){
+                var calculator = new FunctionCalculationThread(currentFunction, xValues[j]);
+                futureValues[i][j] = functionCalculationPool.submit(calculator);
+            }
+        }
+        
+        // Ergebnisse einsammeln.
+        var functionValues = new Koordinate[numberOfFunctions][numberOfCalculations];
+        for(int i = 0; i < numberOfFunctions; i++){
+            for(int j = 0; j < numberOfCalculations; j++){
+                functionValues[i][j] = (Koordinate)futureValues[i][j].get();
+            }
+        }
+        
+        // Für die Rückgabe verpacken.
+        FunctionInfoContainer[] functionInfo = new FunctionInfoContainer[numberOfFunctions];
+        for(int i = 0; i < numberOfFunctions; i++){
+            var currentFunction = functions.get(i);
+            functionInfo[i] = new FunctionInfoContainer(currentFunction, functionValues[i]);
+        }
+        
+        return functionInfo;
     }
 }

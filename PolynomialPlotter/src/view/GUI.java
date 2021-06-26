@@ -61,6 +61,7 @@ public class GUI extends JFrame implements IGUI {
                 }
             }
         });
+        getContentPane().add(new JCustomMenuBar(), BorderLayout.NORTH);
         getContentPane().add(sidebar_panel, BorderLayout.WEST);
         getContentPane().add(plotter_panel, BorderLayout.CENTER);
         pack();

@@ -22,15 +22,19 @@ import model.FunctionInfoContainer;
 import model.IFunction;
 import model.Koordinate;
 import startup.Settings;
+import view.GUI.FontFamily;
+import view.GUI.FontStyle;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.BasicStroke;
 import java.awt.Point;
 import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 import java.util.List;
 import event.IPlotListener;
 import model.Tuple;
+import model.Utils;
 
 public class JPlotter extends JPanel {
 
@@ -73,10 +77,10 @@ public class JPlotter extends JPanel {
             @Override
             public void mouseDragged(MouseEvent e) {
                 // Differenz zwischen der momentanten und letzten Maus-Position
-                double dx = e.getX() - mousePt.x;
-                double dy = e.getY() - mousePt.y;
+                double dx = mousePt.x - e.getX();
+                double dy = mousePt.y - e.getY();
                 // Ändere den Ursprung, basierend auf dx,dy
-                for(IPlotListener listener: plotListeners)listener.plotMoved(new PlotMovedEvent(e.getSource(), getWidth(), getHeight(), new Tuple<Double,Double>(dx,dy)));
+                for(IPlotListener listener: plotListeners)listener.plotMoved(new PlotMovedEvent(e.getSource(), getWidth(), getHeight(), new Tuple<Double,Double>(dx,-dy)));
                 mousePt = e.getPoint();
                 repaint();
             }
@@ -220,11 +224,12 @@ public class JPlotter extends JPanel {
         g2d.setColor(Color.WHITE);
         g2d.fillRect(0, 0, getWidth(), getHeight());
 
-        g2d.translate((double) origin.x, (double) origin.y); // View abhängig vom Ursprung translaten, wichtig für die
-                                                             // Drag-Funktionalität
-        g2d.translate(getWidth() / 2, getHeight() / 2); // View auf die Mitte des Panels translaten
+        // g2d.translate((double) origin.x, (double) origin.y); // View abhängig vom Ursprung translaten, wichtig für die
+        //                                                      // Drag-Funktionalität
+        // g2d.translate(getWidth() / 2, getHeight() / 2); // View auf die Mitte des Panels translaten/
         drawFunctions(g2d);
         // drawAxes(g2d);
+        drawGrid(g2d);
         // drawFunction(g2d, x -> (float) ((x * x) + 1), Color.RED);
         // drawFunction(g2d, x -> (float) (Math.sin(x) * x * x), Color.BLUE);
     }
@@ -319,22 +324,23 @@ public class JPlotter extends JPanel {
      * 
      * @param g2d Graphics2D context
      */
-    // private void drawAxes(Graphics2D g2d) {
-    //     g2d.setStroke(new BasicStroke(2));
-    //     g2d.setColor(Color.BLACK);
-    //     g2d.setFont(GUI.getFont(FontFamily.RUBIK,FontStyle.REGULAR,25));
+    private void drawAxes(Graphics2D g2d) {
+        drawingInformation.getIntervallX();
+        g2d.setStroke(new BasicStroke(2));
+        g2d.setColor(Color.BLACK);
+        g2d.setFont(GUI.getFont(FontFamily.RUBIK,FontStyle.REGULAR,25));
 
-    //     g2d.drawLine((int) -((getWidth() / 2 + origin.x)), (int) (0), (int) ((getWidth() / 2 - origin.x)), (int) (0)); // X-Axis
-    //                                                                                                                    // Main
-    //                                                                                                                    // Line
-    //     drawXSteps(g2d); // Draw the Steps on the X-Axis
+        g2d.drawLine((int) -((getWidth() / 2 + origin.x)), (int) (0), (int) ((getWidth() / 2 - origin.x)), (int) (0)); // X-Axis
+                                                                                                                       // Main
+                                                                                                                       // Line
+        // drawXSteps(g2d); // Draw the Steps on the X-Axis
 
-    //     g2d.drawLine((int) 0, (int) -((getHeight() / 2 + origin.y)), (int) (0), (int) ((getHeight() / 2 - origin.y))); // Y-Axis
-    //                                                                                                                    // Main
-    //                                                                                                                    // Line
-    //     drawYSteps(g2d); // Draw the Steps on the Y-Axis
-    //     g2d.setStroke(new BasicStroke(1));
-    // }
+        g2d.drawLine((int) 0, (int) -((getHeight() / 2 + origin.y)), (int) (0), (int) ((getHeight() / 2 - origin.y))); // Y-Axis
+                                                                                                                       // Main
+                                                                                                                       // Line
+        // drawYSteps(g2d); // Draw the Steps on the Y-Axis
+        g2d.setStroke(new BasicStroke(1));
+    }
 
     /**
      * Zeichnet die X-Achsen Schritte mit Benenneung
@@ -410,9 +416,20 @@ public class JPlotter extends JPanel {
      * 
      * @param g2d Graphics2D context
      */
-    // public void drawGrid(Graphics2D g2d) {
-    //     // Not ready yet
-    // }
+    public void drawGrid(Graphics2D g2d) {
+        Tuple<Double,Double> intervallYTuple = drawingInformation.getIntervallY();
+        Tuple<Double,Double> intervallXTuple = drawingInformation.getIntervallX();
+        for(int i = (int)(intervallYTuple.getItem1()-intervallYTuple.getItem1()%1);i<intervallYTuple.getItem2();i++){
+            int y = (int) Utils.mapToInterval(i, intervallYTuple,new Tuple<Integer,Integer>(0,getHeight()));
+            g2d.drawLine(0, y, getWidth(),y );
+        }
+        for(int i = (int)(intervallXTuple.getItem1()-intervallXTuple.getItem1()%1);i<intervallXTuple.getItem2();i++){
+            int x = (int) Utils.mapToInterval(i, intervallXTuple,new Tuple<Integer,Integer>(0,getWidth()));
+            g2d.drawLine(x,0,x,getHeight());
+        }
+
+        
+    }
 
     /**
      * 
@@ -469,38 +486,6 @@ public class JPlotter extends JPanel {
      */
     public double getZoom() {
         return this.zoom;
-    }
-
-    /**
-     * Remappt eine Zahl von einer vorgegebenen Range auf eine andere vorgegebene
-     * Range
-     * 
-     * @param value  zu mappender Wert (aus Range 1)
-     * @param start1 Start-Wert Range 1
-     * @param stop1  Stop-Wert Range 1
-     * @param start2 Start-Wert Range 2
-     * @param stop2  Stop-Wert Range 2
-     * @return float value auf Range 2 gemappt
-     */
-    static public final float map(float value, float start1, float stop1, float start2, float stop2) {
-        float outgoing = start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
-        return outgoing;
-    }
-
-    /**
-     * Remappt eine Zahl von einer vorgegebenen Range auf eine andere vorgegebene
-     * Range
-     * 
-     * @param value  zu mappender Wert (aus Range 1)
-     * @param start1 Start-Wert Range 1
-     * @param stop1  Stop-Wert Range 1
-     * @param start2 Start-Wert Range 2
-     * @param stop2  Stop-Wert Range 2
-     * @return double value auf Range 2 gemappt
-     */
-    static public final double map(double value, double start1, double stop1, double start2, double stop2) {
-        double outgoing = start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
-        return outgoing;
     }
 
     public void resetOrigin() {

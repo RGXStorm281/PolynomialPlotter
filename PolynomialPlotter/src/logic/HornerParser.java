@@ -19,7 +19,6 @@ public class HornerParser implements IParser {
 		potenz
 	}
 	
-	@Override
 	public boolean canParse(String function) {
 		// TODO TV testen
 		// Überprüft, ob die function dem Format des HornerSchemas entspricht

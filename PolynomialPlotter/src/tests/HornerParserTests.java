@@ -1,10 +1,11 @@
 package tests;
 
+import java.util.Arrays;
+
 import org.junit.Assert;
 import org.junit.Test;
 
 import logic.HornerParser;
-import logic.HornerParser.PolyRechenobjekt;
 
 public class HornerParserTests {
 	
@@ -12,7 +13,6 @@ public class HornerParserTests {
 	public void calculatesCorrectValues_LinearFunction()
 	{
 		HornerParser hP = new HornerParser();
-		PolyRechenobjekt polyRo = null;
 		
 		String[] functions = {
 				"f(x) = 5x^2+(2x)(2*4x+3x)+x^(2+3)",
@@ -33,24 +33,20 @@ public class HornerParserTests {
 		for(int i = 0; i < functions.length; i++) {
 			
 			try {
-				polyRo = hP.parseTest(functions[i]);
+				double[] pHA = hP.parseToArray(functions[i]);
 				
 				// gibt Werte aus
 				System.out.println("In: " + functions[i]);
-				String tempHornerString = polyRo.toString();
-				System.out.println("Horner: (...(" + tempHornerString);
-				System.out.println("");
+				System.out.println("Out: " + Arrays.toString(pHA) + "\n");
 				
 				// Vergleicht Werte für die function
-				Assert.assertEquals(true, polyRo != null);
-				Assert.assertEquals(erwarteteFaktoren[i].length - 1, polyRo.getPotenz());
-				for(int grad = polyRo.getPotenz(); grad >= 0; grad--){
-					Assert.assertEquals(erwarteteFaktoren[i][grad], polyRo.getFaktor(), 0.0001);
-					polyRo = polyRo.getChild();
+				Assert.assertEquals(erwarteteFaktoren[i].length, pHA.length);
+				for(int grad = pHA.length - 1; grad >= 0; grad--){
+					Assert.assertEquals(erwarteteFaktoren[i][grad], pHA[grad], 0.0001);
 				}
 			}
 			catch(Exception e) {
-				// TODO TV Exceptionhandlling
+				// TODO TV Exceptionhandling
 				System.out.println(e);
 				Assert.assertEquals(e, null);
 			}

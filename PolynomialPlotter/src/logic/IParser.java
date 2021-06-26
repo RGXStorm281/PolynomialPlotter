@@ -17,6 +17,7 @@ public interface IParser {
 	 * Parsed den FunctionString in eine IFunction (HornerFunction / UniversalFunction).
 	 * @param function
 	 * @return
+	 * @throws Exception 
 	 */
-    public IFunction parse(String function);
+    public IFunction parse(String function) throws Exception;
 }

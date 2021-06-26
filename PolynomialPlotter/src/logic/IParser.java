@@ -11,8 +11,12 @@ import model.IFunction;
  *
  * @author robinepple
  */
-public interface IParser {
-    public boolean canParse(String function);
-    
+public interface IParser {  
+	
+	/**
+	 * Parsed den FunctionString in eine IFunction (HornerFunction / UniversalFunction).
+	 * @param function
+	 * @return
+	 */
     public IFunction parse(String function);
 }

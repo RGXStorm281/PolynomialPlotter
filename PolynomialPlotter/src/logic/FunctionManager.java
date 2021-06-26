@@ -16,11 +16,10 @@ import model.IFunction;
  */
 public class FunctionManager {
 
-    private HashMap<String, IFunction> functionMap;
+    private HashMap<Character, IFunction> functionMap;
     
 	private static IParser[] parserArray = new IParser[] {
     		new HornerParser(),
-    		new PolynomParser(),
     		new UniversalParser()
     };
 	
@@ -34,7 +33,7 @@ public class FunctionManager {
      * @param functionName
      * @return functionName hinterlegt.
      */
-    public boolean functionNameExists(String functionName) {
+    private boolean functionNameExists(char functionName) {
     	return this.functionMap.containsKey(functionName);
     }
 
@@ -46,49 +45,68 @@ public class FunctionManager {
         return new ArrayList<IFunction>(this.functionMap.values());
     }
     
-    /** 
-     * Fügt die mitgegebene function zu der functionMap hinzu, gibt ihr dabei einen Namen.
-     * @param functionString
-     * @return functionName.
-     */
-    public String add (String functionString) {
-    	for(char nameChar = 'a'; nameChar <= 'z'; nameChar++) {
-    		String functionName = String.valueOf(nameChar);
-    		if(this.functionNameExists(functionName)) {
-    			return this.add(functionName, functionString);
-    		}
-    	}
-    	
-    	// TODO TV nicht so pfuschen!
-    	return null;
-    }
-    
-    /** 
-     * Fügt die mitgegebene function zu der functionMap hinzu.
-     * @param functionString
-     * @return functionName.
-     */
-    public String add (String functionName, String functionString) {
-    	// TODO TV was, wenn functionName bereits existiert?
-    	IFunction function = this.parse(functionString);
-    	if(function != null) {
-    		this.functionMap.put(functionName, function);
-        	
-        	return functionName;
-    	}
-    	
-    	return null;
-    }
-    
     /**
      * Löscht die function mit dem functionName.
      * @param functionName
      * @return function gelöscht.
      */
-    public boolean delete (String functionName) {
-    	if(this.functionNameExists(functionName)) {
+    public boolean delete(Character functionName) {
+    	
+    	if(functionName != null
+    			&& this.functionNameExists(functionName)) {
     		this.functionMap.remove(functionName);
     		return true;
+    	}
+    	
+    	return false;
+    }
+    
+    /**
+     * Speichert die parsed function in der internen FunctionMap.
+     * Erteilt neuen functionName, wenn dieser bisher null war.
+     * @param functionName Name der function.
+     * @param functionString zu parsender String.
+     * @return (neuen) functionName.
+     * @throws Exception
+     */
+    public Character parseAndAddFunction(Character functionName, String functionString) throws Exception{
+    	
+        if(functionName == null) {
+        	for(char tempFunctionName = 'a'; tempFunctionName <= 'z'; tempFunctionName++) {
+        		if(this.functionNameExists(tempFunctionName)) {
+        			functionName = tempFunctionName;
+        			break;
+        		}
+        	}
+        	if(functionName == null) {
+        		throw new Exception("Es existiert kein weiterer FunctionName (a-z).");
+        	}
+        }
+        
+        boolean added = this.add(functionName, functionString);
+        if(added) {
+        	return functionName;
+        }
+        else {
+        	return null;
+        }
+    }
+    
+    /** 
+     * Fügt die mitgegebene function zu der functionMap hinzu.
+     * Solange der FunctionName noch nicht vergeben wurde und die function ermittelt werden konnte!
+     * @param functionString
+     * @return Function wurde gespeichert.
+     */
+    private boolean add(char functionName, String functionString) {
+    	
+    	if(functionName >= 'a' && functionName <= 'z' && this.functionNameExists(functionName)) {
+        	IFunction function = this.parse(functionString);
+        	if(function != null) {
+        		
+        		this.functionMap.put(functionName, function);
+        		return true;
+        	}
     	}
     	
     	return false;
@@ -102,15 +120,14 @@ public class FunctionManager {
     private IFunction parse(String functionString) {
     	for (IParser parser:
 			parserArray) {
-    		if(parser.canParse(functionString)) {
+    		try {
     			return parser.parse(functionString);
+    		}
+    		catch (Exception e) {
+    			// TODO TV ExceptionHandling
     		}
     	}
     	
     	return null;
-    }
-    
-    public void parseAndAddFunction(String function){
-        
     }
 }

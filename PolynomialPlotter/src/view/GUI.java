@@ -15,10 +15,10 @@ import java.awt.event.KeyEvent;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
-import event.FunctionListener;
-import event.PlotListener;
 import model.DrawingInformationContainer;
 import startup.Settings;
+import event.IFunctionListener;
+import event.IPlotListener;
 
 /**
  * @author raphaelsack
@@ -204,7 +204,7 @@ public class GUI extends JFrame implements IGUI {
     }
 
     @Override
-    public void addFunctionListener(FunctionListener functionListener) {
+    public void addFunctionListener(IFunctionListener functionListener) {
         this.sidebar_panel.addFunctionListener(functionListener);
 
     }
@@ -214,7 +214,7 @@ public class GUI extends JFrame implements IGUI {
     }
 
     @Override
-    public void addPlotListener(PlotListener plotListener) {
+    public void addPlotListener(IPlotListener plotListener) {
         this.plotter_panel.addPlotListener(plotListener);
 
     }

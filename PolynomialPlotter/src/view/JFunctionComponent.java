@@ -11,7 +11,6 @@ import java.awt.Point;
 import javax.swing.JComponent;
 
 import event.FunctionEvent;
-import event.FunctionListener;
 import view.FunctionDialog.DialogType;
 import view.GUI.FontFamily;
 import view.GUI.FontStyle;
@@ -25,6 +24,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import event.IFunctionListener;
 
 public class JFunctionComponent extends JComponent implements MouseMotionListener {
 
@@ -46,7 +46,7 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
     private int circleRadius;
     private int circleMargin;
 
-    private List<FunctionListener> functionListeners = new ArrayList<FunctionListener>();
+    private List<IFunctionListener> functionListeners = new ArrayList<IFunctionListener>();
 
     private Color closeButtonCrossDefaultColor;
     private Color closeButtonCrossCurrentColor;
@@ -123,8 +123,8 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
                 if (isInCardBounds(e)) {
                     requestFocus();
                     if (isInCloseButtonBounds(e)) {
-                        for (FunctionListener listener : functionListeners)
-                            ((FunctionListener) listener).functionDeleted(
+                        for (IFunctionListener listener : functionListeners)
+                            ((IFunctionListener) listener).functionDeleted(
                                     new FunctionEvent(e.getSource(), circleColor, functionString, functionChar));
                         destroy();
                     } else{
@@ -389,7 +389,7 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
      * 
      * @param functionListener
      */
-    public void addFunctionListener(FunctionListener functionListener) {
+    public void addFunctionListener(IFunctionListener functionListener) {
         functionDialog.addFunctionListener(functionListener);
         functionListeners.add(functionListener);
     }

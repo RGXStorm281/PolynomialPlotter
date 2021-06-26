@@ -39,7 +39,7 @@ public class HornerParserTests {
 				System.out.println("Horner: (...(" + tempHornerString);
 				System.out.println("");
 				
-				// Vergleicht Werte für die function
+				// Vergleicht Werte fÃ¼r die function
 				Assert.assertEquals(true, polyRo != null);
 				Assert.assertEquals(erwarteteFaktoren[i].length - 1, polyRo.getPotenz());
 				for(int grad = polyRo.getPotenz(); grad >= 0; grad--){

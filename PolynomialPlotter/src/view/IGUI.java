@@ -7,10 +7,10 @@ package view;
 
 import model.DrawingInformationContainer;
 
-import event.FunctionListener;
-import event.PlotListener;
 
 import java.awt.Color;
+import event.IFunctionListener;
+import event.IPlotListener;
 
 /**
  *
@@ -56,15 +56,19 @@ public interface IGUI{
      * Fügt einen FunctionListener hinzu
      * @param functionListener
      */
-    void addFunctionListener(FunctionListener functionListener);
+    void addFunctionListener(IFunctionListener functionListener);
 
     /**
      * Fügt einen PlotListener hinzu
      * @param plotListener
      */
-    void addPlotListener(PlotListener plotListener);
+    void addPlotListener(IPlotListener plotListener);
     
     int getPlotWidth();
 
     int getPlotHeight();
+
+    public void addJFunctionComponent(char functionChar, String functionString, Color functionColor);
+
+    public void updateTheme();
 }

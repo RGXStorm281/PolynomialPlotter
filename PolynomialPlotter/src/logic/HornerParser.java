@@ -43,7 +43,7 @@ public class HornerParser implements IParser {
 		}
 		function = functionTempArray[1];
 		
-		// Prüft, ob Funktion korrekt beginnt
+		// PrÃ¼ft, ob Funktion korrekt beginnt
 		if(!Character.isDigit(function.charAt(0))
 				&& function.charAt(0) != 'x'
 				&& function.charAt(0) != '+'
@@ -58,12 +58,12 @@ public class HornerParser implements IParser {
 			// TODO TV Exceptionhandlling
 		}
 		
-		// TODO TV korrektes Objekt zurückgeben
+		// TODO TV korrektes Objekt zurÃ¼ckgeben
 		return null;
 	}
 	
 	/**
-	 * Dient den UnitTests bis das endgültige AusgabeObjekt existiert
+	 * Dient den UnitTests bis das endgï¿½ltige AusgabeObjekt existiert
 	 * @param function
 	 * @return
 	 * @throws Exception
@@ -77,13 +77,13 @@ public class HornerParser implements IParser {
 			fnct = functionTempArray[1];
 		}
 
-		// Prüft, ob Funktion korrekt beginnt
+		// Prï¿½ft, ob Funktion korrekt beginnt
 		if(!Character.isDigit(fnct.charAt(0))
 				&& fnct.charAt(0) != 'x'
 				&& fnct.charAt(0) != '+'
 				&& fnct.charAt(0) != '-'
 				&& fnct.charAt(0) != '(') {
-			throw new Exception("Startwert '" + fnct.charAt(0) + "' ungültig");
+			throw new Exception("Startwert '" + fnct.charAt(0) + "' ungï¿½ltig");
 		}
 		
 		PolyRechenobjekt pRo = innerParse(fnct.toCharArray(), 0);
@@ -104,10 +104,10 @@ public class HornerParser implements IParser {
 		pRoClone = pRoClone.getChild();
 		for(int currentPotenz = potenzMax - 1; currentPotenz >= 0; currentPotenz--) {
 			
-			// fügt für jeden Grad < potenzMax einen Eintrag hinzu, ggf. mit Faktor 0
+			// fï¿½gt fï¿½r jeden Grad < potenzMax einen Eintrag hinzu, ggf. mit Faktor 0
 			if(pRoClone == null 
 				|| pRoClone.getPotenz() < currentPotenz) {
-				// faktor = 0, da für diesen Grad kein Eintrag ermittelt wurde
+				// faktor = 0, da fï¿½r diesen Grad kein Eintrag ermittelt wurde
 				pRoNew.addTail(new PolyRechenobjekt(0, currentPotenz));
 			}
 			else {
@@ -130,11 +130,11 @@ public class HornerParser implements IParser {
 		
 		// Notfallabbruch
 		if(rekCounter > 500) {
-			throw new Exception("Es wurden zu viele Rekursionsstufen benötigt. Rest-String: '" + new String(function) + "'");
+			throw new Exception("Es wurden zu viele Rekursionsstufen benï¿½tigt. Rest-String: '" + new String(function) + "'");
 		}
 		rekCounter++;
 		
-		// Prüft, ob function bereits nur Zahlen oder x, versucht ggf. direkt zu parsen
+		// Prï¿½ft, ob function bereits nur Zahlen oder x, versucht ggf. direkt zu parsen
 		boolean isDigitsOnly = true;
 		for(char character:
 			function) {
@@ -183,22 +183,22 @@ public class HornerParser implements IParser {
 					klammerZahl--;
 				}
 				
-				// Funktion darf nur außerhalb einer Klammer getrennt werden
+				// Funktion darf nur auï¿½erhalb einer Klammer getrennt werden
 				if(klammerZahl == 0) {
 
-					// prüft, ob der aktuell zu bearbeitende Operator der aktuelle char ist
+					// prï¿½ft, ob der aktuell zu bearbeitende Operator der aktuelle char ist
 					if(function[i] == operatorChar) {
 						// parsed rekursiv alles links und rechts vom Operator
 						
-						// linkes Objekt kann mit nächstem Operator bearbeitet werden, da der aktuelle Operator nicht mehr existiert
+						// linkes Objekt kann mit nï¿½chstem Operator bearbeitet werden, da der aktuelle Operator nicht mehr existiert
 						PolyRechenobjekt polyRoLeft = innerParse(Arrays.copyOfRange(function, 0, i), rekCounter);
 						
-						// rechtes Objekt wird weiter auf aktuellen Operator geprüft
+						// rechtes Objekt wird weiter auf aktuellen Operator geprï¿½ft
 						PolyRechenobjekt polyRoRight = innerParse(Arrays.copyOfRange(function, i + 1, function.length), rekCounter);
 						
 						return combineRechenobjekte(polyRoLeft, polyRoRight, op);
 					}
-					// Prüft ggf., ob eine ungeschriebene Multiplikation vorliegt 
+					// Prï¿½ft ggf., ob eine ungeschriebene Multiplikation vorliegt 
 					else if(op == operator.multiplikation
 							&& i > 0
 							&& (function[i-1] == 'x' && (Character.isDigit(function[i]) || function[i] == '(' || function[i] == 'x')
@@ -207,26 +207,26 @@ public class HornerParser implements IParser {
 
 						// parsed rekursiv alles links und rechts vom ungeschriebenen Operator
 						
-						// linkes Objekt kann mit nächstem Operator bearbeitet werden, da der aktuelle Operator nicht mehr existiert
+						// linkes Objekt kann mit nï¿½chstem Operator bearbeitet werden, da der aktuelle Operator nicht mehr existiert
 						PolyRechenobjekt polyRoLeft = innerParse(Arrays.copyOfRange(function, 0, i), rekCounter);
 						
-						// rechtes Objekt wird weiter auf aktuellen Operator geprüft
+						// rechtes Objekt wird weiter auf aktuellen Operator geprï¿½ft
 						PolyRechenobjekt polyRoRight = innerParse(Arrays.copyOfRange(function, i, function.length), rekCounter);
 						
 						return combineRechenobjekte(polyRoLeft, polyRoRight, op);
 					}
 					
-					// erhöht die Anzahl der sich nicht innerhalb Klammern befindlichen Character
+					// erhï¿½ht die Anzahl der sich nicht innerhalb Klammern befindlichen Character
 					unumklammertCount++;
 				}
 
-				// erhöht ggf. klammerEbene
+				// erhï¿½ht ggf. klammerEbene
 				if(function[i] == '(') {
 					klammerZahl++;
 				}
 			}
 			
-			// Wenn komplette function in Klammern können diese Klammern aufgelöst werden
+			// Wenn komplette function in Klammern kï¿½nnen diese Klammern aufgelï¿½st werden
 			if(unumklammertCount == 2
 					&& function[0] == '('
 					&& function[function.length - 1] == ')') {
@@ -275,17 +275,17 @@ public class HornerParser implements IParser {
 	 */
 	private PolyRechenobjekt getRechenobjFromArray (char[] function) throws Exception {
 		if(function.length == 0) {
-			// gibt leeres objekt zurück
+			// gibt leeres objekt zurï¿½ck
 			return new PolyRechenobjekt(0, 0);
 		}
 		if((function.length == 1
 			&& function[0] == 'x')) {
-			// gibt Rechenobjekt "1*x^1" zurück
+			// gibt Rechenobjekt "1*x^1" zurï¿½ck
 			return new PolyRechenobjekt(1, 1);
 		}
 		
 		try {
-			// gibt Rechenobjekt "faktor*x^0" zurück
+			// gibt Rechenobjekt "faktor*x^0" zurï¿½ck
 			return new PolyRechenobjekt(Double.parseDouble(new String(function)), 0);
 		}
 		catch(Exception e) {
@@ -295,7 +295,7 @@ public class HornerParser implements IParser {
 	
 	/**
 	 * Aufbau: faktor*x^potenz + PolynomRechenobjekt
-	 * Die Objekte sind nach Potenz absteigend sortiert => a*x^n + b*x^(n-m) + ...; n>m; n,m € N
+	 * Die Objekte sind nach Potenz absteigend sortiert => a*x^n + b*x^(n-m) + ...; n>m; n,m ï¿½ N
 	 * @author timo.vollert
 	 *
 	 */
@@ -304,7 +304,7 @@ public class HornerParser implements IParser {
 		
 		private double faktorValue;
 		private int potenzValue;
-		private PolyRechenobjekt child; // via Addition verknüpft
+		private PolyRechenobjekt child; // via Addition verknï¿½pft
 		
 		public PolyRechenobjekt(double faktor, int potenz, PolyRechenobjekt addedPolyRechenobjekt) {
 			this.faktorValue = faktor;
@@ -337,7 +337,7 @@ public class HornerParser implements IParser {
 		}
 		
 		/**
-		 * Fügt das objekt als TAIL an die Liste an
+		 * Fï¿½gt das objekt als TAIL an die Liste an
 		 * @param newChild
 		 */
 		public void addTail(PolyRechenobjekt newChild) {
@@ -350,7 +350,7 @@ public class HornerParser implements IParser {
 		}
 		
 		/**
-		 * Addiert das polyRechenobjekt zu dem aktuellen Polyrechenobjekt (zerstört mitgegebenes Objekt)
+		 * Addiert das polyRechenobjekt zu dem aktuellen Polyrechenobjekt (zerstï¿½rt mitgegebenes Objekt)
 		 * Optimiert Liste automatisch (addieren zweier vorsortierter Listen resultiert in sortierter Liste)
 		 */
 		public void add(PolyRechenobjekt polyRechenobjekt) {
@@ -362,7 +362,7 @@ public class HornerParser implements IParser {
 					
 					// Fallunterscheidung
 					if(polyRechenobjekt.getPotenz() > this.potenzValue) {
-						// das neue Objekt hat eine höhere Potenz, wird deshalb neuer HEAD des Objekts
+						// das neue Objekt hat eine hï¿½here Potenz, wird deshalb neuer HEAD des Objekts
 						// Wenn der Faktor des aktuellen Objekts 0 ist wird dieses verworfen
 						if(this.faktorValue != 0) {
 							this.child =  new PolyRechenobjekt(this.faktorValue, this.potenzValue, this.child);
@@ -371,7 +371,7 @@ public class HornerParser implements IParser {
 						this.potenzValue = polyRechenobjekt.getPotenz();
 					}
 					else if(this.potenzValue == polyRechenobjekt.getPotenz()) {
-						// Wenn zu addierendes Objekt gleichePotenz können einfach die Faktoren der objekte addiert werden
+						// Wenn zu addierendes Objekt gleichePotenz kï¿½nnen einfach die Faktoren der objekte addiert werden
 						this.faktorValue += polyRechenobjekt.getFaktor();
 					}
 					else if(this.child != null) {
@@ -387,7 +387,7 @@ public class HornerParser implements IParser {
 						}
 					}
 					else {
-						// Wenn kein weiteres addiertes Objekt existiert wird das Objekt als neuer TAIL angefügt
+						// Wenn kein weiteres addiertes Objekt existiert wird das Objekt als neuer TAIL angefï¿½gt
 						this.child = new PolyRechenobjekt(polyRechenobjekt);
 					}
 				}
@@ -398,7 +398,7 @@ public class HornerParser implements IParser {
 		}
 
 		/**
-		 * Subtrahiert das polyRechenobjekt von dem aktuellen Polyrechenobjekt (zerstört das mitgegebene Objekt)
+		 * Subtrahiert das polyRechenobjekt von dem aktuellen Polyrechenobjekt (zerstï¿½rt das mitgegebene Objekt)
 		 */
 		public void sub(PolyRechenobjekt polyRechenobjekt) {
 			
@@ -410,7 +410,7 @@ public class HornerParser implements IParser {
 		}
 		
 		/**
-		 * Multipliziert das polyRechenobjekt mit dem aktuelle Polyrechenobjekt (zerstört das mitgegebene Objekt)
+		 * Multipliziert das polyRechenobjekt mit dem aktuelle Polyrechenobjekt (zerstï¿½rt das mitgegebene Objekt)
 		 */
 		public void mult(PolyRechenobjekt polyRechenobjekt) {
 			
@@ -421,7 +421,7 @@ public class HornerParser implements IParser {
 		}
 		
 		/**
-		 * Dividiert das polyRechenobjekt mit dem aktuelle Polyrechenobjekt (zerstört das mitgegebene Objekt)
+		 * Dividiert das polyRechenobjekt mit dem aktuelle Polyrechenobjekt (zerstï¿½rt das mitgegebene Objekt)
 		 */
 		public void div(PolyRechenobjekt polyRechenobjekt) {
 			
@@ -429,7 +429,7 @@ public class HornerParser implements IParser {
 		}
 		
 		/**
-		 * Sortiert die Rechenobjekte und fügt Rechenobjekte mit der gleichen Potenz zusammen
+		 * Sortiert die Rechenobjekte und fï¿½gt Rechenobjekte mit der gleichen Potenz zusammen
 		 */
 		private void bucketSort() {
 			
@@ -458,7 +458,7 @@ public class HornerParser implements IParser {
 					for(PolyRechenobjekt polyRo:
 						bucket) {
 						
-						// addiert keine überflüssigen Objekte
+						// addiert keine ï¿½berflï¿½ssigen Objekte
 						if(polyRo.getFaktor() != 0) {
 							tempPolyRo.add(polyRo);
 						}
@@ -474,7 +474,7 @@ public class HornerParser implements IParser {
 		
 		private void innerMult(PolyRechenobjekt polyRechenobjekt) {
 			
-			// Führt die Multiplikation rekursiv auf jedes Child aus
+			// Fï¿½hrt die Multiplikation rekursiv auf jedes Child aus
 			if (this.child != null) {
 				this.child.innerMult(polyRechenobjekt);
 			}
@@ -482,7 +482,7 @@ public class HornerParser implements IParser {
 			PolyRechenobjekt ausgabeObjekt = new PolyRechenobjekt(0, 0);
 			
 			// Multipliziert jedes Rechenobjekt des eingegebenen Objekts mit "this"
-			// Das direkte hinzufügen von 
+			// Das direkte hinzufï¿½gen von 
 			while (polyRechenobjekt != null) {
 				ausgabeObjekt.add(new PolyRechenobjekt(this.faktorValue * polyRechenobjekt.getFaktor(), this.potenzValue + polyRechenobjekt.getPotenz()));
 				
@@ -497,10 +497,10 @@ public class HornerParser implements IParser {
 		}
 
 		/**
-		 * Potenziert das polyRechenobjekt mit dem aktuelle Polyrechenobjekt (zerstört das mitgegebene Ojekt)
+		 * Potenziert das polyRechenobjekt mit dem aktuelle Polyrechenobjekt (zerstï¿½rt das mitgegebene Ojekt)
 		 */
 		public void pot(PolyRechenobjekt potenzPolyRechenobjekt) {
-			// TODO TV abfangen, wenn x hoch != 0 oder !€ N
+			// TODO TV abfangen, wenn x hoch != 0 oder !ï¿½ N
 			
 			PolyRechenobjekt clonedPolyRo = this.clone();
 			this.potenzValue = 0;

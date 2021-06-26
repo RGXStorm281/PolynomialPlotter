@@ -17,7 +17,9 @@ import java.awt.Color;
 
 import event.*;
 import logic.BusinessLogic;
+import logic.FunctionListener;
 import logic.FunctionManager;
+import logic.PlotListener;
 import model.Koordinate;
 import view.GUI;
 
@@ -39,54 +41,9 @@ public class PolynomialPlotter {
             BusinessLogic logic = new BusinessLogic(view, model, settings);
 
             // Events Setzen
-            view.addFunctionListener(new FunctionListener(){
+            view.addFunctionListener(new FunctionListener(view));
 
-                @Override
-                public boolean functionAdded(FunctionEvent e) {
-                    String functionString = e.getFunctionString();
-                    Color functionColor = e.getFunctionColor();    
-                    char functionChar = e.getFunctionChar();
-                    System.out.println("New function \""+functionChar+"\" with: "+functionString+" and the Color"+functionColor);
-                    view.addJFunctionComponent(functionChar,functionString, functionColor);
-                    view.updateTheme();
-                    return true; // Return ob gegebene funktion legal war
-                    
-                }
-
-                @Override
-                public boolean functionEdited(FunctionEditedEvent e) {
-                    System.out.println(e.getOldFunctionChar()+"-Function was edited to: "+e.getFunctionString()+" with the color: "+e.getFunctionColor());
-                    return true; // Return ob der Edit einen Fehler verursach / Legal war
-                }
-
-                @Override
-                public void functionDeleted(FunctionEvent e) {
-                    System.out.println("Event Triggered: Function Delete \""+e.getFunctionString()+"\"");
-                }
-                
-            });
-
-            view.addPlotListener(new PlotListener(){
-
-                @Override
-                public void plotResized(PlotEvent e) {
-                    logic.resize();
-                    
-                }
-
-                @Override
-                public void plotZoomed(PlotZoomedEvent e) {
-                    logic.zoom(e.getZoomAmount());
-                    
-                }
-
-                @Override
-                public void plotMoved(PlotMovedEvent e) {
-                    Koordinate moveDistance = e.getDist();
-                    System.out.println(moveDistance);
-                }
-                
-            });
+            view.addPlotListener(new PlotListener(logic));
             // Applikation starten
             SwingUtilities.invokeLater(new Runnable(){
                 @Override 

@@ -1,6 +1,6 @@
 package event;
 
-public interface PlotListener extends java.util.EventListener{
+public interface IPlotListener extends java.util.EventListener{
 
     /**
      * Wird gecallt wenn der Plot in irgendeiner Form resized wird

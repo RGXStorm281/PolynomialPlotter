@@ -14,10 +14,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import event.FunctionListener;
 import view.FunctionDialog.DialogType;
 import view.GUI.FontFamily;
 import view.GUI.FontStyle;
+import event.IFunctionListener;
 
 public class Sidebar extends JPanel {
 
@@ -26,7 +26,7 @@ public class Sidebar extends JPanel {
     private FunctionDialog functionDialog;
     private JAddButton addFunctionButton;
     private StyleClass styleClass;
-    private List<FunctionListener> functionListeners = new ArrayList<FunctionListener>();
+    private List<IFunctionListener> functionListeners = new ArrayList<IFunctionListener>();
     private List<JFunctionComponent> functionList = new ArrayList<JFunctionComponent>();
     private JLabel headingText;
 
@@ -79,7 +79,7 @@ public class Sidebar extends JPanel {
      */
     public void addJFunctionComponent(char functionChar,String functionString, Color functionColor){
         JFunctionComponent jfc = new JFunctionComponent(this.styleClass,functionChar, functionString, functionColor);
-        for(FunctionListener functionListener: functionListeners)jfc.addFunctionListener(functionListener);
+        for(IFunctionListener functionListener: functionListeners)jfc.addFunctionListener(functionListener);
         functionList.add(jfc);
         renderJFunctionComponents();
     }
@@ -118,7 +118,7 @@ public class Sidebar extends JPanel {
     /** fügt ein FunctionListener hinzu
      * @param functionListener
      */
-    public void addFunctionListener(FunctionListener functionListener){
+    public void addFunctionListener(IFunctionListener functionListener){
         functionListeners.add(functionListener);
         for(JFunctionComponent jfc: functionList)jfc.addFunctionListener(functionListener);
         functionDialog.addFunctionListener(functionListener);

@@ -1,6 +1,6 @@
 package event;
 
-public interface FunctionListener extends java.util.EventListener{
+public interface IFunctionListener extends java.util.EventListener{
 
     /**
      * Wird gecallt, wenn eine Funktion hinzugefügt wird

@@ -18,43 +18,32 @@ public class DrawingInformationContainer {
     
     private FunctionInfoContainer[] functionInfo;
     
-    private double intervallStart;
-    private double intervallEnd;
+    private Tuple<Double,Double> intervallX;
+    private Tuple<Double,Double> intervallY;
     private double step;
 
-    public DrawingInformationContainer(FunctionInfoContainer[] functionInfo, double intervallStart, double intervallEnd, double step) {
+    public DrawingInformationContainer(FunctionInfoContainer[] functionInfo, Tuple<Double, Double> intervallX, Tuple<Double, Double> intervallY, double step) {
         this.functionInfo = functionInfo;
-        this.intervallStart = intervallStart;
-        this.intervallEnd = intervallEnd;
+        this.intervallX = intervallX;
+        this.intervallY = intervallY;
         this.step = step;
     }
 
-    /**
-     * Gibt die Informationen über die Funktionen zurück.
-     */
     public FunctionInfoContainer[] getFunctionInfo() {
         return functionInfo;
     }
 
-    /**
-     * Der errechnete Startwert des Intervalls.
-     */
-    public double getIntervallStart() {
-        return intervallStart;
+    public Tuple<Double, Double> getIntervallX() {
+        return intervallX;
     }
 
-    /**
-     * Der errechnete Endwert des Intervalls.
-     */
-    public double getIntervallEnd() {
-        return intervallEnd;
+    public Tuple<Double, Double> getIntervallY() {
+        return intervallY;
     }
 
-    /**
-     * Die Schrittweite für die einzelnen Werte.
-     */
     public double getStep() {
         return step;
     }
+    
     
 }

@@ -21,12 +21,12 @@ import javax.swing.SwingUtilities;
 
 import event.FunctionEditedEvent;
 import event.FunctionEvent;
-import event.FunctionListener;
 import view.GUI.FontFamily;
 import view.GUI.FontStyle;
 
 import java.awt.Dimension;
 import java.awt.Cursor;
+import event.IFunctionListener;
 
 public class FunctionDialog extends JFrame {
 
@@ -52,7 +52,7 @@ public class FunctionDialog extends JFrame {
 
     private StyleClass styleClass;
     private JPanel colorPanel;
-    private List<FunctionListener> functionListeners = new ArrayList<FunctionListener>();
+    private List<IFunctionListener> functionListeners = new ArrayList<IFunctionListener>();
 
     FunctionDialog(DialogType dialogType, StyleClass styleClass) {
         this.styleClass = styleClass;
@@ -118,7 +118,7 @@ public class FunctionDialog extends JFrame {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                 boolean legalFunction = false;
-                for(FunctionListener listener: functionListeners)legalFunction = ((FunctionListener)listener).functionAdded(new FunctionEvent(e.getSource(), colorPanel.getBackground(), functionInput.getText().trim(), functionInput.getText().trim().toCharArray()[0]));
+                for(IFunctionListener listener: functionListeners)legalFunction = ((IFunctionListener)listener).functionAdded(new FunctionEvent(e.getSource(), colorPanel.getBackground(), functionInput.getText().trim(), functionInput.getText().trim().toCharArray()[0]));
                 if(legalFunction){
                     //Add the function
                     hideWarn();
@@ -136,7 +136,7 @@ public class FunctionDialog extends JFrame {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                 boolean legalFunction = false;
-                for(FunctionListener listener: functionListeners)legalFunction = ((FunctionListener)listener).functionEdited(new FunctionEditedEvent(e.getSource(), colorPanel.getBackground(), functionInput.getText().trim(), functionInput.getText().trim().toCharArray()[0],lastFunctionChar));
+                for(IFunctionListener listener: functionListeners)legalFunction = ((IFunctionListener)listener).functionEdited(new FunctionEditedEvent(e.getSource(), colorPanel.getBackground(), functionInput.getText().trim(), functionInput.getText().trim().toCharArray()[0],lastFunctionChar));
                 if(legalFunction){
                     //Add the function
                     hideWarn();
@@ -288,7 +288,7 @@ public class FunctionDialog extends JFrame {
     /** 
      * @param functionListener
      */
-    public void addFunctionListener(FunctionListener functionListener) {
+    public void addFunctionListener(IFunctionListener functionListener) {
         functionListeners.add(functionListener);
     }
 

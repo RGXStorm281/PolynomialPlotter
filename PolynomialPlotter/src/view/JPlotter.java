@@ -15,7 +15,6 @@ import java.awt.event.MouseAdapter;
 import javax.swing.JPanel;
 
 import event.PlotEvent;
-import event.PlotListener;
 import event.PlotMovedEvent;
 import event.PlotZoomedEvent;
 import model.DrawingInformationContainer;
@@ -30,6 +29,8 @@ import java.awt.Point;
 import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 import java.util.List;
+import event.IPlotListener;
+import model.Tuple;
 
 public class JPlotter extends JPanel {
 
@@ -38,7 +39,7 @@ public class JPlotter extends JPanel {
     private final float SPACING; // Hardcoded Space-unit, |spacing| pixels = 1 numerical unit
 
 
-    private List<PlotListener> plotListeners = new ArrayList<PlotListener>();
+    private List<IPlotListener> plotListeners = new ArrayList<IPlotListener>();
     private Point origin; // Point to keep track of the origin point (Used for dragging the screen)
     private Point mousePt; // Point to keep track of the last mouse-position
     private Settings settings;
@@ -55,7 +56,7 @@ public class JPlotter extends JPanel {
             public void mouseWheelMoved(MouseWheelEvent e) {
                 float dZoom = e.isControlDown() ? 0.1f : 0.05f;
                 dZoom*=e.getWheelRotation();
-                for(PlotListener listener: plotListeners)listener.plotResized(new PlotZoomedEvent(e.getSource(), getWidth(), getHeight(), dZoom));
+                for(IPlotListener listener: plotListeners)listener.plotZoomed(new PlotZoomedEvent(e.getSource(), getWidth(), getHeight(), dZoom));
             }
         });
         // Mouse Listener für die Drag-Funktionalität und um den Cursor zu ändern
@@ -75,7 +76,7 @@ public class JPlotter extends JPanel {
                 double dx = e.getX() - mousePt.x;
                 double dy = e.getY() - mousePt.y;
                 // Ändere den Ursprung, basierend auf dx,dy
-                for(PlotListener listener: plotListeners)listener.plotMoved(new PlotMovedEvent(e.getSource(), getWidth(), getHeight(), new Koordinate(dx, dy)));
+                for(IPlotListener listener: plotListeners)listener.plotMoved(new PlotMovedEvent(e.getSource(), getWidth(), getHeight(), new Tuple<Double,Double>(dx,dy)));
                 mousePt = e.getPoint();
                 repaint();
             }
@@ -85,7 +86,7 @@ public class JPlotter extends JPanel {
 
             @Override
             public void componentResized(ComponentEvent e) {
-                for(PlotListener listener: plotListeners)listener.plotResized(new PlotEvent(e.getSource(), getWidth(), getHeight()));
+                for(IPlotListener listener: plotListeners)listener.plotResized(new PlotEvent(e.getSource(), getWidth(), getHeight()));
             }
 
             @Override
@@ -236,8 +237,8 @@ public class JPlotter extends JPanel {
         if(drawingInformation == null)return;
         // Um es wirklich an den canvas anzupassen, benötige ich entweder daten über den zoom+origin, oder den
         // Sichtbaren y-Intervall. Anders kann ich nicht wissen wie ich die numerischen Werte an den Canvas anpassen soll
-        double xStart = drawingInformation.getIntervallStart();
-        double xStop = drawingInformation.getIntervallEnd();
+        double xStart = drawingInformation.getIntervallX().getItem1();
+        double xStop = drawingInformation.getIntervallX().getItem2();
         double xStep = drawingInformation.getStep();
         FunctionInfoContainer[] functionInfo = drawingInformation.getFunctionInfo();
         g2d.setPaint(Color.RED);
@@ -510,7 +511,7 @@ public class JPlotter extends JPanel {
     /** Fügt einen PlotListener an das Event an
      * @param plotListener
      */
-    public void addPlotListener(PlotListener plotListener) {
+    public void addPlotListener(IPlotListener plotListener) {
         plotListeners.add(plotListener);
     }
 }

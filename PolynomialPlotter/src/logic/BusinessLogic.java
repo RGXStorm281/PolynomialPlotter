@@ -5,6 +5,7 @@
  */
 package logic;
 
+import event.PlotEvent;
 import java.awt.Color;
 import java.awt.Point;
 import startup.Settings;
@@ -93,9 +94,9 @@ public class BusinessLogic {
      * @param dx Die X-Komponente des Verschiebungsvektors.
      * @param dy Die Y-Komponente des Verschiebungsvektors.
      */
-    public void moveCanvas(float dx, float dy){
-        positionX += dx;
-        positionY += dy;
+    public void moveCanvas(Tuple<Double,Double> dist){
+        positionX += dist.getItem1();
+        positionY += dist.getItem2();
         debugPosition();
         
         calculateAndDraw();
@@ -104,18 +105,20 @@ public class BusinessLogic {
     /**
      * Aktualisiert die Intervallgröße zur Anpassung an die Fenstergröße und zeichnet neu.
      */
-    public void resize(){
-        var newCanvasWidth = gui.getPlotWidth();
-        var newCanvasHeight = gui.getPlotHeight();
+    public void resize(PlotEvent e){
+        var newCanvasWidth = e.getPlotWidth();
+        var newCanvasHeight = e.getPlotHeight();
         
         if(newCanvasWidth == 0 || newCanvasHeight == 0){
             return;
         }
         
+        // Intervalle mit der Panelgröße skalieren.
         intervallSizeX *= (double)newCanvasWidth / cachedCanvasWidth;
         intervallSizeY *= (double)newCanvasHeight / cachedCanvasHeight;
         debugIntervallSize();
         
+        // gecachete Panelgröße aktualisieren.
         cachedCanvasWidth = newCanvasWidth;
         cachedCanvasHeight = newCanvasHeight;
         
@@ -128,8 +131,10 @@ public class BusinessLogic {
      * @param scale Der Wert, mit dem die Intervalle skaliert werden.
      */
     public void zoom(float scale){
+        // Skalierung der X-Achse anpassen.
         intervallSizeX *= 1 + scale;
-        intervallSizeY *= 1 + scale;
+        // Skalierung auf Y-Achse übertragen.
+        intervallSizeY = intervallSizeX * ((double)cachedCanvasHeight / cachedCanvasWidth);
         debugIntervallSize();
         calculateAndDraw();
     }
@@ -145,9 +150,10 @@ public class BusinessLogic {
      * Nutzt die aktuellen Positionsdaten um die sichtbaren Funktionswerte zu berechnen und auf der GUI auszugeben.
      */
     private void calculateAndDraw(){
-        double halfInterval = intervallSizeX / 2;
-        double intervallStart = positionX - halfInterval;
-        double intervallEnd = positionX + halfInterval;
+        double halfIntervallX = intervallSizeX / 2;
+        Tuple<Double,Double> intervallX = new Tuple<>(positionX - halfIntervallX, positionX + halfIntervallX);
+        double halfIntervallY = intervallSizeY / 2;
+        Tuple<Double,Double> intervallY = new Tuple<>(positionY - halfIntervallY, positionY + halfIntervallY);
         
         ArrayList<IFunction> functions = functionManager.getFunctionList();
         int numberOfFunctions = functions.size();
@@ -155,11 +161,11 @@ public class BusinessLogic {
         FunctionInfoContainer[] functionInfo = new FunctionInfoContainer[numberOfFunctions];
         for(int i = 0; i < numberOfFunctions; i++){
             var currentFunction = functions.get(i);
-            var functionValues = currentFunction.calculate(intervallStart, intervallEnd, step);
+            var functionValues = currentFunction.calculate(intervallX.getItem1(), intervallX.getItem2(), step);
             functionInfo[i] = new FunctionInfoContainer(currentFunction, functionValues);
         }
         
-        var drawingInformation = new DrawingInformationContainer(functionInfo, intervallStart, intervallEnd, step);
+        var drawingInformation = new DrawingInformationContainer(functionInfo, intervallX, intervallY, step);
         gui.drawFunctions(drawingInformation);
     }
 }

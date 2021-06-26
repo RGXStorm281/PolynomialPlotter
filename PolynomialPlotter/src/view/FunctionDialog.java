@@ -9,8 +9,12 @@ import javax.swing.JPanel;
 
 import java.awt.Font;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowAdapter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.net.URL;
 import java.util.ArrayList;
@@ -18,6 +22,10 @@ import java.util.List;
 import java.awt.Color;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 
 import event.FunctionEditedEvent;
 import event.FunctionEvent;
@@ -58,6 +66,14 @@ public class FunctionDialog extends JFrame {
         this.styleClass = styleClass;
         buttonBackground = this.styleClass.BUTTON_BG;
         buttonForeground = this.styleClass.BUTTON_FG;
+        addWindowListener(new WindowAdapter(){
+            @Override
+            public void windowClosing(WindowEvent e) {
+                closeDialog();
+                
+            }
+            
+        });
         getContentPane().setBackground(this.styleClass.DIALOG_BG);
         getContentPane().setForeground(this.styleClass.DIALOG_FG);
         URL iconURL = getClass().getResource("../data/functionDialogIcon.png");
@@ -86,6 +102,7 @@ public class FunctionDialog extends JFrame {
             functionInput.getBorder(),BorderFactory.createMatteBorder(0, 0, 1, 0, this.styleClass.DIALOG_FG)
         ));
 
+
         functionInputLabel = new JLabel("Funktionausdruck");
         functionInputLabel.setFont(font.deriveFont(11f));
         functionInputLabel.setForeground(this.styleClass.DIALOG_FG);
@@ -111,14 +128,14 @@ public class FunctionDialog extends JFrame {
         okButton.setForeground(buttonForeground);
         okButton.setBorder(BorderFactory.createLineBorder(buttonBackground));
         okButton.setFont(font.deriveFont(15f));
-
+        getRootPane().setDefaultButton(okButton);
         switch(dialogType){
             case ADD:
             okButton.addActionListener(new ActionListener(){
                 @Override
                 public void actionPerformed(ActionEvent e) {
                 boolean legalFunction = false;
-                for(FunctionListener listener: functionListeners)legalFunction = ((FunctionListener)listener).functionAdded(new FunctionEvent(e.getSource(), colorPanel.getBackground(), functionInput.getText().trim(), functionInput.getText().trim().toCharArray()[0]));
+                for(FunctionListener listener: functionListeners)legalFunction = ((FunctionListener)listener).functionAdded(new FunctionEvent(e.getSource(), colorPanel.getBackground(), GUI.undecorate(functionInput.getText().trim()), functionInput.getText().trim().toCharArray()[0]));
                 if(legalFunction){
                     //Add the function
                     hideWarn();
@@ -136,7 +153,7 @@ public class FunctionDialog extends JFrame {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                 boolean legalFunction = false;
-                for(FunctionListener listener: functionListeners)legalFunction = ((FunctionListener)listener).functionEdited(new FunctionEditedEvent(e.getSource(), colorPanel.getBackground(), functionInput.getText().trim(), functionInput.getText().trim().toCharArray()[0],lastFunctionChar));
+                for(FunctionListener listener: functionListeners)legalFunction = ((FunctionListener)listener).functionEdited(new FunctionEditedEvent(e.getSource(), colorPanel.getBackground(), GUI.undecorate(functionInput.getText().trim()), functionInput.getText().trim().toCharArray()[0],lastFunctionChar));
                 if(legalFunction){
                     //Add the function
                     hideWarn();
@@ -189,8 +206,7 @@ public class FunctionDialog extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e){
-                cancelButton.setBackground(buttonBackground);
-                dispose();
+                closeDialog();
             }
         });
         getContentPane().add(cancelButton);
@@ -267,7 +283,8 @@ public class FunctionDialog extends JFrame {
     public void closeDialog(){
         okButton.setBackground(buttonBackground);
         cancelButton.setBackground(buttonBackground);
-        dispose();
+        functionInput.setText("");
+        setVisible(false);
     }
 
 

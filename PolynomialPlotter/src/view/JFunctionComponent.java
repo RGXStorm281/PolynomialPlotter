@@ -191,7 +191,6 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
         if (closeCrossPath == null) { // Speichert einen Pfad nach dem ersten berechnen ab (Spart etwas Rechenzeit
                                       // ein)
             closeCrossPath = new GeneralPath();
-            System.out.println("redo path");
             int x1 = (int) (Math.sin(0.25 * Math.PI) * closeButtonRadius * closeButtonCrossLenghtFactor + cardMargins
                     + closeButtonMargin + closeButtonRadius);
             int y1 = (int) (Math.cos(0.25 * Math.PI) * closeButtonRadius * closeButtonCrossLenghtFactor + cardVMargin
@@ -229,9 +228,9 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
      */
     private void paintFunctionString(Graphics2D g2d) {
         g2d.setColor(functionStringColor);
-        g2d.setFont(GUI.getFont(FontFamily.ROBOTO, FontStyle.REGULAR, 20));
+        g2d.setFont(GUI.getFont(FontFamily.INCONSOLATA, FontStyle.ITALIC, 20));
         double height = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), "f").getVisualBounds().getHeight();
-        g2d.drawString(functionString,
+        g2d.drawString(GUI.decorate(functionString),
                 (int) (-cardWidth / 2 + closeButtonRadius * 2 + 2 * circleMargin + circleRadius * 2),
                 (int) (height / 2));
     }

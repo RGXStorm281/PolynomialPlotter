@@ -72,7 +72,7 @@ public class BusinessLogic {
     }
     
     public void addFunction(String function){
-        functionManager.parseAndAddFunction(function);
+    	
     }
     
     public void deleteFunction(){

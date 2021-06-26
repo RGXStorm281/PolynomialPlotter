@@ -17,28 +17,28 @@ public class UniversalFunctionTests {
 		//Arrange
 		UniversalFunction testFunction = new UniversalFunction("2x+1");
 		
-		double start = 0.0;
-		double end = 5.0;
-		double step = 1.0;
+		double[] xValues = new double[] {
+				3.5,
+				-999.842,
+		};		
 		
 		Koordinate[] expectedValues = new Koordinate[] { 
-				new Koordinate(0.0, 1.0), 
-				new Koordinate(1.0, 3.0), 
-				new Koordinate(2.0, 5.0),
-				new Koordinate(3.0, 7.0),
-				new Koordinate(4.0, 9.0),
-				new Koordinate(5.0, 11.0)
+				new Koordinate(3.5, 8.0), 
+				new Koordinate(-999.842, -1998.684)
 				};
 		
 		//Act
-		Koordinate[] returnedValues = testFunction.calculate(start, end, step);		
+		Koordinate[] returnedValues = new Koordinate[] {
+				testFunction.calculate(xValues[0]),
+				testFunction.calculate(xValues[1])	
+		};		
 		
 		//Assert
-		for(Integer i=0; i<returnedValues.length; i++)
-		{
-			Assert.assertEquals("x-Value, position "+ i.toString(), expectedValues[i].getX(), returnedValues[i].getX(), 0.0);
-			Assert.assertEquals("y-Value, position"+ i.toString(), expectedValues[i].getX(), returnedValues[i].getX(), 0.0);
-		}
+		Assert.assertEquals("x-Value, position "+ 0, expectedValues[0].getX(), returnedValues[0].getX(), 0.0);
+		Assert.assertEquals("y-Value, position"+ 0, expectedValues[0].getY(), returnedValues[0].getY(), 0.0);
+		
+		Assert.assertEquals("x-Value, position "+ 1, expectedValues[1].getX(), returnedValues[1].getX(), 0.0);
+		Assert.assertEquals("y-Value, position"+ 1, expectedValues[1].getY(), returnedValues[1].getY(), 0.001);
 	}
 	
 	@Test
@@ -47,39 +47,38 @@ public class UniversalFunctionTests {
 		//Arrange
 		UniversalFunction testFunction = new UniversalFunction("2x^3+1");
 		
-		double start = 0.0;
-		double end = 5.0;
-		double step = 1.0;
-		
+		double[] xValues = new double[] {
+				3.5,
+				-999.842,
+		};		
 
 		Koordinate[] expectedValues = new Koordinate[] { 
-				new Koordinate(0.0, 1.0), 
-				new Koordinate(1.0, 3.0), 
-				new Koordinate(2.0, 17.0),
-				new Koordinate(3.0, 55.0),
-				new Koordinate(4.0, 129.0),
-				new Koordinate(5.0, 251.0)
+				new Koordinate(3.5, 86.75), 
+				new Koordinate(-999.842, -1999052149),
 				};
 		
 		//Act
-		Koordinate[] returnedValues = testFunction.calculate(start, end, step);
+		Koordinate[] returnedValues = new Koordinate[] {
+				testFunction.calculate(xValues[0]),
+				testFunction.calculate(xValues[1])
+		};
 		
 		//Assert
-		for(Integer i=0; i<returnedValues.length; i++)
-		{
-			Assert.assertEquals("x-Value, position "+ i.toString(), expectedValues[i].getX(), returnedValues[i].getX(), 0.0);
-			Assert.assertEquals("y-Value, position"+ i.toString(), expectedValues[i].getX(), returnedValues[i].getX(), 0.0);
-		}
-	}
-	
-	@Test
-	public void calculate_returnNullInsteadOfException()
-	{
-		UniversalFunction testFunction = new UniversalFunction("yxcv�asdf");
-		Object result = testFunction.calculate(0.0, 10.0, 0.1);
+		Assert.assertEquals("x-Value, position "+ 0, expectedValues[0].getX(), returnedValues[0].getX(), 0.0);
+		Assert.assertEquals("y-Value, position"+ 0, expectedValues[0].getY(), returnedValues[0].getY(), 0.0);
 		
-		Assert.assertEquals(null, result);
+		Assert.assertEquals("x-Value, position "+ 1, expectedValues[1].getX(), returnedValues[1].getX(), 0.0);
+		Assert.assertEquals("y-Value, position"+ 1, expectedValues[1].getY(), returnedValues[1].getY(), 1.0);
 	}
+//	
+//	@Test
+//	public void calculate_returnNullInsteadOfException()
+//	{
+//		UniversalFunction testFunction = new UniversalFunction("yxcv�asdf");
+//		Object result = testFunction.calculate(0.0, 10.0, 0.1);
+//		
+//		Assert.assertEquals(null, result);
+//	}
 	
 	//TODO verhalten wenn 1/0 geteilt wird
 }

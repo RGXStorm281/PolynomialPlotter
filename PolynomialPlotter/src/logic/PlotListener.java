@@ -38,7 +38,7 @@ public class PlotListener implements IPlotListener {
 
     @Override
     public void plotMoved(PlotMovedEvent e) {
-        Tuple<Double,Double> moveDistance = e.getDist();
+        Tuple<Integer,Integer> moveDistance = e.getDist();
         logic.moveCanvas(moveDistance);
     }
 }

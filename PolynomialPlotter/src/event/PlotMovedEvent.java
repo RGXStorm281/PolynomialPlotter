@@ -5,7 +5,7 @@ import model.Tuple;
 
 public class PlotMovedEvent extends PlotEvent{
 
-    Tuple<Double,Double> dist;
+    Tuple<Integer,Integer> dist;
     /**
      * Child von PlotEvent, trägt als Extra den Distanz-Vektor mit informationen um wie viele Einheiten der Plot bewegt wurde
      * @param source
@@ -13,7 +13,7 @@ public class PlotMovedEvent extends PlotEvent{
      * @param height
      * @param dist Distanz-Vektor der Bewegung
      */
-    public PlotMovedEvent(Object source, int width, int height, Tuple<Double,Double> dist) {
+    public PlotMovedEvent(Object source, int width, int height, Tuple<Integer,Integer> dist) {
         super(source, width, height);
         this.dist = dist;
     }
@@ -22,7 +22,7 @@ public class PlotMovedEvent extends PlotEvent{
     /** gibt den Distanz-Vektor in Form einer Koordinate zurück
      * @return Koordinate
      */
-    public Tuple<Double,Double> getDist(){
+    public Tuple<Integer,Integer> getDist(){
         return this.dist;
     }
     

@@ -6,7 +6,6 @@
 package logic;
 
 import event.PlotEvent;
-import java.awt.Color;
 import java.awt.Point;
 import startup.Settings;
 import java.util.ArrayList;
@@ -14,6 +13,7 @@ import model.DrawingInformationContainer;
 import model.FunctionInfoContainer;
 import model.IFunction;
 import model.Tuple;
+import model.Utils;
 import view.IGUI;
 
 /**
@@ -22,9 +22,9 @@ import view.IGUI;
  */
 public class BusinessLogic {
     
-    private IGUI gui;
-    private FunctionManager functionManager;
-    private Settings settings;
+    private final IGUI gui;
+    private final FunctionManager functionManager;
+    private final Settings settings;
     
     private double positionX;
     private double positionY;
@@ -32,7 +32,6 @@ public class BusinessLogic {
     private double intervallSizeY;
     private double step;
     
-    private Point mousePoint;
     private int cachedCanvasHeight;
     private int cachedCanvasWidth;
 
@@ -80,23 +79,15 @@ public class BusinessLogic {
         
     }
     
-    public void setMousePoint(Point mousePoint){
-        this.mousePoint = mousePoint;
-    }
-    
-    public Point getMousePoint(){
-        return mousePoint;
-    }
-    
     /**
-     * Bewegt die Position des sichtbaren Intervalls und zeichnet neu.
-     * Achtung: X und Y werden positiv addiert. Wenn mit der Maus "gezogen" wird, dann muss hier der Gegenvektor zum "Ziehen" mitgegeben werden.
-     * @param dx Die X-Komponente des Verschiebungsvektors.
-     * @param dy Die Y-Komponente des Verschiebungsvektors.
+     * Bewegt die Position des sichtbaren Intervalls und zeichnet neu.Achtung: X und Y werden positiv addiert.Wenn mit der Maus "gezogen" wird, dann muss hier der Gegenvektor zum "Ziehen" mitgegeben werden.
+     * @param distance Die Distanz in Pixeln, um die das Feld bewegt werden soll.
      */
-    public void moveCanvas(Tuple<Double,Double> dist){
-        positionX += dist.getItem1();
-        positionY += dist.getItem2();
+    public void moveCanvas(Tuple<Integer,Integer> distance){
+        double moveX = Utils.mapToInterval(distance.getItem1(), 0, cachedCanvasWidth, 0, intervallSizeX);
+        double moveY = Utils.mapToInterval(distance.getItem2(), 0, cachedCanvasHeight, 0, intervallSizeY);
+        positionX += moveX;
+        positionY += moveY;
         debugPosition();
         
         calculateAndDraw();
@@ -104,6 +95,7 @@ public class BusinessLogic {
     
     /**
      * Aktualisiert die Intervallgröße zur Anpassung an die Fenstergröße und zeichnet neu.
+     * @param e Das Event, das die Plot Informationen enthält.
      */
     public void resize(PlotEvent e){
         var newCanvasWidth = e.getPlotWidth();

@@ -26,6 +26,8 @@ public class Settings {
     public final double INITIAL_ZOOM;
     public final double MIN_ZOOM;
     public final double MAX_ZOOM;
+    public final float STANDARD_ZOOM_SCALE;
+    public final float INCREASED_ZOOM_SCALE;
     public final int CALCULATE_EVERY_X_PIXELS;
 
     public Settings(String path) throws FileNotFoundException, IOException {
@@ -40,6 +42,8 @@ public class Settings {
             this.INITIAL_ZOOM = Double.parseDouble(propertiesFile.getProperty("initialZoom"));
             this.MIN_ZOOM = Double.parseDouble(propertiesFile.getProperty("minZoom"));
             this.MAX_ZOOM = Double.parseDouble(propertiesFile.getProperty("maxZoom"));
+            this.STANDARD_ZOOM_SCALE = Float.parseFloat(propertiesFile.getProperty("standardZoomScale"));
+            this.INCREASED_ZOOM_SCALE = Float.parseFloat(propertiesFile.getProperty("increasedZoomScale"));
             this.CALCULATE_EVERY_X_PIXELS = Integer.parseInt(propertiesFile.getProperty("calculateEveryXPixels"));
     }
 

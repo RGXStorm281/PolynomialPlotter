@@ -54,7 +54,7 @@ public class JPlotter extends JPanel {
         this.SPACING = settings.INITIAL_PIXEL_TO_UNIT_RATIO;
         addMouseWheelListener(new MouseWheelListener() {
             public void mouseWheelMoved(MouseWheelEvent e) {
-                float dZoom = e.isControlDown() ? 0.1f : 0.05f;
+                float dZoom = e.isControlDown() ? settings.INCREASED_ZOOM_SCALE : settings.STANDARD_ZOOM_SCALE;
                 dZoom*=e.getWheelRotation();
                 for(IPlotListener listener: plotListeners)listener.plotZoomed(new PlotZoomedEvent(e.getSource(), getWidth(), getHeight(), dZoom));
             }
@@ -73,10 +73,10 @@ public class JPlotter extends JPanel {
             @Override
             public void mouseDragged(MouseEvent e) {
                 // Differenz zwischen der momentanten und letzten Maus-Position
-                double dx = e.getX() - mousePt.x;
-                double dy = e.getY() - mousePt.y;
+                int dx = e.getX() - mousePt.x;
+                int dy = e.getY() - mousePt.y;
                 // Ändere den Ursprung, basierend auf dx,dy
-                for(IPlotListener listener: plotListeners)listener.plotMoved(new PlotMovedEvent(e.getSource(), getWidth(), getHeight(), new Tuple<Double,Double>(dx,dy)));
+                for(IPlotListener listener: plotListeners)listener.plotMoved(new PlotMovedEvent(e.getSource(), getWidth(), getHeight(), new Tuple<>(dx,dy)));
                 mousePt = e.getPoint();
                 repaint();
             }

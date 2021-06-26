@@ -18,19 +18,13 @@ public class UniversalFunction implements IFunction {
 	 * @return Koordinaten-Array mit allen Werten im Zielbereich (x-Koordinate, y-Koordinate)
 	 */	
 	@Override
-	public Koordinate[] calculate(double start, double end, double step) {
-		int valueCounter = (int) ((end - start) / step);
-		Koordinate[] tableOfValues = new Koordinate[valueCounter+1];
+	public Koordinate calculate(double xValue) {
 		
 		try {
-			for(Integer i = 0; i <= valueCounter; i++) {
-	                    double currentX = start + (step*i);
-	                    String temp = functionalTerm.replace("x", "("+ currentX +")");
-	                    Expression functionExpression = new ExpressionBuilder(temp).build();
-	                    tableOfValues[i] = new Koordinate(currentX,functionExpression.evaluate());
-			}
-			
-			return tableOfValues;
+			String temp = functionalTerm.replace("x", "("+ xValue +")");
+			Expression functionExpression = new ExpressionBuilder(temp).build();
+			Koordinate koordinate = new Koordinate(xValue,functionExpression.evaluate());
+			return koordinate;
 		}
 		catch(UnknownFunctionOrVariableException e)
 		{

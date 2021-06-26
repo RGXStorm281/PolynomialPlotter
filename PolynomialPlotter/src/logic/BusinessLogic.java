@@ -155,8 +155,8 @@ public class BusinessLogic {
         FunctionInfoContainer[] functionInfo = new FunctionInfoContainer[numberOfFunctions];
         for(int i = 0; i < numberOfFunctions; i++){
             var currentFunction = functions.get(i);
-            var functionValues = currentFunction.calculate(intervallStart, intervallEnd, step);
-            functionInfo[i] = new FunctionInfoContainer(currentFunction, functionValues);
+//            var functionValues = currentFunction.calculate(intervallStart, intervallEnd, step);
+//            functionInfo[i] = new FunctionInfoContainer(currentFunction, functionValues);
         }
         
         var drawingInformation = new DrawingInformationContainer(functionInfo, intervallStart, intervallEnd, step);

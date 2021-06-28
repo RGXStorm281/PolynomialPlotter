@@ -52,7 +52,7 @@ public class GUI extends JFrame implements IGUI {
 
         // Split up in 2 Panes
         sidebar_panel = new Sidebar(styleClass);
-        plotter_panel = new JPlotter(this.settings);
+        plotter_panel = new JPlotter(this.settings,styleClass);
         sidebar_panel.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {

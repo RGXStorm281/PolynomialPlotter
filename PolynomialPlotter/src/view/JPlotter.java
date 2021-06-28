@@ -47,15 +47,21 @@ public class JPlotter extends JPanel {
     private Point origin; // Point to keep track of the origin point (Used for dragging the screen)
     private Point mousePt; // Point to keep track of the last mouse-position
     private Settings settings;
+
+    private int subGrid;
+
+    private Color gridColor;
     // Temporäre Vars
 
     private DrawingInformationContainer drawingInformation;
 
-    public JPlotter(Settings settings) {
+    public JPlotter(Settings settings, StyleClass styleClass) {
         // Scroll-Listener --> Zoom
         this.settings = settings;
         this.zoom = settings.INITIAL_ZOOM;
         this.SPACING = settings.INITIAL_PIXEL_TO_UNIT_RATIO;
+        this.subGrid = settings.SUB_SQUARE_GRID;
+        this.gridColor = styleClass.GIRD_COLOR;
         addMouseWheelListener(new MouseWheelListener() {
             public void mouseWheelMoved(MouseWheelEvent e) {
                 float dZoom = e.isControlDown() ? 0.1f : 0.05f;
@@ -417,15 +423,30 @@ public class JPlotter extends JPanel {
      * @param g2d Graphics2D context
      */
     public void drawGrid(Graphics2D g2d) {
+        g2d.setPaint(this.gridColor);
         Tuple<Double,Double> intervallYTuple = drawingInformation.getIntervallY();
         Tuple<Double,Double> intervallXTuple = drawingInformation.getIntervallX();
+        Tuple<Integer,Integer> heightIntervall = new Tuple<Integer,Integer>(0, getHeight());
+        Tuple<Integer,Integer> widthIntervall = new Tuple<Integer,Integer>(0, getWidth());
+        int xSubStep = (int) Math.round(getWidth()/Math.abs(intervallXTuple.getItem2()-intervallXTuple.getItem1())/subGrid);
+        int ySubStep = (int) Math.round(getHeight()/Math.abs(intervallYTuple.getItem2()-intervallYTuple.getItem1())/subGrid);
         for(int i = (int)(intervallYTuple.getItem1()-intervallYTuple.getItem1()%1);i<intervallYTuple.getItem2();i++){
-            int y = (int) Utils.mapToInterval(i, intervallYTuple,new Tuple<Integer,Integer>(0,getHeight()));
+            g2d.setStroke(new BasicStroke(2f));
+            int y = (int) Utils.mapToInterval(i, intervallYTuple,heightIntervall);
             g2d.drawLine(0, y, getWidth(),y );
+            g2d.setStroke(new BasicStroke(1f));
+            for(int j = 0;j<subGrid;j++){
+                g2d.drawLine(0, (int)(y+ySubStep*j), getWidth(),(int)(y+ySubStep*j) );
+            }
         }
         for(int i = (int)(intervallXTuple.getItem1()-intervallXTuple.getItem1()%1);i<intervallXTuple.getItem2();i++){
-            int x = (int) Utils.mapToInterval(i, intervallXTuple,new Tuple<Integer,Integer>(0,getWidth()));
+            g2d.setStroke(new BasicStroke(2f));
+            int x = (int) Utils.mapToInterval(i, intervallXTuple,widthIntervall);
             g2d.drawLine(x,0,x,getHeight());
+            g2d.setStroke(new BasicStroke(1f));
+            for(int j = 0;j<subGrid;j++){
+                g2d.drawLine((int)(x+xSubStep*j),0,(int)(x+xSubStep*j),getHeight());
+            }
         }
 
         

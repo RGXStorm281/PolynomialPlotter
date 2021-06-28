@@ -24,6 +24,7 @@ public class StyleClass {
     public Color FUNCTION_CARD_EDIT_BUTTON_BG;
     public Color BUTTON_BG;
     public Color BUTTON_FG;
+    public Color GIRD_COLOR;
 
     private String currentPath;
 
@@ -46,6 +47,7 @@ public class StyleClass {
         this.BUTTON_FG = Color.decode(propertiesFile.getProperty("button-color"));
         this.DIALOG_BG = Color.decode(propertiesFile.getProperty("dialog-background"));
         this.DIALOG_FG = Color.decode(propertiesFile.getProperty("dialog-color"));
+        this.GIRD_COLOR = Color.LIGHT_GRAY;
 
     }
 

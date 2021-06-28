@@ -1,6 +1,7 @@
 package view;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.MouseWheelEvent;
@@ -77,16 +78,31 @@ public class JPlotter extends JPanel {
                 repaint();
                 requestFocus();
             }
+
+           
+            @Override
+            public void mouseExited(MouseEvent e) {
+                setCursor(Cursor.getDefaultCursor());
+            }
+
         });
         // MouseMotionListener für die Drag-Funktionalität
         addMouseMotionListener(new MouseMotionAdapter() {
+
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
+            }
+
+
             @Override
             public void mouseDragged(MouseEvent e) {
+                setCursor(new Cursor(Cursor.MOVE_CURSOR));
                 // Differenz zwischen der momentanten und letzten Maus-Position
                 int dx = mousePt.x - e.getX();
                 int dy = mousePt.y - e.getY();
                 // Ändere den Ursprung, basierend auf dx,dy
-                for(IPlotListener listener: plotListeners)listener.plotMoved(new PlotMovedEvent(e.getSource(), getWidth(), getHeight(), new Tuple<Integer,Integer>(dx,-dy)));
+                for(IPlotListener listener: plotListeners)listener.plotMoved(new PlotMovedEvent(e.getSource(), getWidth(), getHeight(), new Tuple<Integer,Integer>(dx,dy)));
                 mousePt = e.getPoint();
                 repaint();
             }

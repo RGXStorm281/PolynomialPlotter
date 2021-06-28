@@ -446,7 +446,7 @@ public class JPlotter extends JPanel {
         Tuple<Integer,Integer> widthIntervall = new Tuple<Integer,Integer>(0, getWidth());
         int xSubStep = (int) Math.round(getWidth()/Math.abs(intervallXTuple.getItem2()-intervallXTuple.getItem1())/subGrid);
         int ySubStep = (int) Math.round(getHeight()/Math.abs(intervallYTuple.getItem2()-intervallYTuple.getItem1())/subGrid);
-        for(int i = (int)(intervallYTuple.getItem1()-intervallYTuple.getItem1()%1);i<intervallYTuple.getItem2();i++){
+        for(int i = (int)(intervallYTuple.getItem1()-intervallYTuple.getItem1()%1)-1;i<intervallYTuple.getItem2()+1;i++){
             g2d.setStroke(new BasicStroke(2f));
             int y = (int) Utils.mapToInterval(i, intervallYTuple,heightIntervall);
             g2d.drawLine(0, y, getWidth(),y );
@@ -455,7 +455,7 @@ public class JPlotter extends JPanel {
                 g2d.drawLine(0, (int)(y+ySubStep*j), getWidth(),(int)(y+ySubStep*j) );
             }
         }
-        for(int i = (int)(intervallXTuple.getItem1()-intervallXTuple.getItem1()%1);i<intervallXTuple.getItem2();i++){
+        for(int i = (int)(intervallXTuple.getItem1()-intervallXTuple.getItem1()%1)-1;i<intervallXTuple.getItem2()+1;i++){
             g2d.setStroke(new BasicStroke(2f));
             int x = (int) Utils.mapToInterval(i, intervallXTuple,widthIntervall);
             g2d.drawLine(x,0,x,getHeight());

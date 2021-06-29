@@ -25,10 +25,12 @@ import view.GUI.FontStyle;
 public class JCustomMenuBar extends JMenuBar{
     private GUI gui;
     private StyleClass styleClass;
+    private ThemeDialog themeDialog;
 
     private MouseAdapter ml;
 
     public JCustomMenuBar(GUI gui, StyleClass styleClass){
+        themeDialog = new ThemeDialog(gui,styleClass);
         setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
         this.gui = gui;
         this.styleClass = styleClass;
@@ -39,6 +41,12 @@ public class JCustomMenuBar extends JMenuBar{
         JMenu menu_edit = new JMenu("Bearbeiten");
         menu_edit.setMnemonic('E');
         JMenuItem item_theme = new JMenuItem("Design");
+        item_theme.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                themeDialog.setVisible(true);
+            }
+        });
         JMenuItem item_refresh = new JMenuItem("Aktualisieren");
         item_refresh.addActionListener(new ActionListener(){
             @Override
@@ -54,6 +62,7 @@ public class JCustomMenuBar extends JMenuBar{
     }
 
     public  void recolor() { 
+        themeDialog.recolor();
         Font font = GUI.getFont(FontFamily.ROBOTO, FontStyle.REGULAR, 15);
         for(Component c: getComponents()){
             if(c instanceof JMenu){

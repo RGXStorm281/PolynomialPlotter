@@ -164,7 +164,6 @@ public class FunctionDialog extends JFrame {
         });
         getContentPane().add(okButton);
         cancelButton = new JButton("Cancel");
-        cancelButton.setBounds(365, 25, 89, 33);
         cancelButton.setBackground(buttonBackground);
         cancelButton.setForeground(buttonForeground);
         cancelButton.setBorder(BorderFactory.createLineBorder(buttonBackground));
@@ -353,6 +352,7 @@ public class FunctionDialog extends JFrame {
         functionInput.setBorder(BorderFactory.createCompoundBorder(
             functionInput.getBorder(),BorderFactory.createMatteBorder(0, 0, 1, 0, this.styleClass.DIALOG_FG)
         ));
+        getContentPane().setBackground(styleClass.DIALOG_BG);
         revalidate();
         repaint();
     }

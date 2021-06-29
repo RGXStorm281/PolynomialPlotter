@@ -89,20 +89,16 @@ public class GUI extends JFrame implements IGUI {
 
     public void updateTheme() {
         styleClass.update();
-        menubar.revalidate();
-        menubar.repaint();
+        menubar.recolor();
         sidebar_panel.recolor();
         plotter_panel.recolor();
     }
     
     public void changeTheme(String newPath) {
-        try {
-            this.styleClass = new StyleClass(newPath);
-            sidebar_panel.recolor();
-            plotter_panel.recolor();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        styleClass.change("src/view/themes/"+newPath+".properties");
+        menubar.recolor();
+        sidebar_panel.recolor();
+        plotter_panel.recolor();
     }
 
     public void start() {

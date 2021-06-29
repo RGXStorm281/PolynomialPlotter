@@ -43,7 +43,7 @@ public class GUI extends JFrame implements IGUI {
     public GUI(Settings settings) throws FileNotFoundException, IOException {
         super();
         this.settings = settings;
-        this.styleClass = new StyleClass("src/view/dcdark.properties");
+        this.styleClass = new StyleClass("src/view/spot.properties");
         // Add custom icon
         URL iconURL = getClass().getResource("../data/icon.png");
         ImageIcon icon = new ImageIcon(iconURL);
@@ -75,12 +75,14 @@ public class GUI extends JFrame implements IGUI {
     public void updateTheme() {
         styleClass.update();
         sidebar_panel.recolor();
+        plotter_panel.recolor();
     }
-
+    
     public void changeTheme(String newPath) {
         try {
             this.styleClass = new StyleClass(newPath);
             sidebar_panel.recolor();
+            plotter_panel.recolor();
         } catch (IOException e) {
             e.printStackTrace();
         }

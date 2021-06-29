@@ -25,6 +25,8 @@ public class StyleClass {
     public Color BUTTON_BG;
     public Color BUTTON_FG;
     public Color GIRD_COLOR;
+    public Color PLOT_BG;
+    public Color PLOT_FG;
 
     private String currentPath;
 
@@ -47,7 +49,9 @@ public class StyleClass {
         this.BUTTON_FG = Color.decode(propertiesFile.getProperty("button-color"));
         this.DIALOG_BG = Color.decode(propertiesFile.getProperty("dialog-background"));
         this.DIALOG_FG = Color.decode(propertiesFile.getProperty("dialog-color"));
-        this.GIRD_COLOR = Color.LIGHT_GRAY;
+        this.GIRD_COLOR = Color.decode(propertiesFile.getProperty("grid-color"));
+        this.PLOT_FG = Color.decode(propertiesFile.getProperty("plot-color"));
+        this.PLOT_BG = Color.decode(propertiesFile.getProperty("plot-background"));
 
     }
 
@@ -77,6 +81,9 @@ public class StyleClass {
         this.BUTTON_FG = Color.decode(propertiesFile.getProperty("button-color"));
         this.DIALOG_BG = Color.decode(propertiesFile.getProperty("dialog-background"));
         this.DIALOG_FG = Color.decode(propertiesFile.getProperty("dialog-color"));
+        this.GIRD_COLOR = Color.decode(propertiesFile.getProperty("grid-color"));
+        this.PLOT_FG = Color.decode(propertiesFile.getProperty("plot-color"));
+        this.PLOT_BG = Color.decode(propertiesFile.getProperty("plot-background"));
     }
     
 }

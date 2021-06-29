@@ -50,6 +50,12 @@ public class JPlotter extends JPanel {
     private float squareScale = 2;
     private int xAxisValueYOffset = 10;
     private int yAxisValueXOffset = 10;
+    private float smallSquareStrokeWidth = 0.5f;
+    private float bigSquareStrokeWidth = 2f;
+    private float axisStrokeWidth = 3f;
+    private Color plotBackground;
+    private Color plotForeground;
+    private StyleClass styleClass;
 
     private List<IPlotListener> plotListeners = new ArrayList<IPlotListener>();
     private Point origin; // Point to keep track of the origin point (Used for dragging the screen)
@@ -64,12 +70,15 @@ public class JPlotter extends JPanel {
     private DrawingInformationContainer drawingInformation;
 
     public JPlotter(Settings settings, StyleClass styleClass) {
+        this.styleClass = styleClass;
         // Scroll-Listener --> Zoom
         this.settings = settings;
         this.zoom = settings.INITIAL_ZOOM;
         this.SPACING = settings.INITIAL_PIXEL_TO_UNIT_RATIO;
         this.subGrid = settings.SUB_SQUARE_GRID;
+        this.plotBackground = styleClass.PLOT_BG;
         this.gridColor = styleClass.GIRD_COLOR;
+        this.plotForeground = styleClass.PLOT_FG;
         addMouseWheelListener(new MouseWheelListener() {
             public void mouseWheelMoved(MouseWheelEvent e) {
                 float dZoom = e.isControlDown() ? 0.1f : 0.05f;
@@ -191,7 +200,7 @@ public class JPlotter extends JPanel {
         // Antialiasing für bessere Diagonalen
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         // Hintergrund-Füllung
-        g2d.setColor(Color.WHITE);
+        g2d.setColor(this.plotBackground);
         g2d.fillRect(0, 0, getWidth(), getHeight());
 
         // g2d.translate((double) origin.x, (double) origin.y); // View abhängig vom Ursprung translaten, wichtig für die
@@ -214,6 +223,7 @@ public class JPlotter extends JPanel {
         Tuple<Integer,Integer> heightInterval = new Tuple<Integer,Integer>(0, getHeight());
         Tuple<Integer,Integer> widthInterval = new Tuple<Integer,Integer>(0, getWidth());
         Font font = GUI.getFont(FontFamily.ROBOTO, FontStyle.REGULAR, 15);
+        g2d.setPaint(plotForeground);
         g2d.setFont(font);
         int stringHeight = (int) font.createGlyphVector(g2d.getFontRenderContext(), "1").getVisualBounds().getHeight();
         int xAxis = Utils.clampToDimensions(Utils.mapToInterval(0, yInterval, heightInterval),heightInterval);
@@ -280,8 +290,8 @@ public class JPlotter extends JPanel {
         Tuple<Double,Double> yInterval = drawingInformation.getIntervallY();
         Tuple<Integer,Integer> heightInterval = new Tuple<Integer,Integer>(0, getHeight());
         Tuple<Integer,Integer> widthInterval = new Tuple<Integer,Integer>(0, getWidth());
-        g2d.setPaint(Color.BLACK);
-        g2d.setStroke(new BasicStroke(3f));
+        g2d.setPaint(plotForeground);
+        g2d.setStroke(new BasicStroke(axisStrokeWidth));
         if(xInterval.getItem1()<=0 && xInterval.getItem2() >=0){
             int x = (int)Utils.mapToInterval(0, xInterval, widthInterval);
             g2d.drawLine(x, 0, x, heightInterval.getItem2());
@@ -318,19 +328,19 @@ public class JPlotter extends JPanel {
         int xSubStep = (int) Math.round(getWidth()/Math.abs(intervallXTuple.getItem2()-intervallXTuple.getItem1())/subGrid*squareScale);
         int ySubStep = (int) Math.round(getHeight()/Math.abs(intervallYTuple.getItem2()-intervallYTuple.getItem1())/subGrid*squareScale);
         for(double i = (intervallYTuple.getItem1()-intervallYTuple.getItem1()%squareScale-squareScale);i<intervallYTuple.getItem2()+squareScale;i+=squareScale){
-            g2d.setStroke(new BasicStroke(2f));
+            g2d.setStroke(new BasicStroke(bigSquareStrokeWidth));
             int y = (int) Utils.mapToInterval(i, intervallYTuple,heightInterval);
             g2d.drawLine(0, y, getWidth(),y );
-            g2d.setStroke(new BasicStroke(1f));
+            g2d.setStroke(new BasicStroke(smallSquareStrokeWidth));
             for(int j = 0;j<subGrid;j++){
                 g2d.drawLine(0, (int)(y+ySubStep*j), getWidth(),(int)(y+ySubStep*j) );
             }
         }
         for(double i = (intervallXTuple.getItem1()-intervallXTuple.getItem1()%squareScale-squareScale);i<intervallXTuple.getItem2()+squareScale;i+=squareScale){
-            g2d.setStroke(new BasicStroke(2f));
+            g2d.setStroke(new BasicStroke(bigSquareStrokeWidth));
             int x = (int) Utils.mapToInterval(i, intervallXTuple,widthInterval);
             g2d.drawLine(x,0,x,getHeight());
-            g2d.setStroke(new BasicStroke(1f));
+            g2d.setStroke(new BasicStroke(smallSquareStrokeWidth));
             for(int j = 0;j<subGrid;j++){
                 g2d.drawLine((int)(x+xSubStep*j),0,(int)(x+xSubStep*j),getHeight());
             }
@@ -406,5 +416,12 @@ public class JPlotter extends JPanel {
      */
     public void addPlotListener(IPlotListener plotListener) {
         plotListeners.add(plotListener);
+    }
+
+    public void recolor() {
+        this.plotBackground = styleClass.PLOT_BG;
+        this.gridColor = styleClass.GIRD_COLOR;
+        this.plotForeground = styleClass.PLOT_FG;
+        repaint();
     }
 }

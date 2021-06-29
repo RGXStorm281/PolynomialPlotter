@@ -1,8 +1,11 @@
 package view;
 
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Properties;
 import java.awt.Color;
 
@@ -31,13 +34,15 @@ public class StyleClass {
     public Color MENU_BG_SELECTION;
     public Color MENU_FG_SELECTION;
 
-    private String currentPath;
+    private String currTheme;
     public Color MENU_ACCEL;
 
     public StyleClass(String path) throws FileNotFoundException, IOException {
-        currentPath = path;
+        currTheme = path;
         Properties propertiesFile = new Properties();
-        propertiesFile.load(new FileReader(path));
+        InputStream in = getClass().getResourceAsStream("themes/"+currTheme+".properties"); 
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+        propertiesFile.load(reader);
         this.SIDEBAR_BG_COLOR = Color.decode(propertiesFile.getProperty("sidebar-background-color"));
         this.HEADING_BG_COLOR = Color.decode(propertiesFile.getProperty("heading-background-color"));
         this.SIDEBAR_ADD_BUTTON_BG = Color.decode(propertiesFile.getProperty("add-button-bg"));
@@ -68,15 +73,19 @@ public class StyleClass {
     }
     
     public void change(String newPath) {
-        currentPath = newPath;
+        currTheme = newPath;
         update();
     }
     
     public void update() {
         Properties propertiesFile = new Properties();
+        System.out.println(currTheme);
+        InputStream in = getClass().getResourceAsStream("themes/"+currTheme+".properties"); 
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         try {
-            propertiesFile.load(new FileReader(currentPath));
+            propertiesFile.load(reader);
         } catch (IOException e) {
+            e.printStackTrace();
         }
         this.SIDEBAR_BG_COLOR = Color.decode(propertiesFile.getProperty("sidebar-background-color"));
         this.HEADING_BG_COLOR = Color.decode(propertiesFile.getProperty("heading-background-color"));

@@ -5,9 +5,12 @@
  */
 package startup;
 
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Properties;
 
 /**
@@ -32,7 +35,8 @@ public class Settings {
     
     public Settings(String path) throws FileNotFoundException, IOException {
         Properties propertiesFile = new Properties();
-        propertiesFile.load(new FileReader(path));
+        InputStream in = (getClass().getResourceAsStream(path));
+        propertiesFile.load(new BufferedReader(new InputStreamReader(in)));
         this.INITIAL_PLOT_WIDTH = Integer.parseInt(propertiesFile.getProperty("initialPlotWidth"));
         this.INITIAL_PLOT_HEIGHT = Integer.parseInt(propertiesFile.getProperty("initialPlotHeight"));
         this.INITIAL_PIXEL_TO_UNIT_RATIO = Integer.parseInt(propertiesFile.getProperty("pixelToUnitRatio"));

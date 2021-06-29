@@ -28,6 +28,7 @@ public class Settings {
     public final double MAX_ZOOM;
     public final int CALCULATE_EVERY_X_PIXELS;
     public final int SUB_SQUARE_GRID;
+    public final String THEME;
     
     public Settings(String path) throws FileNotFoundException, IOException {
         Properties propertiesFile = new Properties();
@@ -43,6 +44,10 @@ public class Settings {
         this.MAX_ZOOM = Double.parseDouble(propertiesFile.getProperty("maxZoom"));
         this.CALCULATE_EVERY_X_PIXELS = Integer.parseInt(propertiesFile.getProperty("calculateEveryXPixels"));
         this.SUB_SQUARE_GRID = Integer.parseInt(propertiesFile.getProperty("subSquareGrid"));
+   
+   
+        
+        this.THEME = propertiesFile.getProperty("theme");
     }
 
     

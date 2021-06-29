@@ -14,6 +14,7 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.UIManager;
 
 import model.DrawingInformationContainer;
 import startup.Settings;
@@ -39,11 +40,24 @@ public class GUI extends JFrame implements IGUI {
 
     private final Settings settings;
     private StyleClass styleClass;
+    private JCustomMenuBar menubar;
 
     public GUI(Settings settings) throws FileNotFoundException, IOException {
         super();
+        
         this.settings = settings;
-        this.styleClass = new StyleClass("src/view/spot.properties");
+        this.styleClass = new StyleClass("src/view/themes/"+settings.THEME+".properties");
+        UIManager.put("MenuItem.selectionBackground", styleClass.MENU_BG_SELECTION);
+		UIManager.put("MenuItem.selectionForeground", styleClass.MENU_FG_SELECTION);
+		UIManager.put("Menu.selectionBackground", styleClass.MENU_BG_SELECTION);
+		UIManager.put("Menu.selectionForeground", styleClass.MENU_FG_SELECTION);
+        UIManager.put("MenuItem.background", styleClass.MENU_BG);
+		UIManager.put("MenuItem.foreground", styleClass.MENU_FG);
+		UIManager.put("Menu.background", styleClass.MENU_BG);
+		UIManager.put("Menu.foreground", styleClass.MENU_FG);
+		UIManager.put("MenuBar.background", styleClass.MENU_BG);
+		UIManager.put("MenuBar.foreground", styleClass.MENU_FG);
+		UIManager.put("MenuItem.acceleratorForeground", styleClass.MENU_ACCEL);
         // Add custom icon
         URL iconURL = getClass().getResource("../data/icon.png");
         ImageIcon icon = new ImageIcon(iconURL);
@@ -61,7 +75,8 @@ public class GUI extends JFrame implements IGUI {
                 }
             }
         });
-        getContentPane().add(new JCustomMenuBar(), BorderLayout.NORTH);
+        menubar = new JCustomMenuBar(this,styleClass);
+        getContentPane().add(menubar, BorderLayout.NORTH);
         getContentPane().add(sidebar_panel, BorderLayout.WEST);
         getContentPane().add(plotter_panel, BorderLayout.CENTER);
         pack();
@@ -74,6 +89,8 @@ public class GUI extends JFrame implements IGUI {
 
     public void updateTheme() {
         styleClass.update();
+        menubar.revalidate();
+        menubar.repaint();
         sidebar_panel.recolor();
         plotter_panel.recolor();
     }

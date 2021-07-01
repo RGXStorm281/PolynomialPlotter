@@ -5,9 +5,12 @@
  */
 package startup;
 
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Properties;
 
 /**
@@ -16,10 +19,12 @@ import java.util.Properties;
  */
 public class Settings {
     
-    // Dimensionen.
+    // Plot.
     public final int INITIAL_PLOT_WIDTH;
     public final int INITIAL_PLOT_HEIGHT;
     public final int INITIAL_PIXEL_TO_UNIT_RATIO;
+    public final int SUB_SQUARE_GRID;
+    public final String THEME;
     
     // Standardposition.
     public final int INITIAL_ORIGIN_X;
@@ -37,24 +42,26 @@ public class Settings {
     public final int CORE_THREADPOOL_SIZE;
 
     public Settings(String path) throws FileNotFoundException, IOException {
-            Properties propertiesFile = new Properties();
-            propertiesFile.load(new FileReader(path));
-            
-            this.INITIAL_PLOT_WIDTH = Integer.parseInt(propertiesFile.getProperty("initialPlotWidth"));
-            this.INITIAL_PLOT_HEIGHT = Integer.parseInt(propertiesFile.getProperty("initialPlotHeight"));
-            this.INITIAL_PIXEL_TO_UNIT_RATIO = Integer.parseInt(propertiesFile.getProperty("pixelToUnitRatio"));
-            
-            this.INITIAL_ORIGIN_X = Integer.parseInt(propertiesFile.getProperty("initialOriginX"));
-            this.INITIAL_ORIGIN_Y= Integer.parseInt(propertiesFile.getProperty("initialOriginY"));
+        Properties propertiesFile = new Properties();
+        propertiesFile.load(new FileReader(path));
 
-            this.INITIAL_ZOOM = Double.parseDouble(propertiesFile.getProperty("initialZoom"));
-            this.MIN_ZOOM = Double.parseDouble(propertiesFile.getProperty("minZoom"));
-            this.MAX_ZOOM = Double.parseDouble(propertiesFile.getProperty("maxZoom"));
-            this.STANDARD_ZOOM_SCALE = Float.parseFloat(propertiesFile.getProperty("standardZoomScale"));
-            this.INCREASED_ZOOM_SCALE = Float.parseFloat(propertiesFile.getProperty("increasedZoomScale"));
-            
-            this.CALCULATE_EVERY_X_PIXELS = Integer.parseInt(propertiesFile.getProperty("calculateEveryXPixels"));
-            this.CORE_THREADPOOL_SIZE = Integer.parseInt(propertiesFile.getProperty("coreThreadpoolSize"));
+        this.INITIAL_PLOT_WIDTH = Integer.parseInt(propertiesFile.getProperty("initialPlotWidth"));
+        this.INITIAL_PLOT_HEIGHT = Integer.parseInt(propertiesFile.getProperty("initialPlotHeight"));
+        this.INITIAL_PIXEL_TO_UNIT_RATIO = Integer.parseInt(propertiesFile.getProperty("pixelToUnitRatio"));
+        this.SUB_SQUARE_GRID = Integer.parseInt(propertiesFile.getProperty("subSquareGrid"));
+        this.THEME = propertiesFile.getProperty("theme");
+
+        this.INITIAL_ORIGIN_X = Integer.parseInt(propertiesFile.getProperty("initialOriginX"));
+        this.INITIAL_ORIGIN_Y= Integer.parseInt(propertiesFile.getProperty("initialOriginY"));
+
+        this.INITIAL_ZOOM = Double.parseDouble(propertiesFile.getProperty("initialZoom"));
+        this.MIN_ZOOM = Double.parseDouble(propertiesFile.getProperty("minZoom"));
+        this.MAX_ZOOM = Double.parseDouble(propertiesFile.getProperty("maxZoom"));
+        this.STANDARD_ZOOM_SCALE = Float.parseFloat(propertiesFile.getProperty("standardZoomScale"));
+        this.INCREASED_ZOOM_SCALE = Float.parseFloat(propertiesFile.getProperty("increasedZoomScale"));
+
+        this.CALCULATE_EVERY_X_PIXELS = Integer.parseInt(propertiesFile.getProperty("calculateEveryXPixels"));
+        this.CORE_THREADPOOL_SIZE = Integer.parseInt(propertiesFile.getProperty("coreThreadpoolSize"));
     }
 
     

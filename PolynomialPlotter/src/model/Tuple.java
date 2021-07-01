@@ -35,4 +35,9 @@ public class Tuple<Type1,Type2> {
     public void setItem2(Type2 item2) {
         this.item2 = item2;
     }
+
+    @Override
+    public String toString() {
+        return "mode.Tuple[item1:"+this.item1+",item2:"+this.item2+"]";
+    }
 }

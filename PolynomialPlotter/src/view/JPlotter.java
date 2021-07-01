@@ -1,7 +1,9 @@
 package view;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -22,39 +24,64 @@ import model.FunctionInfoContainer;
 import model.IFunction;
 import model.Koordinate;
 import startup.Settings;
+import view.GUI.FontFamily;
+import view.GUI.FontStyle;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.BasicStroke;
 import java.awt.Point;
 import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 import java.util.List;
 import event.IPlotListener;
 import model.Tuple;
+import model.Utils;
+
+/**
+ * @author raphaelsack
+ */
 
 public class JPlotter extends JPanel {
 
     private double zoom; // Global zoomlevel
 
     private final float SPACING; // Hardcoded Space-unit, |spacing| pixels = 1 numerical unit
-
+    private float squareScale = 2;
+    private int xAxisValueYOffset = 10;
+    private int yAxisValueXOffset = 10;
+    private float smallSquareStrokeWidth = 0.5f;
+    private float bigSquareStrokeWidth = 2f;
+    private float axisStrokeWidth = 3f;
+    private Color plotBackground;
+    private Color plotForeground;
+    private StyleClass styleClass;
 
     private List<IPlotListener> plotListeners = new ArrayList<IPlotListener>();
     private Point origin; // Point to keep track of the origin point (Used for dragging the screen)
     private Point mousePt; // Point to keep track of the last mouse-position
     private Settings settings;
+
+    private int subGrid;
+
+    private Color gridColor;
     // Temporäre Vars
 
     private DrawingInformationContainer drawingInformation;
 
-    public JPlotter(Settings settings) {
+    public JPlotter(Settings settings, StyleClass styleClass) {
+        this.styleClass = styleClass;
         // Scroll-Listener --> Zoom
         this.settings = settings;
         this.zoom = settings.INITIAL_ZOOM;
         this.SPACING = settings.INITIAL_PIXEL_TO_UNIT_RATIO;
+        this.subGrid = settings.SUB_SQUARE_GRID;
+        this.plotBackground = styleClass.PLOT_BG;
+        this.gridColor = styleClass.GIRD_COLOR;
+        this.plotForeground = styleClass.PLOT_FG;
         addMouseWheelListener(new MouseWheelListener() {
             public void mouseWheelMoved(MouseWheelEvent e) {
-                float dZoom = e.isControlDown() ? settings.INCREASED_ZOOM_SCALE : settings.STANDARD_ZOOM_SCALE;
+                float dZoom = e.isControlDown() ? 0.1f : 0.05f;
                 dZoom*=e.getWheelRotation();
                 for(IPlotListener listener: plotListeners)listener.plotZoomed(new PlotZoomedEvent(e.getSource(), getWidth(), getHeight(), dZoom));
             }
@@ -67,16 +94,31 @@ public class JPlotter extends JPanel {
                 repaint();
                 requestFocus();
             }
+
+           
+            @Override
+            public void mouseExited(MouseEvent e) {
+                setCursor(Cursor.getDefaultCursor());
+            }
+
         });
         // MouseMotionListener für die Drag-Funktionalität
         addMouseMotionListener(new MouseMotionAdapter() {
+
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
+            }
+
+
             @Override
             public void mouseDragged(MouseEvent e) {
+                setCursor(new Cursor(Cursor.MOVE_CURSOR));
                 // Differenz zwischen der momentanten und letzten Maus-Position
-                int dx = e.getX() - mousePt.x;
-                int dy = e.getY() - mousePt.y;
+                int dx = mousePt.x - e.getX();
+                int dy = mousePt.y - e.getY();
                 // Ändere den Ursprung, basierend auf dx,dy
-                for(IPlotListener listener: plotListeners)listener.plotMoved(new PlotMovedEvent(e.getSource(), getWidth(), getHeight(), new Tuple<>(dx,dy)));
+                for(IPlotListener listener: plotListeners)listener.plotMoved(new PlotMovedEvent(e.getSource(), getWidth(), getHeight(), new Tuple<Integer,Integer>(dx,dy)));
                 mousePt = e.getPoint();
                 repaint();
             }
@@ -108,66 +150,7 @@ public class JPlotter extends JPanel {
             }
             
         });
-        // // Hotkeys - Wird noch in eine Extra Klasse gepackt
-        // InputMap inputmap = getInputMap(WHEN_IN_FOCUSED_WINDOW);
-        // ActionMap actionmap = getActionMap();
-        // inputmap.put(KeyStroke.getKeyStroke("UP"), "moveUp");
-        // inputmap.put(KeyStroke.getKeyStroke("DOWN"), "moveDown");
-        // inputmap.put(KeyStroke.getKeyStroke("LEFT"), "moveLeft");
-        // inputmap.put(KeyStroke.getKeyStroke("RIGHT"), "moveRight");
-        // inputmap.put(KeyStroke.getKeyStroke("W"), "moveUp");
-        // inputmap.put(KeyStroke.getKeyStroke("S"), "moveDown");
-        // inputmap.put(KeyStroke.getKeyStroke("A"), "moveLeft");
-        // inputmap.put(KeyStroke.getKeyStroke("D"), "moveRight");
-        // inputmap.put(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP,0), "zoomIn");
-        // inputmap.put(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN,0), "zoomOut");
-        // actionmap.put("moveUp", new AbstractAction(){
-        //     public void actionPerformed(ActionEvent e) {
-        //         moveUp(10);
-        //         repaint();
-        //     }
-        // });
-        // actionmap.put("moveDown", new AbstractAction(){
-        //     public void actionPerformed(ActionEvent e) {
-        //         moveDown(10);
-        //         repaint();
-        //     }
-        // });
-        // actionmap.put("moveLeft", new AbstractAction(){
-        //     public void actionPerformed(ActionEvent e) {
-        //         moveLeft(10);
-        //         repaint();
-        //     }
-        // });
-        // actionmap.put("moveRight", new AbstractAction(){
-        //     public void actionPerformed(ActionEvent e) {
-        //         moveRight(10);
-        //         repaint();
-        //     }
-        // });
-        // inputmap.put(KeyStroke.getKeyStroke("F12"), "resetOrigin");
-        // actionmap.put("resetOrigin", new AbstractAction() {
-        //     public void actionPerformed(ActionEvent e) {
-        //         resetOrigin();
-        //         resetZoom();
-        //         repaint();
-        //     }
-        // });
-        // actionmap.put("zoomIn", new AbstractAction() {
-        //     public void actionPerformed(ActionEvent e) {
-        //         zoomIn(0.01f);
-        //         repaint();
-        //     }
-        // });
-        // actionmap.put("zoomOut", new AbstractAction() {
-        //     public void actionPerformed(ActionEvent e) {
-        //         zoomOut(0.01f);
-        //         repaint();
-        //     }
-        // });
-        // Setzte den Ursprung initial auf 0,0
         setPreferredSize(new Dimension(settings.INITIAL_PLOT_WIDTH,settings.INITIAL_PLOT_HEIGHT));
-        origin = new Point(settings.INITIAL_ORIGIN_X, settings.INITIAL_ORIGIN_Y);
     }
 
     protected void resetZoom() {
@@ -217,24 +200,55 @@ public class JPlotter extends JPanel {
         // Antialiasing für bessere Diagonalen
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         // Hintergrund-Füllung
-        g2d.setColor(Color.WHITE);
+        g2d.setColor(this.plotBackground);
         g2d.fillRect(0, 0, getWidth(), getHeight());
 
-        g2d.translate((double) origin.x, (double) origin.y); // View abhängig vom Ursprung translaten, wichtig für die
-                                                             // Drag-Funktionalität
-        g2d.translate(getWidth() / 2, getHeight() / 2); // View auf die Mitte des Panels translaten
-        drawFunctions(g2d);
-        // drawAxes(g2d);
+        // g2d.translate((double) origin.x, (double) origin.y); // View abhängig vom Ursprung translaten, wichtig für die
+        //                                                      // Drag-Funktionalität
+        // g2d.translate(getWidth() / 2, getHeight() / 2); // View auf die Mitte des Panels translaten/
+        if(drawingInformation != null){
+            drawFunctions(g2d);
+            drawGrid(g2d);
+            drawAxes(g2d);
+            drawValues(g2d);
+        }
         // drawFunction(g2d, x -> (float) ((x * x) + 1), Color.RED);
         // drawFunction(g2d, x -> (float) (Math.sin(x) * x * x), Color.BLUE);
     }
 
     
+    private void drawValues(Graphics2D g2d) {
+        Tuple<Double,Double> xInterval = drawingInformation.getIntervallX();
+        Tuple<Double,Double> yInterval = drawingInformation.getIntervallY();
+        Tuple<Integer,Integer> heightInterval = new Tuple<Integer,Integer>(0, getHeight());
+        Tuple<Integer,Integer> widthInterval = new Tuple<Integer,Integer>(0, getWidth());
+        Font font = GUI.getFont(FontFamily.ROBOTO, FontStyle.REGULAR, 15);
+        g2d.setPaint(plotForeground);
+        g2d.setFont(font);
+        int stringHeight = (int) font.createGlyphVector(g2d.getFontRenderContext(), "1").getVisualBounds().getHeight();
+        int xAxis = Utils.clampToDimensions(Utils.mapToInterval(0, yInterval, heightInterval),heightInterval);
+        int yAxis = Utils.clampToDimensions(Utils.mapToInterval(0, xInterval, widthInterval),widthInterval);
+
+        for(double i = (yInterval.getItem1()-yInterval.getItem1()%squareScale-squareScale);i<yInterval.getItem2()+squareScale;i+=squareScale){
+            if(i == 0)continue;
+            int y = Utils.mapToDimension(i, yInterval,heightInterval);
+            int yOff = (int) (stringHeight/2);
+            int xOff = (int) (g2d.getFontMetrics().stringWidth(i+""));
+            g2d.drawString(i+"", yAxis <= yAxisValueXOffset*2+xOff? yAxisValueXOffset : yAxis-xOff-yAxisValueXOffset, y+yOff);
+        }
+        for(double i = (xInterval.getItem1()-xInterval.getItem1()%squareScale-squareScale);i<xInterval.getItem2()+squareScale;i+=squareScale){
+            if(i == 0)continue;
+            int x = Utils.mapToDimension(i, xInterval,widthInterval);
+            int xOff = (int) (g2d.getFontMetrics().stringWidth(i+"")/2);
+            g2d.drawString(i+"", x-xOff, xAxis >= getHeight()-stringHeight-xAxisValueYOffset*2 ? getHeight()-xAxisValueYOffset : xAxis+stringHeight+xAxisValueYOffset);
+        }
+        
+    }
+
     /** 
      * @param g2d
      */
     private void drawFunctions(Graphics2D g2d) {
-        if(drawingInformation == null)return;
         // Um es wirklich an den canvas anzupassen, benötige ich entweder daten über den zoom+origin, oder den
         // Sichtbaren y-Intervall. Anders kann ich nicht wissen wie ich die numerischen Werte an den Canvas anpassen soll
         double xStart = drawingInformation.getIntervallX().getItem1();
@@ -265,144 +279,32 @@ public class JPlotter extends JPanel {
      * @deprecated Nur eine Test-Funktion für Dimensionen, passt nicht in die
      *             BusinessLogic
      */
-    // private void drawFunction(Graphics2D g2d, DoubleFunction<Float> function, Color color) {
-
-    //     // Set a Constant Stroke width, which scales itself down accordingly to the zoom
-    //     // factor
-    //     g2d.setStroke(new BasicStroke(3));
-
-    //     double unit = SPACING * zoom; // Represents how many Pixels equals 1 (as a numeric value) [Scales up with the
-    //                                   // zoom factor]
-    //     double xSpace = getWidth() / unit; // How many 1-units are currently on the x-Axis [Maybe refactor this later,
-    //                                        // to only calculate it when the screen is resized]
-    //     double xStart = -xSpace / 2 - (origin.x / unit); // Start of the x-Range [Numeric Range-Start of x-Values] Used
-    //                                                      // to only render values that are visible
-    //     double xStop = xSpace / 2 - (origin.x / unit); // Stop of the x-Range
-    //     double wStart = -getWidth() / 2 - origin.x; // Start of the width-Range (used to map the x-numeric-value to a
-    //                                                 // point on the canvas)
-    //     double wStop = getWidth() / 2 - origin.x;
-
-    //     double ySpace = getHeight() / unit; // Same as above but with the y-Value
-    //     double yStart = -ySpace / 2 + (origin.y / unit); // The y-values are different from the x-value because the
-    //                                                      // canvas-coord y values are "upside-down" when mapping
-    //                                                      // normally to a Kartesian Coordinate-System
-    //     double yStop = ySpace / 2 + (origin.y / unit);
-    //     double hStart = getHeight() / 2 - origin.y;
-    //     double hStop = -getHeight() / 2 - origin.y;
-    //     double steps = 0.005f / zoom; // Detail of the Graph [How small is one line on the graph] Scales down with the
-    //                                   // zoom, to get more detail, as "deeper" we go
-    //     ArrayList<Point.Float> points = new ArrayList<Point.Float>(); // Array List to save the points [Maybe refactor
-    //                                                                   // this later, to only push new values in, and pop
-    //                                                                   // old values out that are not in vision, instead
-    //                                                                   // of creating a new Array on and on]
-    //     for (double i = xStart; i < xStop; i += steps) {
-    //         // Map the x/y-numeric value to the space on the screen
-    //         double x = map(i, xStart, xStop, wStart, wStop);
-    //         double y = map(function.apply((double) i), yStart, yStop, hStart, hStop);
-    //         points.add(new Point.Float(Math.round(x), Math.round(y)));
-    //     }
-    //     GeneralPath gp = new GeneralPath();
-    //     g2d.setPaint(color);
-    //     gp.moveTo(points.get(0).x, points.get(1).y); // Move the path-start to the first point
-    //     for (int i = 0; i < points.size() - 1; i++) {
-    //         // Cross a line between every point in the List
-    //         gp.lineTo(points.get(i).x, points.get(i).y);
-    //     }
-    //     // Draw the Path and reset the Stroke Width to 1
-    //     g2d.draw(gp);
-    //     g2d.setStroke(new BasicStroke(1));
-
-    // }
-
+    
     /**
-     * Zeichnet die X und Y Achsen auf den Bildschirm (Abhängig von JPlotter.origin)
+     * Zeichnet die X und Y Achsen auf den Bildschirm
      * 
      * @param g2d Graphics2D context
      */
-    // private void drawAxes(Graphics2D g2d) {
-    //     g2d.setStroke(new BasicStroke(2));
-    //     g2d.setColor(Color.BLACK);
-    //     g2d.setFont(GUI.getFont(FontFamily.RUBIK,FontStyle.REGULAR,25));
+    private void drawAxes(Graphics2D g2d) {
+        Tuple<Double,Double> xInterval = drawingInformation.getIntervallX();
+        Tuple<Double,Double> yInterval = drawingInformation.getIntervallY();
+        Tuple<Integer,Integer> heightInterval = new Tuple<Integer,Integer>(0, getHeight());
+        Tuple<Integer,Integer> widthInterval = new Tuple<Integer,Integer>(0, getWidth());
+        g2d.setPaint(plotForeground);
+        g2d.setStroke(new BasicStroke(axisStrokeWidth));
+        if(xInterval.getItem1()<=0 && xInterval.getItem2() >=0){
+            int x = (int)Utils.mapToInterval(0, xInterval, widthInterval);
+            g2d.drawLine(x, 0, x, heightInterval.getItem2());
+        }
 
-    //     g2d.drawLine((int) -((getWidth() / 2 + origin.x)), (int) (0), (int) ((getWidth() / 2 - origin.x)), (int) (0)); // X-Axis
-    //                                                                                                                    // Main
-    //                                                                                                                    // Line
-    //     drawXSteps(g2d); // Draw the Steps on the X-Axis
+        if(yInterval.getItem1()<=0 && yInterval.getItem2() >=0){
+            int y = (int)Utils.mapToInterval(0, yInterval, heightInterval);
+            g2d.drawLine(0,y,widthInterval.getItem2(),y);
+        }
+        
+    }
 
-    //     g2d.drawLine((int) 0, (int) -((getHeight() / 2 + origin.y)), (int) (0), (int) ((getHeight() / 2 - origin.y))); // Y-Axis
-    //                                                                                                                    // Main
-    //                                                                                                                    // Line
-    //     drawYSteps(g2d); // Draw the Steps on the Y-Axis
-    //     g2d.setStroke(new BasicStroke(1));
-    // }
 
-    /**
-     * Zeichnet die X-Achsen Schritte mit Benenneung
-     * 
-     * @param g2d Graphics2D context
-     */
-    // private void drawXSteps(Graphics2D g2d) {
-    //     double unit = SPACING * zoom;
-    //     // TODO: xSpace und ySpace Als Globales Attribut deklarieren und nur ändern wenn
-    //     // man den Screen resized
-    //     double xSpace = getWidth() / unit; // Wie viele 1er Werte (numerisch) passen auf die x-Achse
-    //     double xStart = -xSpace / 2 - (origin.x / unit); // Start der x-Werte [Numerisch], damit nur sichtbare werte
-    //                                                      // gerechnet werden
-    //     double xStop = xSpace / 2 - (origin.x / unit); // Gegenstück zum Start
-    //     double wStart = -getWidth() / 2 - origin.x; // Start der Breiten-Werten [Später wird die x-Menge auf die
-    //                                                 // Breiten-Menge gemappt]
-    //     double wStop = getWidth() / 2 - origin.x;
-    //     // Pseudo dynamische anpassung der stepsize Abhängig vom verfügbaren Platz die
-    //     // stepsize entweder größer, oder kleiner ziehen
-    //     if (xSpace / stepsize > 20) {
-    //         stepsize *= 10;
-    //     }
-    //     if (xSpace / stepsize < 5) {
-    //         stepsize /= 10;
-    //     }
-    //     DecimalFormat df = new DecimalFormat(stepsize - stepsize + ""); // Decimal-Format um die Zahlen Später auf eine
-    //                                                                     // lesbare länge zu bringen
-    //     df.setRoundingMode(RoundingMode.HALF_DOWN);
-    //     double textHeight = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), "-1").getVisualBounds()
-    //             .getHeight();
-    //     for (float i = (float) (xStart - xStart % (stepsize)); i < xStop; i += stepsize) { // Für jede Markierung,
-    //                                                                                        // startend an der Linken,
-    //                                                                                        // bis zur rechten
-    //         if (i < stepsize - stepsize / 10 && i > -stepsize + stepsize / 10)
-    //             continue; // Wenn (-stepsize+correction) < i < (stepsize-correction), dann ist i ~ 0 ->
-    //                       // Skip
-    //         double x = map((double) i, xStart, xStop, wStart, wStop); // Numerischen Wert auf die Breiten-Range mappen
-    //         g2d.draw(new Line2D.Double(x, 10d, x, -10d));
-    //         float textWidth = g2d.getFontMetrics().stringWidth(df.format(i));
-    //         g2d.drawString(df.format(i), (int) x - textWidth / 2, (int) -textHeight - 15);
-    //     }
-    // }
-
-    // /**
-    //  * Zeichnet die Y-Achsen Schritte mit Benennung
-    //  * 
-    //  * @param g2d Graphics2D context
-    //  */
-    // private void drawYSteps(Graphics2D g2d) {
-    //     double unit = SPACING * zoom;
-    //     double ySpace = getHeight() / unit;
-    //     double yStart = -ySpace / 2 - (origin.y / unit);
-    //     double yStop = ySpace / 2 - (origin.y / unit);
-    //     double hStart = -getHeight() / 2 - origin.y;
-    //     double hStop = getHeight() / 2 - origin.y;
-    //     DecimalFormat df = new DecimalFormat(stepsize - stepsize + "");
-    //     df.setRoundingMode(RoundingMode.HALF_DOWN);
-    //     double textHeight = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), "-1").getVisualBounds()
-    //             .getHeight();
-    //     for (float i = (float) (yStart - yStart % (stepsize)); i < yStop; i += stepsize) {
-    //         if (i < stepsize - stepsize / 10 && i > -stepsize + stepsize / 10)
-    //             continue;
-    //         double y = map((double) i, yStart, yStop, hStart, hStop);
-    //         float textWidth = g2d.getFontMetrics().stringWidth(df.format(-i));
-    //         g2d.draw(new Line2D.Double(10d, y, -10d, y));
-    //         g2d.drawString(df.format(-i), -textWidth - 15, (int) (y + textHeight / 2));
-    //     }
-    // }
 
     /**
      * Zeichnet ein Karierten Hintergrund, basierend auf JPlotter.origin und
@@ -410,9 +312,42 @@ public class JPlotter extends JPanel {
      * 
      * @param g2d Graphics2D context
      */
-    // public void drawGrid(Graphics2D g2d) {
-    //     // Not ready yet
-    // }
+    public void drawGrid(Graphics2D g2d) {
+        g2d.setPaint(this.gridColor);
+        Tuple<Double,Double> intervallYTuple = drawingInformation.getIntervallY();
+        Tuple<Double,Double> intervallXTuple = drawingInformation.getIntervallX();
+        Tuple<Double,Double> heightInterval = new Tuple<Double,Double>(0d, (double)getHeight());
+        Tuple<Double,Double> widthInterval = new Tuple<Double,Double>(0d, (double)getWidth());
+        int nSquares = (int) (Math.abs(intervallXTuple.getItem2()-intervallXTuple.getItem1())/squareScale);
+        System.out.println(nSquares);
+        if(nSquares>=25){
+            squareScale*=2;
+        }else if(nSquares<=10){
+            squareScale/=2;
+        }
+        int xSubStep = (int) Math.round(getWidth()/Math.abs(intervallXTuple.getItem2()-intervallXTuple.getItem1())/subGrid*squareScale);
+        int ySubStep = (int) Math.round(getHeight()/Math.abs(intervallYTuple.getItem2()-intervallYTuple.getItem1())/subGrid*squareScale);
+        for(double i = (intervallYTuple.getItem1()-intervallYTuple.getItem1()%squareScale-squareScale);i<intervallYTuple.getItem2()+squareScale;i+=squareScale){
+            g2d.setStroke(new BasicStroke(bigSquareStrokeWidth));
+            int y = (int) Utils.mapToInterval(i, intervallYTuple,heightInterval);
+            g2d.drawLine(0, y, getWidth(),y );
+            g2d.setStroke(new BasicStroke(smallSquareStrokeWidth));
+            for(int j = 0;j<subGrid;j++){
+                g2d.drawLine(0, (int)(y+ySubStep*j), getWidth(),(int)(y+ySubStep*j) );
+            }
+        }
+        for(double i = (intervallXTuple.getItem1()-intervallXTuple.getItem1()%squareScale-squareScale);i<intervallXTuple.getItem2()+squareScale;i+=squareScale){
+            g2d.setStroke(new BasicStroke(bigSquareStrokeWidth));
+            int x = (int) Utils.mapToInterval(i, intervallXTuple,widthInterval);
+            g2d.drawLine(x,0,x,getHeight());
+            g2d.setStroke(new BasicStroke(smallSquareStrokeWidth));
+            for(int j = 0;j<subGrid;j++){
+                g2d.drawLine((int)(x+xSubStep*j),0,(int)(x+xSubStep*j),getHeight());
+            }
+        }
+
+        
+    }
 
     /**
      * 
@@ -471,38 +406,6 @@ public class JPlotter extends JPanel {
         return this.zoom;
     }
 
-    /**
-     * Remappt eine Zahl von einer vorgegebenen Range auf eine andere vorgegebene
-     * Range
-     * 
-     * @param value  zu mappender Wert (aus Range 1)
-     * @param start1 Start-Wert Range 1
-     * @param stop1  Stop-Wert Range 1
-     * @param start2 Start-Wert Range 2
-     * @param stop2  Stop-Wert Range 2
-     * @return float value auf Range 2 gemappt
-     */
-    static public final float map(float value, float start1, float stop1, float start2, float stop2) {
-        float outgoing = start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
-        return outgoing;
-    }
-
-    /**
-     * Remappt eine Zahl von einer vorgegebenen Range auf eine andere vorgegebene
-     * Range
-     * 
-     * @param value  zu mappender Wert (aus Range 1)
-     * @param start1 Start-Wert Range 1
-     * @param stop1  Stop-Wert Range 1
-     * @param start2 Start-Wert Range 2
-     * @param stop2  Stop-Wert Range 2
-     * @return double value auf Range 2 gemappt
-     */
-    static public final double map(double value, double start1, double stop1, double start2, double stop2) {
-        double outgoing = start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
-        return outgoing;
-    }
-
     public void resetOrigin() {
         origin = new Point(0, 0);
     }
@@ -513,5 +416,12 @@ public class JPlotter extends JPanel {
      */
     public void addPlotListener(IPlotListener plotListener) {
         plotListeners.add(plotListener);
+    }
+
+    public void recolor() {
+        this.plotBackground = styleClass.PLOT_BG;
+        this.gridColor = styleClass.GIRD_COLOR;
+        this.plotForeground = styleClass.PLOT_FG;
+        repaint();
     }
 }

@@ -9,6 +9,8 @@ import javax.swing.JPanel;
 
 import java.awt.Font;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.io.InputStream;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -60,10 +62,14 @@ public class FunctionDialog extends JFrame {
         buttonForeground = this.styleClass.BUTTON_FG;
         getContentPane().setBackground(this.styleClass.DIALOG_BG);
         getContentPane().setForeground(this.styleClass.DIALOG_FG);
-        URL iconURL = getClass().getResource("../data/functionDialogIcon.png");
-        ImageIcon icon = new ImageIcon(iconURL);
-        setIconImage(icon.getImage());
+        InputStream in = getClass().getResourceAsStream("data/functionDialogIcon.png"); 
+        try {
+            setIconImage(new ImageIcon(in.readAllBytes()).getImage());
+        } catch (IOException e2) {
+            e2.printStackTrace();
+        }
         Font font = GUI.getFont(FontFamily.ROBOTO,FontStyle.REGULAR,16);
+
         setFont(font);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setPreferredSize(new Dimension(476, 150));
@@ -164,7 +170,6 @@ public class FunctionDialog extends JFrame {
         });
         getContentPane().add(okButton);
         cancelButton = new JButton("Cancel");
-        cancelButton.setBounds(365, 25, 89, 33);
         cancelButton.setBackground(buttonBackground);
         cancelButton.setForeground(buttonForeground);
         cancelButton.setBorder(BorderFactory.createLineBorder(buttonBackground));
@@ -353,6 +358,7 @@ public class FunctionDialog extends JFrame {
         functionInput.setBorder(BorderFactory.createCompoundBorder(
             functionInput.getBorder(),BorderFactory.createMatteBorder(0, 0, 1, 0, this.styleClass.DIALOG_FG)
         ));
+        getContentPane().setBackground(styleClass.DIALOG_BG);
         revalidate();
         repaint();
     }

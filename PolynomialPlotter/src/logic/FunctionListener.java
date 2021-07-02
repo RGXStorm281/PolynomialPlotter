@@ -18,27 +18,33 @@ import view.IGUI;
 public class FunctionListener implements IFunctionListener {
     
     private IGUI view;
+    private BusinessLogic logic;
     
-    public FunctionListener(IGUI view){
+    public FunctionListener(IGUI view, BusinessLogic logic){
         this.view = view;
+        this.logic = logic;
     }
     
     @Override
-    public boolean functionAdded(FunctionEvent e) {
+    public void functionAdded(FunctionEvent e) throws FunctionParsingException {
         String functionString = e.getFunctionString();
         Color functionColor = e.getFunctionColor();    
         char functionChar = e.getFunctionChar();
         System.out.println("New function \""+functionChar+"\" with: "+functionString+" and the Color"+functionColor);
+        logic.addFunction(functionChar, functionString, functionColor);
         view.addJFunctionComponent(functionChar,functionString, functionColor);
         view.updateTheme();
-        return true; // Return ob gegebene funktion legal war
 
     }
 
     @Override
-    public boolean functionEdited(FunctionEditedEvent e) {
-        System.out.println(e.getOldFunctionChar()+"-Function was edited to: "+e.getFunctionString()+" with the color: "+e.getFunctionColor());
-        return true; // Return ob der Edit einen Fehler verursach / Legal war
+    public void functionEdited(FunctionEditedEvent e) throws FunctionParsingException {
+        var targetFunctionName = e.getOldFunctionChar();
+        var newFunctionName = e.getFunctionChar();
+        var newFunctionString = e.getFunctionString();
+        var functionColor = e.getFunctionColor();
+        System.out.println(targetFunctionName+"-Function was edited to: "+newFunctionString+" with the color: "+functionColor);
+        logic.editFunction(targetFunctionName, newFunctionName, newFunctionString, functionColor);
     }
 
     @Override

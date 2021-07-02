@@ -234,7 +234,7 @@ public class JPlotter extends JPanel {
             int y = Utils.mapToDimension(i, yInterval,heightInterval);
             int yOff = (int) (stringHeight/2);
             int xOff = (int) (g2d.getFontMetrics().stringWidth(i+""));
-            g2d.drawString(i+"", yAxis <= yAxisValueXOffset*2+xOff? yAxisValueXOffset : yAxis-xOff-yAxisValueXOffset, y+yOff);
+            g2d.drawString(-i+"", yAxis <= yAxisValueXOffset*2+xOff? yAxisValueXOffset : yAxis-xOff-yAxisValueXOffset, y+yOff);
         }
         for(double i = (xInterval.getItem1()-xInterval.getItem1()%squareScale-squareScale);i<xInterval.getItem2()+squareScale;i+=squareScale){
             if(i == 0)continue;

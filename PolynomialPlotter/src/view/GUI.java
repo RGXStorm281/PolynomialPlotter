@@ -105,6 +105,10 @@ public class GUI extends JFrame implements IGUI {
         plotter_panel.recolor();
     }
 
+    public JPlotter getPlotter(){
+        return this.plotter_panel;
+    }
+
     public void start() {
         if (!isVisible())
             setVisible(true);

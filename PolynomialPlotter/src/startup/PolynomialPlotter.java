@@ -35,7 +35,7 @@ public class PolynomialPlotter {
     public static void main(String[] args) {
         try {
             // Objekte initialisieren
-            Settings settings = new Settings("settings.properties");
+            Settings settings = new Settings("src/startup/settings.properties");
             FunctionManager model = new FunctionManager();
             GUI view = new GUI(settings);
             BusinessLogic logic = new BusinessLogic(view, model, settings);

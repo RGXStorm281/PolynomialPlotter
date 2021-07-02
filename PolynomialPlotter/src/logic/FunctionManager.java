@@ -175,9 +175,8 @@ public class FunctionManager {
     			return parser.parse(functionString);
     		}
     		catch (FunctionParsingException e) {
-    			// TODO TV ExceptionHandling
     			// TODO Loggen
-    			e.printStackTrace();
+    			System.out.println(e.getResponseCode() + " - " + e.getMessage());
     		}
     	}
     	

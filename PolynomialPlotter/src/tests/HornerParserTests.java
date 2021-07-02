@@ -20,6 +20,7 @@ public class HornerParserTests {
 				"h(x) = (5x^4*(3x^2+x-5) + x - 1)*(12x^2-2x+3)",
 				"i(x) = (5.36x^4*(3x^2+x-5) + x - 1.6)*(-(12.4x^2-2.2x+3))",
 				"j(x) = (19 + x^2 - 19x^5)(x - 1)",
+				"k(x) = (4x^2+4x+1)/(2x+1)"
 				};
 		double[][] erwarteteFaktoren = {
 		// Grad  0  1  2 ...
@@ -28,6 +29,7 @@ public class HornerParserTests {
 				{-3, 5, -14, 12, -75, 65, -265, 30, 180},
 				{4.8, -6.52, 22.04, -12.4, 80.4, -75.04, 295.872, -31.088, -199.392},
 				{-19, 19, -1, 1, 0, 19, -19},
+				{1, 2}
 		};
 		
 		for(int i = 0; i < functions.length; i++) {

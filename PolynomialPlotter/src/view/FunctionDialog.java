@@ -29,6 +29,9 @@ import view.GUI.FontStyle;
 import java.awt.Dimension;
 import java.awt.Cursor;
 import event.IFunctionListener;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import logic.FunctionParsingException;
 
 public class FunctionDialog extends JFrame {
 
@@ -124,7 +127,13 @@ public class FunctionDialog extends JFrame {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                 boolean legalFunction = false;
-                for(IFunctionListener listener: functionListeners)legalFunction = ((IFunctionListener)listener).functionAdded(new FunctionEvent(e.getSource(), colorPanel.getBackground(), functionInput.getText().trim(), functionInput.getText().trim().toCharArray()[0]));
+                for(IFunctionListener listener: functionListeners){
+                    try {
+                        ((IFunctionListener)listener).functionAdded(new FunctionEvent(e.getSource(), colorPanel.getBackground(), functionInput.getText().trim(), functionInput.getText().trim().toCharArray()[0]));
+                    } catch (FunctionParsingException ex) {
+                        Logger.getLogger(FunctionDialog.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
                 if(legalFunction){
                     //Add the function
                     hideWarn();
@@ -142,7 +151,13 @@ public class FunctionDialog extends JFrame {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                 boolean legalFunction = false;
-                for(IFunctionListener listener: functionListeners)legalFunction = ((IFunctionListener)listener).functionEdited(new FunctionEditedEvent(e.getSource(), colorPanel.getBackground(), functionInput.getText().trim(), functionInput.getText().trim().toCharArray()[0],lastFunctionChar));
+                for(IFunctionListener listener: functionListeners){
+                    try {
+                        ((IFunctionListener)listener).functionEdited(new FunctionEditedEvent(e.getSource(), colorPanel.getBackground(), functionInput.getText().trim(), functionInput.getText().trim().toCharArray()[0],lastFunctionChar));
+                    } catch (FunctionParsingException ex) {
+                        Logger.getLogger(FunctionDialog.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
                 if(legalFunction){
                     //Add the function
                     hideWarn();

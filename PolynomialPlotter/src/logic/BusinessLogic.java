@@ -6,15 +6,13 @@
 package logic;
 
 import event.PlotEvent;
-import java.awt.Point;
+import java.awt.Color;
 import startup.Settings;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import model.DrawingInformationContainer;
 import model.FunctionInfoContainer;
 import model.IFunction;
@@ -81,16 +79,56 @@ public class BusinessLogic {
         this.step = intervallSizeX / numberOfCalculations;
     }
     
-    public void addFunction(String function) throws FunctionParsingException{
-    	try{
-            functionManager.parseAndAddFunction(null, function);
-            // TODO RE / RS: Rückmeldung an den Benutzer dass erfolgreich.
+    /**
+     * Versucht, die neue Funktion zu parsen.Wenn das Parsen fehl schlägt liefert die Exception Details über das Problem.
+     * @param functionName Der Name der Funktion.
+     * @param functionString Ein String, der zur Funktion geparsed wird.
+     * @param lineColor Die Farbe, in der die Funktionslinie gezeichnet werden soll.
+     * @throws FunctionParsingException Details zum Parsing Fehler.
+     */
+    public void addFunction(char functionName, String functionString, Color lineColor) throws FunctionParsingException{
+        // TODO RE Farbe weitergeben.
+        functionManager.parseAndAddFunction(functionName, functionString);
+        calculateAndDraw();
+    }
+    
+    /**
+     * Versucht, die neue Funktion zu parsen und die bestehende damit zu ersetzen.Falls das Parsen fehl schlägt wird die bestehende Funktion wiederhergestellt und der Fehler weiter geworfen.
+     * @param targetFunctionName Der Name der Funktion, die geändert/überschrieben werden soll.
+     * @param newFunctionName  Der neue Name der Funktion.
+     * @param newFunctionString Der String, der als neue Funktion geparsed werden soll.
+     * @param newLineColor Die Linienfarbe der Funktion.
+     * @throws FunctionParsingException Details zum Parsing Fehler.
+     */
+    public void editFunction(char targetFunctionName, char newFunctionName, String newFunctionString, Color newLineColor) throws FunctionParsingException{
+        var targetFunction = functionManager.getFunction(targetFunctionName);
+        
+        // Darf eigentlich nicht vorkommen. Wenn doch: Nichts tun.
+        if(targetFunction == null){
+            return;
+        }
+        
+        // Platz machen, falls sich der Funktionsname nicht geändert hat. 
+        functionManager.delete(targetFunctionName);
+        
+        try {
+            // Versuche neue Funktion zu speichern.
+            // TODO RE Farbe weitergeben.
+            functionManager.parseAndAddFunction(newFunctionName, newFunctionString);
+            // Neu berechnen und Zeichnen.
             calculateAndDraw();
-        }catch(FunctionParsingException p){
-            // TODO RE / RS: Rückmeldung an den Benutzer welches Problem aufgetreten ist.
+        }catch (FunctionParsingException f){
+            // Falls parsen fehl schlägt bestehende Funktion wiederherstellen.
+            functionManager.add(targetFunctionName, targetFunction);
+            // Dann Fehler an die GUI weitergeben, damit Problemdetails an den Bentzer weiter gegeben werden können.
+            throw f;
         }
     }
     
+    /**
+     * Löscht die Funktion, falls vorhanden.
+     * @param functionName Der Caracter, mit der die Funktion bezeichnet ist.
+     */
     public void deleteFunction(char functionName){
         functionManager.delete(functionName);
         calculateAndDraw();
@@ -168,7 +206,7 @@ public class BusinessLogic {
         try {
             functionInfo = calculateFunctionValues(intervallX);
         } catch (InterruptedException | ExecutionException ex) {
-            // TODO RE Errorhandling.
+            // TODO RE Errorhandling (Logging).
             functionInfo = new FunctionInfoContainer[0];
         }
         

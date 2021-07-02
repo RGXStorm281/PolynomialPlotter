@@ -1,20 +1,22 @@
 package event;
 
+import logic.FunctionParsingException;
+
 public interface IFunctionListener extends java.util.EventListener{
 
     /**
      * Wird gecallt, wenn eine Funktion hinzugefügt wird
      * @param e 
-     * @return Gibt einen boolean zurück, gibt an ob die Mitgegebene Funktion "legal" ist
+     * @throws FunctionParsingException Wenn das Parsen der Funktion fehlschlägt, enthält die Exception die Informationen darüber, was das Problem war.
      */
-    boolean functionAdded(FunctionEvent e);
+    void functionAdded(FunctionEvent e) throws FunctionParsingException;
 
     /**
      * Wird gecallt, wenn eine Funktion editiert wird
      * @param e
-     * @return Gibt einen boolean zurück, gibt an ob die Editierte Funtion "legal" ist
+     * @throws FunctionParsingException Wenn das Parsen der Funktion fehlschlägt, enthält die Exception die Informationen darüber, was das Problem war.
      */
-    boolean functionEdited(FunctionEditedEvent e);
+    void functionEdited(FunctionEditedEvent e) throws FunctionParsingException;
 
     /**
      * Wird gecallt wenn eine Funktion gelöscht wird

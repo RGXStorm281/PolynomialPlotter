@@ -84,11 +84,12 @@ public class FunctionManager {
     	
         if(functionName == null) {
         	for(char tempFunctionName = 'a'; tempFunctionName <= 'z'; tempFunctionName++) {
-        		if(this.functionNameExists(tempFunctionName)) {
+        		if(!this.functionNameExists(tempFunctionName)) {
         			functionName = tempFunctionName;
         			break;
         		}
         	}
+        	
         	if(functionName == null) {
         		throw new FunctionParsingException(ParsingResponseCode.NoMoreNamesAvailable, "Es existiert kein weiterer FunctionName (a-z).");
         	}
@@ -111,16 +112,17 @@ public class FunctionManager {
      */
     private boolean add(char functionName, String functionString) {
     	
-    	if(functionNameAddable(functionName)) {
-        	IFunction function = this.parse(functionString);
-        	if(function != null) {
-        		
-        		this.functionMap.put(functionName, function);
-        		return true;
-        	}
+    	if(!functionNameAddable(functionName)) {
+    		return false;
     	}
     	
-    	return false;
+    	IFunction function = this.parse(functionString);
+    	if(function == null) {
+    		return false;
+    	}
+    	
+		this.functionMap.put(functionName, function);
+		return true;
     }
     
     /** 
@@ -172,8 +174,10 @@ public class FunctionManager {
     		try {
     			return parser.parse(functionString);
     		}
-    		catch (Exception e) {
+    		catch (FunctionParsingException e) {
     			// TODO TV ExceptionHandling
+    			// TODO Loggen
+    			e.printStackTrace();
     		}
     	}
     	

@@ -331,11 +331,27 @@ public class JPlotter extends JPanel {
         Tuple<Double,Double> heightInterval = new Tuple<Double,Double>(0d, (double)getHeight());
         Tuple<Double,Double> widthInterval = new Tuple<Double,Double>(0d, (double)getWidth());
         int nSquares = (int) (Math.abs(intervallXTuple.getItem2()-intervallXTuple.getItem1())/squareScale); // so viele große Quadrate befinden sich in einer Reihe
-        if(nSquares>=25){ // Wenn zu viele in einer Reihe sind
+        int upper;
+        int lower;
+        if(getWidth() >= 750){
+            upper = 25;
+            lower = 10;
+        }else if(getWidth()>=500){
+            upper = 20;
+            lower = 5;
+        }else if(getWidth()>=400){
+            upper = 15;
+            lower = 5;
+        }else{
+            upper = 5;
+            lower = 1;
+        }
+        if(nSquares>=upper){ // Wenn zu viele in einer Reihe sind
             squareScale*=2; // Squares "mergen"
-        }else if(nSquares<=10){ // Wenn es zu wenig sind
+        }else if(nSquares<=lower){ // Wenn es zu wenig sind
             squareScale/=2; // Squares aufteilen
         }
+        System.out.println(getWidth());
         int substep = (int) Math.round(getHeight()/Math.abs(intervallYTuple.getItem2()-intervallYTuple.getItem1())/subGrid*squareScale);
 
         // Für i, welches bei der ersten ganzen Zahl die zur Scale passt startet [Bsp.: 3.141 - (3.141%1) - 1 = 2] minus squareScale um eventuelle ansichtsfehler zu vermeiden

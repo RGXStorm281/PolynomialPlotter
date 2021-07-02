@@ -20,13 +20,13 @@ public class HornerParser implements IParser {
 	}
 	
 	@Override
-	public IFunction parse(String function) throws Exception {
+	public IFunction parse(String function) throws FunctionParsingException {
 	
 		try {
 			return new HornerFunction(this.parseToArray(function));
 		}
 		catch(Exception e) {
-			throw new Exception("'" + function + "' konnte nicht geparsed werden");
+			throw new FunctionParsingException(ParsingResponseCode.ParsingFailed, "'" + function + "' konnte nicht geparsed werden");
 		}
 	}
 	
@@ -51,7 +51,7 @@ public class HornerParser implements IParser {
 				&& fnct.charAt(0) != '+'
 				&& fnct.charAt(0) != '-'
 				&& fnct.charAt(0) != '(') {
-			throw new Exception("Startwert '" + fnct.charAt(0) + "' ung�ltig");
+			throw new Exception("Startwert '" + fnct.charAt(0) + "' ungültig");
 		}
 		
 		return innerParse(fnct.toCharArray(), 0);
@@ -189,12 +189,12 @@ public class HornerParser implements IParser {
 		}
 		if((function.length == 1
 			&& function[0] == 'x')) {
-			// gibt Array f�r "1*x^1" zur�ck
+			// gibt Array für "1*x^1" zurück
 			return new double[]{0, 1};
 		}
 		
 		try {
-			// gibt Array f�r "faktor" zur�ck
+			// gibt Array f�r "faktor" zurück
 			return new double[]{Double.parseDouble(new String(function))};
 		}
 		catch(Exception e) {
@@ -238,7 +238,7 @@ public class HornerParser implements IParser {
 			newPHA[i] = pHALeft[i] + pHARight[i];
 		}
 		
-		// f�gt die restlichen werte des l�ngeren Arrays an
+		// fügt die restlichen werte des längeren Arrays an
 		if(pHALeft.length == maxLength) {
 			for(int i = minLength; i < maxLength; i++) {
 				newPHA[i] = pHALeft[i];
@@ -307,6 +307,11 @@ public class HornerParser implements IParser {
 		return cleanPHA(newPHA);
 	}
 	
+	/**
+	 * Reduziert das Array auf den benötigten Grad.
+	 * @param pHA
+	 * @return
+	 */
 	private static double[] cleanPHA(double[] pHA) {
 		int i = pHA.length - 1;
 		while(i >= 0 

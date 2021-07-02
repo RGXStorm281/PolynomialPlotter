@@ -39,7 +39,7 @@ public class HornerParserTests {
 				System.out.println("In: " + functions[i]);
 				System.out.println("Out: " + Arrays.toString(pHA) + "\n");
 				
-				// Vergleicht Werte für die function
+				// Vergleicht Werte fÃ¼r die function
 				Assert.assertEquals(erwarteteFaktoren[i].length, pHA.length);
 				for(int grad = pHA.length - 1; grad >= 0; grad--){
 					Assert.assertEquals(erwarteteFaktoren[i][grad], pHA[grad], 0.0001);

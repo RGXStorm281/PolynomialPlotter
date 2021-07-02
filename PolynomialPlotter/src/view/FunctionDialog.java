@@ -117,7 +117,7 @@ public class FunctionDialog extends JFrame {
         okButton.setForeground(buttonForeground);
         okButton.setBorder(BorderFactory.createLineBorder(buttonBackground));
         okButton.setFont(font.deriveFont(15f));
-
+        // TODO: Function char schlauer machen
         switch(dialogType){
             case ADD:
             okButton.addActionListener(new ActionListener(){

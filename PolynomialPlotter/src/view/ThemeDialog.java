@@ -82,6 +82,8 @@ public class ThemeDialog extends JFrame{
         jcb = new JComboBox<String>(files);
         jcb.setFont(font.deriveFont(15f));
         jcb.setForeground(styleClass.DIALOG_FG);
+        jcb.setBackground(styleClass.DIALOG_BG);
+
         jcb.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,0,0,10),BorderFactory.createLineBorder(styleClass.DIALOG_BG)));
         button = new JButton("Anwenden");
         button.setBackground(buttonBackground);
@@ -125,6 +127,7 @@ public class ThemeDialog extends JFrame{
         button.setForeground(buttonForeground);
         button.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(buttonBackground),BorderFactory.createEmptyBorder(10,10,10,10)));
         jcb.setForeground(styleClass.DIALOG_FG);
+        jcb.setBackground(styleClass.DIALOG_BG);
         jcb.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,0,0,10),BorderFactory.createLineBorder(styleClass.DIALOG_BG)));
         label.setForeground(styleClass.DIALOG_FG);
         getContentPane().setBackground(styleClass.DIALOG_BG);

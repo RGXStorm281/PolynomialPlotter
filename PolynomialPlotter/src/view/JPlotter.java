@@ -52,7 +52,7 @@ public class JPlotter extends JPanel {
     private int yAxisValueXOffset = 10;
     private float smallSquareStrokeWidth = 0.5f;
     private float bigSquareStrokeWidth = 2f;
-    private float axisStrokeWidth = 3f;
+    private float axisStrokeWidth = 2.5f;
     private Color plotBackground;
     private Color plotForeground;
     private StyleClass styleClass;
@@ -218,6 +218,7 @@ public class JPlotter extends JPanel {
 
     
     private void drawValues(Graphics2D g2d) {
+        // TODO: Fensterbreite als Paramerter mit rein nehmen
         Tuple<Double,Double> xInterval = drawingInformation.getIntervallX();
         Tuple<Double,Double> yInterval = drawingInformation.getIntervallY();
         Tuple<Integer,Integer> heightInterval = new Tuple<Integer,Integer>(0, getHeight());
@@ -251,18 +252,20 @@ public class JPlotter extends JPanel {
     private void drawFunctions(Graphics2D g2d) {
         // Um es wirklich an den canvas anzupassen, benötige ich entweder daten über den zoom+origin, oder den
         // Sichtbaren y-Intervall. Anders kann ich nicht wissen wie ich die numerischen Werte an den Canvas anpassen soll
-        double xStart = drawingInformation.getIntervallX().getItem1();
-        double xStop = drawingInformation.getIntervallX().getItem2();
+        Tuple<Double,Double> xInterval = drawingInformation.getIntervallX();
+        Tuple<Double,Double> yInterval = drawingInformation.getIntervallY();
+        Tuple<Double,Double> heightInterval = new Tuple<Double,Double>((double)0, (double)getHeight());
+        Tuple<Double,Double> widthInterval = new Tuple<Double,Double>((double)0, (double)getWidth());
         double xStep = drawingInformation.getStep();
         FunctionInfoContainer[] functionInfo = drawingInformation.getFunctionInfo();
-        g2d.setPaint(Color.RED);
+        g2d.setColor(Color.RED);
         for(FunctionInfoContainer functionContainer: functionInfo){
             IFunction func = functionContainer.getFunction();
             Koordinate[] values = functionContainer.getFunctionValues();
             GeneralPath gp = new GeneralPath();
-            gp.moveTo(values[0].getX(),values[1].getY());
+            gp.moveTo(Utils.mapToInterval(values[0].getX(), xInterval, widthInterval),Utils.mapToInterval(values[0].getY(), yInterval, heightInterval));
             for(int i = 1;i<values.length;i++){
-                gp.lineTo(values[i].getX(),values[i].getY());
+                gp.lineTo(Utils.mapToInterval(values[i].getX(), xInterval, widthInterval),Utils.mapToInterval(values[0].getY(), yInterval, heightInterval));
             }
             g2d.draw(gp);
         }
@@ -291,15 +294,24 @@ public class JPlotter extends JPanel {
         Tuple<Integer,Integer> heightInterval = new Tuple<Integer,Integer>(0, getHeight());
         Tuple<Integer,Integer> widthInterval = new Tuple<Integer,Integer>(0, getWidth());
         g2d.setPaint(plotForeground);
+        g2d.setFont(GUI.getFont(FontFamily.ROBOTO, FontStyle.REGULAR, 15));
         g2d.setStroke(new BasicStroke(axisStrokeWidth));
         if(xInterval.getItem1()<=0 && xInterval.getItem2() >=0){
+            g2d.setStroke(new BasicStroke(axisStrokeWidth,BasicStroke.CAP_ROUND,BasicStroke.JOIN_BEVEL));
             int x = (int)Utils.mapToInterval(0, xInterval, widthInterval);
             g2d.drawLine(x, 0, x, heightInterval.getItem2());
+            g2d.drawLine(x, 0, x-5, 10);
+            g2d.drawLine(x, 0, x+5, 10);
+            g2d.drawString("y", x+20, 20);
         }
-
+        
         if(yInterval.getItem1()<=0 && yInterval.getItem2() >=0){
+            g2d.setStroke(new BasicStroke(axisStrokeWidth,BasicStroke.CAP_ROUND,BasicStroke.JOIN_BEVEL));
             int y = (int)Utils.mapToInterval(0, yInterval, heightInterval);
             g2d.drawLine(0,y,widthInterval.getItem2(),y);
+            g2d.drawLine(getWidth(),y,getWidth()-10,y+5);
+            g2d.drawLine(getWidth(),y,getWidth()-10,y-5);
+            g2d.drawString("x", getWidth()-20, y-20);
         }
         
     }
@@ -318,22 +330,26 @@ public class JPlotter extends JPanel {
         Tuple<Double,Double> intervallXTuple = drawingInformation.getIntervallX();
         Tuple<Double,Double> heightInterval = new Tuple<Double,Double>(0d, (double)getHeight());
         Tuple<Double,Double> widthInterval = new Tuple<Double,Double>(0d, (double)getWidth());
-        int nSquares = (int) (Math.abs(intervallXTuple.getItem2()-intervallXTuple.getItem1())/squareScale);
-        System.out.println(nSquares);
-        if(nSquares>=25){
-            squareScale*=2;
-        }else if(nSquares<=10){
-            squareScale/=2;
+        int nSquares = (int) (Math.abs(intervallXTuple.getItem2()-intervallXTuple.getItem1())/squareScale); // so viele große Quadrate befinden sich in einer Reihe
+        if(nSquares>=25){ // Wenn zu viele in einer Reihe sind
+            squareScale*=2; // Squares "mergen"
+        }else if(nSquares<=10){ // Wenn es zu wenig sind
+            squareScale/=2; // Squares aufteilen
         }
-        int xSubStep = (int) Math.round(getWidth()/Math.abs(intervallXTuple.getItem2()-intervallXTuple.getItem1())/subGrid*squareScale);
-        int ySubStep = (int) Math.round(getHeight()/Math.abs(intervallYTuple.getItem2()-intervallYTuple.getItem1())/subGrid*squareScale);
+        int substep = (int) Math.round(getHeight()/Math.abs(intervallYTuple.getItem2()-intervallYTuple.getItem1())/subGrid*squareScale);
+
+        // Für i, welches bei der ersten ganzen Zahl die zur Scale passt startet [Bsp.: 3.141 - (3.141%1) - 1 = 2] minus squareScale um eventuelle ansichtsfehler zu vermeiden
+        // i geht bis zum ende des intervalls plus squareScale
+        // i wächst jedesmal um so viel, wie die nächste linie 
         for(double i = (intervallYTuple.getItem1()-intervallYTuple.getItem1()%squareScale-squareScale);i<intervallYTuple.getItem2()+squareScale;i+=squareScale){
             g2d.setStroke(new BasicStroke(bigSquareStrokeWidth));
             int y = (int) Utils.mapToInterval(i, intervallYTuple,heightInterval);
-            g2d.drawLine(0, y, getWidth(),y );
+            // Zeichne die linie
+            g2d.drawLine(0, y, getWidth(),y);
             g2d.setStroke(new BasicStroke(smallSquareStrokeWidth));
+            // Zeichne die kleinen Linien 
             for(int j = 0;j<subGrid;j++){
-                g2d.drawLine(0, (int)(y+ySubStep*j), getWidth(),(int)(y+ySubStep*j) );
+                g2d.drawLine(0, (int)(y+substep*j), getWidth(),(int)(y+substep*j) );
             }
         }
         for(double i = (intervallXTuple.getItem1()-intervallXTuple.getItem1()%squareScale-squareScale);i<intervallXTuple.getItem2()+squareScale;i+=squareScale){
@@ -342,7 +358,7 @@ public class JPlotter extends JPanel {
             g2d.drawLine(x,0,x,getHeight());
             g2d.setStroke(new BasicStroke(smallSquareStrokeWidth));
             for(int j = 0;j<subGrid;j++){
-                g2d.drawLine((int)(x+xSubStep*j),0,(int)(x+xSubStep*j),getHeight());
+                g2d.drawLine((int)(x+substep*j),0,(int)(x+substep*j),getHeight());
             }
         }
 

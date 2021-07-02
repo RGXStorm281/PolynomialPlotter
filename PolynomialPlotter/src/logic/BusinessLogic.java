@@ -86,7 +86,7 @@ public class BusinessLogic {
      * @param lineColor Die Farbe, in der die Funktionslinie gezeichnet werden soll.
      * @throws FunctionParsingException Details zum Parsing Fehler.
      */
-    public void addFunction(char functionName, String functionString, Color lineColor) throws FunctionParsingException{
+    public void addFunction(Character functionName, String functionString, Color lineColor) throws FunctionParsingException{
         // TODO RE Farbe weitergeben.
         functionManager.parseAndAddFunction(functionName, functionString);
         calculateAndDraw();
@@ -100,7 +100,7 @@ public class BusinessLogic {
      * @param newLineColor Die Linienfarbe der Funktion.
      * @throws FunctionParsingException Details zum Parsing Fehler.
      */
-    public void editFunction(char targetFunctionName, char newFunctionName, String newFunctionString, Color newLineColor) throws FunctionParsingException{
+    public void editFunction(Character targetFunctionName, Character newFunctionName, String newFunctionString, Color newLineColor) throws FunctionParsingException{
         var targetFunction = functionManager.getFunction(targetFunctionName);
         
         // Darf eigentlich nicht vorkommen. Wenn doch: Nichts tun.

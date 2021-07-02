@@ -70,15 +70,15 @@ public class UniversalFunctionTests {
 		Assert.assertEquals("x-Value, position "+ 1, expectedValues[1].getX(), returnedValues[1].getX(), 0.0);
 		Assert.assertEquals("y-Value, position"+ 1, expectedValues[1].getY(), returnedValues[1].getY(), 1.0);
 	}
-//	
-//	@Test
-//	public void calculate_returnNullInsteadOfException()
-//	{
-//		UniversalFunction testFunction = new UniversalFunction("yxcv�asdf");
-//		Object result = testFunction.calculate(0.0, 10.0, 0.1);
-//		
-//		Assert.assertEquals(null, result);
-//	}
+	
+	@Test
+	public void calculate_returnNullInsteadOfException()
+	{
+		UniversalFunction testFunction = new UniversalFunction("yxcv�asdf");
+		Object result = testFunction.calculate(3.5);
+		
+		Assert.assertEquals(null, result);
+	}
 	
 	//TODO verhalten wenn 1/0 geteilt wird
 }

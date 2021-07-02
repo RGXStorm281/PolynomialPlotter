@@ -1,5 +1,7 @@
 package model;
 
+import java.awt.Color;
+
 import net.objecthunter.exp4j.*;
 import net.objecthunter.exp4j.tokenizer.UnknownFunctionOrVariableException;
 
@@ -7,6 +9,7 @@ import net.objecthunter.exp4j.tokenizer.UnknownFunctionOrVariableException;
 public class UniversalFunction implements IFunction {
 
 	private String functionalTerm;
+	private Color functionColor;
 	
 	public UniversalFunction(String term){
 		functionalTerm = term;
@@ -36,5 +39,16 @@ public class UniversalFunction implements IFunction {
 	@Override
 	public String toString(){
 		return functionalTerm;
+	}
+
+
+	@Override
+	public void setColor(Color color) {
+		functionColor = color;
+	}
+
+	@Override
+	public Color getColor() {
+		return functionColor;
 	}
 }

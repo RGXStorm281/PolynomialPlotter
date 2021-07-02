@@ -39,7 +39,7 @@ public class Settings {
     
     // Berechnung der Funktionswerte.
     public final int CALCULATE_EVERY_X_PIXELS;
-    public final int CORE_THREADPOOL_SIZE;
+    public final int THREADPOOL_SIZE;
 
     public Settings(String path) throws FileNotFoundException, IOException {
         Properties propertiesFile = new Properties();
@@ -61,7 +61,7 @@ public class Settings {
         this.INCREASED_ZOOM_SCALE = Float.parseFloat(propertiesFile.getProperty("increasedZoomScale"));
 
         this.CALCULATE_EVERY_X_PIXELS = Integer.parseInt(propertiesFile.getProperty("calculateEveryXPixels"));
-        this.CORE_THREADPOOL_SIZE = Integer.parseInt(propertiesFile.getProperty("coreThreadpoolSize"));
+        this.THREADPOOL_SIZE = Integer.parseInt(propertiesFile.getProperty("threadpoolSize"));
     }
 
     

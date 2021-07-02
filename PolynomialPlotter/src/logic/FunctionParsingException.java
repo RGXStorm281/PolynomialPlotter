@@ -15,12 +15,15 @@ public class FunctionParsingException extends Exception {
     
     public FunctionParsingException(String message){
         super(message);
+        this.response = null;
     }
 
     public FunctionParsingException(ParsingResponseCode response, String message) {
         super(message);
         this.response = response;
     }
-    
-    
+
+    public ParsingResponseCode getResponseCode() {
+    	return response;
+    }
 }

@@ -131,7 +131,6 @@ public class BusinessLogic {
         cachedCanvasWidth = newCanvasWidth;
         cachedCanvasHeight = newCanvasHeight;
         
-        evaluateStep();
         calculateAndDraw();
     }
     
@@ -183,6 +182,8 @@ public class BusinessLogic {
         ArrayList<IFunction> functions = functionManager.getFunctionList();
         int numberOfFunctions = functions.size();
         
+        // Die Schrittweite berechnen.
+        evaluateStep();
         // Berechnungswerte vorbereiten.
         double intervallStart = intervallX.getItem1();
         int numberOfCalculations = (int)Math.floor(intervallSizeX / step);

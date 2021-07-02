@@ -194,7 +194,7 @@ public class HornerParser implements IParser {
 		}
 		
 		try {
-			// gibt Array f�r "faktor" zurück
+			// gibt Array für "faktor" zurück
 			return new double[]{Double.parseDouble(new String(function))};
 		}
 		catch(Exception e) {
@@ -288,23 +288,73 @@ public class HornerParser implements IParser {
 	}
 	
 	private static double[] division(double[] pHALeft, double[] pHARight) throws Exception {
-		// TODO TV implementieren
-		throw new Exception("Division not Implemented");
+		
+		pHARight = cleanPHA(pHARight);
+		int gradRight = pHARight.length - 1;
+		if(gradRight == 0) {
+			throw new FunctionParsingException(ParsingResponseCode.ParsingFailed, "Division durch 0 nicht erlaubt.");
+		}
+		
+		// ermittelt den niedrigstenGrad des linken pHA
+		int lowestGradLeft = 0;
+		while(lowestGradLeft < pHALeft.length 
+				&& pHALeft[lowestGradLeft] == 0) {
+			lowestGradLeft++;
+		}
+		
+		int newLength = pHALeft.length - pHARight.length + 1;
+		double[] newPHA = new double[newLength];
+		
+		// initialisiert das neue Array
+		for(int i = 0; i < newLength; i++) {
+			newPHA[i] = 0;
+		}
+		
+		double[] pHALeftClone = pHALeft.clone();
+		
+		// dividieren alle Werte
+		for(int leftIndex = pHALeftClone.length - 1; leftIndex >= 0; leftIndex--) {
+			if(pHALeftClone[leftIndex] == 0) {
+				continue;
+			}
+			
+			// ermittle wie oft höchster Grad von R in aktuellen Grad von L passt (pHALeft[leftIndex], pHARight[gradRight] != 0)
+			double faktor = pHALeftClone[leftIndex] / pHARight[gradRight];
+			int gradNew = leftIndex - gradRight;
+			if(gradNew < 0) {
+				throw new FunctionParsingException(ParsingResponseCode.ParsingFailed, "Negative Hochzahlen nicht erlaubt.");
+			}
+			
+			// hinterlegen des errechneten Wertes
+			newPHA[gradNew] = faktor;
+			
+			// ziehe das faktor-vielfache von R von L ab
+			for(int i = 0; i < pHARight.length; i++) {
+				
+				int gradToEdit = leftIndex - i;
+				int rightIndex = gradRight - i;
+
+				pHALeftClone[gradToEdit] = pHALeftClone[gradToEdit] - faktor * pHARight[rightIndex];
+			}
+		}
+		
+		return cleanPHA(newPHA);
 	}
 	
 	private static double[] potenzierung(double[] pHALeft, double[] pHARight) throws Exception {
-		if(pHARight.length != 1) {
-			throw new Exception("Potenzierung mit x ist nicht erlaubt.");
+		if(pHARight.length != 1 
+				|| pHARight[0] != (int) Math.round(pHARight[0])
+				|| pHARight[0] < 0) {
+			throw new Exception("Potenzierung ist nur mit natürlichen Zahlen erlaubt.");
 		}
 		
-		// TODO TV checken, ob Grad wirklich int
-		int grad = (int) Math.round(pHARight[0]);
+		int grad = (int) pHARight[0];
 		double[] newPHA = new double[] {1};
 		for(int i = 0; i < grad; i++) {
 			newPHA = multiplikation(newPHA, pHALeft);
 		}
 		
-		return cleanPHA(newPHA);
+		return newPHA;
 	}
 	
 	/**

@@ -67,8 +67,6 @@ public class Sidebar extends JPanel {
         FlowLayout layout = (FlowLayout)getLayout();
         layout.setHgap(0);
         layout.setVgap(0);
-        addJFunctionComponent('g', "g(x) = 4x+3", Color.decode("0x252632"));
-        addJFunctionComponent('f', "f(x) = x²+5", Color.decode("0xDE425C"));
     }
 
     

@@ -79,7 +79,6 @@ public class StyleClass {
     
     public void update() {
         Properties propertiesFile = new Properties();
-        System.out.println(currTheme);
         InputStream in = getClass().getResourceAsStream("themes/"+currTheme+".properties"); 
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         try {

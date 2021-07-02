@@ -354,7 +354,6 @@ public class JPlotter extends JPanel {
         }else if(nSquares<=lower){ // Wenn es zu wenig sind
             squareScale/=2; // Squares aufteilen
         }
-        System.out.println(getWidth());
         int substep = (int) Math.round(getHeight()/Math.abs(intervallYTuple.getItem2()-intervallYTuple.getItem1())/subGrid*squareScale);
 
         // Für i, welches bei der ersten ganzen Zahl die zur Scale passt startet [Bsp.: 3.141 - (3.141%1) - 1 = 2] minus squareScale um eventuelle ansichtsfehler zu vermeiden

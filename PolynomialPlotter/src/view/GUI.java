@@ -273,7 +273,6 @@ public class GUI extends JFrame implements IGUI {
                 if (!superscripted) {
                     superscripted = !superscripted;
                     res += '^';
-                    System.out.println((int) '^');
                 }
                 res += (uni - 176);
             } else if (uni >= 8308 && uni <= 8313) {

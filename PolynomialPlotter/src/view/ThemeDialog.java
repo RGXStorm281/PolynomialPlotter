@@ -98,9 +98,6 @@ public class ThemeDialog extends JFrame{
                 Properties propertiesFile = new Properties();
                 try {
                     InputStream in = (getClass().getResourceAsStream("../startup/settings.properties"));
-                    System.out.println(in);
-                    // BufferedOutputStream out = getClass().getResource("../startup/"+jcb.getSelectedItem());
-                    System.out.println(getClass().getResource("../startup/settings.properties"));
                     propertiesFile.load(new BufferedReader(new InputStreamReader(in)));
                     propertiesFile.setProperty("theme", jcb.getSelectedItem()+"");
                     propertiesFile.store(new FileOutputStream(getClass().getResource("../startup/settings.properties").getPath()),null);

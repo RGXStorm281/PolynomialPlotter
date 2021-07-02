@@ -31,7 +31,7 @@ public class HornerParser implements IParser {
 	}
 	
 	/**
-	 * Dient den UnitTests bis das endgültige AusgabeObjekt existiert
+	 * Dient den UnitTests bis das endgÃ¼ltige AusgabeObjekt existiert
 	 * @param function
 	 * @return
 	 * @throws Exception
@@ -45,13 +45,13 @@ public class HornerParser implements IParser {
 			fnct = functionTempArray[1];
 		}
 
-		// Prüft, ob Funktion korrekt beginnt
+		// PrÃ¼ft, ob Funktion korrekt beginnt
 		if(!Character.isDigit(fnct.charAt(0))
 				&& fnct.charAt(0) != 'x'
 				&& fnct.charAt(0) != '+'
 				&& fnct.charAt(0) != '-'
 				&& fnct.charAt(0) != '(') {
-			throw new Exception("Startwert '" + fnct.charAt(0) + "' ungültig");
+			throw new Exception("Startwert '" + fnct.charAt(0) + "' ungï¿½ltig");
 		}
 		
 		return innerParse(fnct.toCharArray(), 0);
@@ -68,11 +68,11 @@ public class HornerParser implements IParser {
 		
 		// Notfallabbruch
 		if(rekCounter > 500) {
-			throw new Exception("Es wurden zu viele Rekursionsstufen benötigt. Rest-String: '" + new String(function) + "'");
+			throw new Exception("Es wurden zu viele Rekursionsstufen benÃ¶tigt. Rest-String: '" + new String(function) + "'");
 		}
 		rekCounter++;
 		
-		// Prüft, ob function bereits nur Zahlen oder x, versucht ggf. direkt zu parsen
+		// Prï¿½ft, ob function bereits nur Zahlen oder x, versucht ggf. direkt zu parsen
 		boolean isDigitsOnly = true;
 		for(char character:
 			function) {
@@ -121,22 +121,22 @@ public class HornerParser implements IParser {
 					klammerZahl--;
 				}
 				
-				// Funktion darf nur außerhalb einer Klammer getrennt werden
+				// Funktion darf nur auï¿½erhalb einer Klammer getrennt werden
 				if(klammerZahl == 0) {
 
-					// prüft, ob der aktuell zu bearbeitende Operator der aktuelle char ist
+					// prï¿½ft, ob der aktuell zu bearbeitende Operator der aktuelle char ist
 					if(function[i] == operatorChar) {
 						// parsed rekursiv alles links und rechts vom Operator
 						
-						// linkes Objekt kann mit nächstem Operator bearbeitet werden, da der aktuelle Operator nicht mehr existiert
+						// linkes Objekt kann mit nï¿½chstem Operator bearbeitet werden, da der aktuelle Operator nicht mehr existiert
 						double[] pHALeft = innerParse(Arrays.copyOfRange(function, 0, i), rekCounter);
 						
-						// rechtes Objekt wird weiter auf aktuellen Operator geprüft
+						// rechtes Objekt wird weiter auf aktuellen Operator geprï¿½ft
 						double[] pHARight = innerParse(Arrays.copyOfRange(function, i + 1, function.length), rekCounter);
 						
 						return combineRechenobjekte(pHALeft, pHARight, op);
 					}
-					// Prüft ggf., ob eine ungeschriebene Multiplikation vorliegt 
+					// Prï¿½ft ggf., ob eine ungeschriebene Multiplikation vorliegt 
 					else if(op == operator.multiplikation
 							&& i > 0
 							&& (function[i-1] == 'x' && (Character.isDigit(function[i]) || function[i] == '(' || function[i] == 'x')
@@ -145,26 +145,26 @@ public class HornerParser implements IParser {
 
 						// parsed rekursiv alles links und rechts vom ungeschriebenen Operator
 						
-						// linkes Objekt kann mit nächstem Operator bearbeitet werden, da der aktuelle Operator nicht mehr existiert
+						// linkes Objekt kann mit nï¿½chstem Operator bearbeitet werden, da der aktuelle Operator nicht mehr existiert
 						double[] pHALeft = innerParse(Arrays.copyOfRange(function, 0, i), rekCounter);
 						
-						// rechtes Objekt wird weiter auf aktuellen Operator geprüft
+						// rechtes Objekt wird weiter auf aktuellen Operator geprï¿½ft
 						double[] pHARight = innerParse(Arrays.copyOfRange(function, i, function.length), rekCounter);
 						
 						return combineRechenobjekte(pHALeft, pHARight, op);
 					}
 					
-					// erhöht die Anzahl der sich nicht innerhalb Klammern befindlichen Character
+					// erhï¿½ht die Anzahl der sich nicht innerhalb Klammern befindlichen Character
 					unumklammertCount++;
 				}
 
-				// erhöht ggf. klammerEbene
+				// erhï¿½ht ggf. klammerEbene
 				if(function[i] == '(') {
 					klammerZahl++;
 				}
 			}
 			
-			// Wenn komplette function in Klammern können diese Klammern aufgelöst werden
+			// Wenn komplette function in Klammern kï¿½nnen diese Klammern aufgelï¿½st werden
 			if(unumklammertCount == 2
 					&& function[0] == '('
 					&& function[function.length - 1] == ')') {
@@ -184,17 +184,17 @@ public class HornerParser implements IParser {
 	 */
 	private double[] getPHAFromFunctionArray (char[] function) throws Exception {
 		if(function.length == 0) {
-			// gibt Array für 0 zurück
+			// gibt Array fï¿½r 0 zurï¿½ck
 			return new double[]{0};
 		}
 		if((function.length == 1
 			&& function[0] == 'x')) {
-			// gibt Array für "1*x^1" zurück
+			// gibt Array fï¿½r "1*x^1" zurï¿½ck
 			return new double[]{0, 1};
 		}
 		
 		try {
-			// gibt Array für "faktor" zurück
+			// gibt Array fï¿½r "faktor" zurï¿½ck
 			return new double[]{Double.parseDouble(new String(function))};
 		}
 		catch(Exception e) {
@@ -238,7 +238,7 @@ public class HornerParser implements IParser {
 			newPHA[i] = pHALeft[i] + pHARight[i];
 		}
 		
-		// fügt die restlichen werte des längeren Arrays an
+		// fï¿½gt die restlichen werte des lï¿½ngeren Arrays an
 		if(pHALeft.length == maxLength) {
 			for(int i = minLength; i < maxLength; i++) {
 				newPHA[i] = pHALeft[i];

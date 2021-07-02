@@ -126,23 +126,19 @@ public class FunctionDialog extends JFrame {
             okButton.addActionListener(new ActionListener(){
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                boolean legalFunction = false;
                 for(IFunctionListener listener: functionListeners){
                     try {
-                        ((IFunctionListener)listener).functionAdded(new FunctionEvent(e.getSource(), colorPanel.getBackground(), functionInput.getText().trim(), functionInput.getText().trim().toCharArray()[0]));
+                        ((IFunctionListener)listener).functionAdded(new FunctionEvent(e.getSource(), colorPanel.getBackground(), functionInput.getText().trim(), functionStringToChar(functionInput.getText().trim())));
+                        hideWarn();
+                        closeDialog();
+                        functionInput.setText("");
+                        colorPanel.setBackground(randomColor());
                     } catch (FunctionParsingException ex) {
                         Logger.getLogger(FunctionDialog.class.getName()).log(Level.SEVERE, null, ex);
+                        enableWarn(ex.getMessage());
                     }
                 }
-                if(legalFunction){
-                    //Add the function
-                    hideWarn();
-                    closeDialog();
-                    functionInput.setText("");
-                    colorPanel.setBackground(randomColor());
-                }else{
-                    enableWarn("Eingegebene Funktion ist nicht valide");
-                }
+              
                 }
             });
             break;
@@ -150,23 +146,19 @@ public class FunctionDialog extends JFrame {
             okButton.addActionListener(new ActionListener(){
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                boolean legalFunction = false;
                 for(IFunctionListener listener: functionListeners){
                     try {
-                        ((IFunctionListener)listener).functionEdited(new FunctionEditedEvent(e.getSource(), colorPanel.getBackground(), functionInput.getText().trim(), functionInput.getText().trim().toCharArray()[0],lastFunctionChar));
+                        ((IFunctionListener)listener).functionEdited(new FunctionEditedEvent(e.getSource(), colorPanel.getBackground(), functionInput.getText().trim(), functionStringToChar(functionInput.getText().trim()),lastFunctionChar));
+                        hideWarn();
+                        closeDialog();
+                        functionInput.setText("");
+                        colorPanel.setBackground(randomColor());
                     } catch (FunctionParsingException ex) {
                         Logger.getLogger(FunctionDialog.class.getName()).log(Level.SEVERE, null, ex);
+                        enableWarn(ex.getMessage());
                     }
                 }
-                if(legalFunction){
-                    //Add the function
-                    hideWarn();
-                    closeDialog();
-                }else{
-                    enableWarn("Eingegebene Funktion ist nicht valide");
-                }
-                }
-            });
+            }});
         }
         okButton.addMouseListener(new MouseAdapter(){
             @Override
@@ -242,6 +234,15 @@ public class FunctionDialog extends JFrame {
         pack();
         revalidate();
         repaint();
+    }
+
+    protected Character functionStringToChar(String string) {
+        String[] arr = string.split("=");
+        if(arr.length == 1){
+            return null;
+        }else{
+            return arr[0].toCharArray()[0];
+        }
     }
 
     protected void hideWarn() {

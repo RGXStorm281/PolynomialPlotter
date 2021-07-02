@@ -262,6 +262,9 @@ public class JPlotter extends JPanel {
         for(FunctionInfoContainer functionContainer: functionInfo){
             IFunction func = functionContainer.getFunction();
             Koordinate[] values = functionContainer.getFunctionValues();
+            if(values.length == 0){
+                continue;
+            }
             GeneralPath gp = new GeneralPath();
             gp.moveTo(Utils.mapToInterval(values[0].getX(), xInterval, widthInterval),Utils.mapToInterval(values[0].getY(), yInterval, heightInterval));
             for(int i = 1;i<values.length;i++){

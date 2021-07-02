@@ -29,8 +29,12 @@ public class FunctionListener implements IFunctionListener {
     public void functionAdded(FunctionEvent e) throws FunctionParsingException {
         String functionString = e.getFunctionString();
         Color functionColor = e.getFunctionColor();    
-        char functionChar = e.getFunctionChar();
-        System.out.println("New function \""+functionChar+"\" with: "+functionString+" and the Color"+functionColor);
+        Character functionChar = e.getFunctionChar();
+        if(functionChar != null){
+            System.out.println("New function \""+functionChar+"\" with: "+functionString+" and the Color"+functionColor);
+        }else{
+            System.out.println("New function \""+functionChar+"\" with: "+functionString+" and the Color"+functionColor);
+        }
         logic.addFunction(functionChar, functionString, functionColor);
         view.addJFunctionComponent(functionChar,functionString, functionColor);
         view.updateTheme();

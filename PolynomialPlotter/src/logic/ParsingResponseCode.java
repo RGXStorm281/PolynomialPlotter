@@ -9,4 +9,4 @@ package logic;
  *
  * @author robinepple
  */
-public enum ParsingResponseCode {OK, NameAlreadyTaken, NoMoreNamesAvailable}
+public enum ParsingResponseCode {ParsingFailed, NameAlreadyTaken, NoMoreNamesAvailable}

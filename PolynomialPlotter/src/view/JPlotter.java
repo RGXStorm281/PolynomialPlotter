@@ -207,10 +207,10 @@ public class JPlotter extends JPanel {
         //                                                      // Drag-Funktionalität
         // g2d.translate(getWidth() / 2, getHeight() / 2); // View auf die Mitte des Panels translaten/
         if(drawingInformation != null){
-            drawFunctions(g2d);
             drawGrid(g2d);
             drawAxes(g2d);
             drawValues(g2d);
+            drawFunctions(g2d);
         }
         // drawFunction(g2d, x -> (float) ((x * x) + 1), Color.RED);
         // drawFunction(g2d, x -> (float) (Math.sin(x) * x * x), Color.BLUE);

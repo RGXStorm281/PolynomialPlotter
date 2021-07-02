@@ -46,7 +46,7 @@ public class BusinessLogic {
         this.gui = gui;
         this.functionManager = functionManager;
         this.settings = settings;
-        this.functionCalculationPool = Executors.newScheduledThreadPool(settings.CORE_THREADPOOL_SIZE);
+        this.functionCalculationPool = Executors.newFixedThreadPool(settings.THREADPOOL_SIZE);
         
         initPositon(settings);
     }

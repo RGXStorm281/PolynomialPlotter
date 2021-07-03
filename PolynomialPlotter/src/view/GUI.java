@@ -21,6 +21,8 @@ import model.DrawingInformationContainer;
 import startup.Settings;
 import event.IFunctionListener;
 import event.IPlotListener;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 /**
  * @author raphaelsack
@@ -45,7 +47,6 @@ public class GUI extends JFrame implements IGUI {
 
     public GUI(Settings settings) throws FileNotFoundException, IOException {
         super();
-        
         this.settings = settings;
         this.styleClass = new StyleClass(settings.THEME);
         UIManager.put("MenuItem.selectionBackground", styleClass.MENU_BG_SELECTION);

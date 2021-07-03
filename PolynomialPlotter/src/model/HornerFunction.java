@@ -2,6 +2,10 @@ package model;
 
 import java.awt.Color;
 
+import org.apache.log4j.*;
+
+import logging.Logmanager;
+
 public class HornerFunction implements IFunction {
 	
 	private double[] hornerElements;
@@ -16,9 +20,9 @@ public class HornerFunction implements IFunction {
 	public Koordinate calculate(double xValue) {
 
 		Koordinate koordinate;
-		double yValue = hornerElements[0];
+		double yValue = hornerElements[hornerElements.length-1];
 		
-		for (int i = 1; i < hornerElements.length; i++)
+		for (int i = (hornerElements.length-1); i >= 0; i--)
 		{
 			yValue = yValue*xValue + hornerElements[i];
 		}

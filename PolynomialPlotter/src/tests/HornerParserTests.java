@@ -48,7 +48,6 @@ public class HornerParserTests {
 				}
 			}
 			catch(Exception e) {
-				// TODO TV Exceptionhandling
 				System.out.println(e);
 				Assert.assertEquals(e, null);
 			}

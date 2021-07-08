@@ -17,7 +17,10 @@ import javax.swing.SwingUtilities;
 import logic.BusinessLogic;
 import logic.FunctionListener;
 import logic.FunctionManager;
+import logic.HornerParser;
+import logic.IParser;
 import logic.PlotListener;
+import logic.UniversalParser;
 import view.GUI;
 
 /**
@@ -31,9 +34,15 @@ public class PolynomialPlotter {
      */
     public static void main(String[] args) {
         try {
+            // Vorbereitungen
+            IParser[] availableParsers = new IParser[] {
+    		new HornerParser(),
+    		new UniversalParser()
+            };
+            
             // Objekte initialisieren
             Settings settings = new Settings("src/startup/settings.properties");
-            FunctionManager model = new FunctionManager();
+            FunctionManager model = new FunctionManager(availableParsers);
             GUI view = new GUI(settings);
             BusinessLogic logic = new BusinessLogic(view, model, settings);
 

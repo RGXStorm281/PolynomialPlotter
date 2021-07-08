@@ -258,7 +258,7 @@ public class GUI extends JFrame implements IGUI {
 
     }
 
-    public void addJFunctionComponent(char functionChar, String functionString, Color functionColor) {
+    public void addJFunctionComponent(Character functionChar, String functionString, Color functionColor) {
         sidebar_panel.addJFunctionComponent(functionChar, functionString, functionColor);
     }
 

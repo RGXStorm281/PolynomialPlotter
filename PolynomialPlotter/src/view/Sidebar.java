@@ -75,7 +75,7 @@ public class Sidebar extends JPanel {
      * @param functionString Funktions-String
      * @param functionColor Funkctions-Farbe
      */
-    public void addJFunctionComponent(char functionChar,String functionString, Color functionColor){
+    public void addJFunctionComponent(Character functionChar,String functionString, Color functionColor){
         JFunctionComponent jfc = new JFunctionComponent(this.styleClass,functionChar, functionString, functionColor);
         for(IFunctionListener functionListener: functionListeners)jfc.addFunctionListener(functionListener);
         functionList.add(jfc);

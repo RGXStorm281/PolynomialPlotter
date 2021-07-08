@@ -258,9 +258,9 @@ public class JPlotter extends JPanel {
         Tuple<Double,Double> widthInterval = new Tuple<Double,Double>((double)0, (double)getWidth());
         double xStep = drawingInformation.getStep();
         FunctionInfoContainer[] functionInfo = drawingInformation.getFunctionInfo();
-        g2d.setColor(Color.RED);
         for(FunctionInfoContainer functionContainer: functionInfo){
             IFunction func = functionContainer.getFunction();
+            g2d.setColor(func.getColor());
             Koordinate[] values = functionContainer.getFunctionValues();
             if(values.length == 0){
                 continue;

@@ -29,7 +29,7 @@ import event.IFunctionListener;
 public class JFunctionComponent extends JComponent implements MouseMotionListener {
 
     private String functionString;
-    private char functionChar;
+    private Character functionChar;
 
     private JFunctionContextMenu contextMenu;
     private StyleClass styleClass;
@@ -71,7 +71,7 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
     private Color functionStringColor;
 
     
-    public JFunctionComponent(StyleClass styleClass, char functionChar, String functionString, Color circleColor) {
+    public JFunctionComponent(StyleClass styleClass, Character functionChar, String functionString, Color circleColor) {
         super();
         this.circleColor = circleColor;
         this.functionString = functionString;

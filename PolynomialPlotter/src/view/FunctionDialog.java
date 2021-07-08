@@ -47,7 +47,7 @@ public class FunctionDialog extends JFrame {
     private JButton okButton;
     private JButton cancelButton;
 
-    private char lastFunctionChar;
+    private Character lastFunctionChar;
 
     private JTextField functionInput;
     private JLabel functionInputLabel;
@@ -349,7 +349,7 @@ public class FunctionDialog extends JFrame {
     /** Wenn der Dialog als Edit-Dialog gecallt wird, dann soll am anfang der alte Character mitgegeben werden
      * @param functionChar
      */
-    public void setLastFunctionChar(char functionChar) {
+    public void setLastFunctionChar(Character functionChar) {
         this.lastFunctionChar = functionChar;
     }
 

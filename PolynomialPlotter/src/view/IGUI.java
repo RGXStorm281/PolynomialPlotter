@@ -68,7 +68,7 @@ public interface IGUI{
 
     int getPlotHeight();
 
-    public void addJFunctionComponent(char functionChar, String functionString, Color functionColor);
+    public void addJFunctionComponent(Character functionChar, String functionString, Color functionColor);
 
     public void updateTheme();
 }

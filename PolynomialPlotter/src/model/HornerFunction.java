@@ -2,10 +2,6 @@ package model;
 
 import java.awt.Color;
 
-import org.apache.log4j.*;
-
-import logging.Logmanager;
-
 public class HornerFunction implements IFunction {
 	
 	private double[] hornerElements;

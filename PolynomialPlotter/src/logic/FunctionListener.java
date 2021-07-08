@@ -26,10 +26,10 @@ public class FunctionListener implements IFunctionListener {
     }
     
     @Override
-    public char functionAdded(FunctionEvent e) throws FunctionParsingException {
+    public String functionAdded(FunctionEvent e) throws FunctionParsingException {
         String functionString = e.getFunctionString();
         Color functionColor = e.getFunctionColor();    
-        Character functionName = e.getFunctionChar();
+        String functionName = e.getFunctionChar();
         
         if(functionName != null){
             System.out.println("New function \""+functionName+"\" with: "+functionString+" and the Color"+functionColor);
@@ -44,7 +44,7 @@ public class FunctionListener implements IFunctionListener {
     }
 
     @Override
-    public char functionEdited(FunctionEditedEvent e) throws FunctionParsingException {
+    public String functionEdited(FunctionEditedEvent e) throws FunctionParsingException {
         var targetFunctionName = e.getOldFunctionChar();
         var newFunctionName = e.getFunctionChar();
         var newFunctionString = e.getFunctionString();

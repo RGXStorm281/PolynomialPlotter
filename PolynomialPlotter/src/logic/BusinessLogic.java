@@ -84,12 +84,14 @@ public class BusinessLogic {
      * @param functionName Der Name der Funktion.
      * @param functionString Ein String, der zur Funktion geparsed wird.
      * @param lineColor Die Farbe, in der die Funktionslinie gezeichnet werden soll.
+     * @return Der Funktionsname, der für die angelegte Funktion vergeben wurde.
      * @throws FunctionParsingException Details zum Parsing Fehler.
      */
-    public void addFunction(Character functionName, String functionString, Color lineColor) throws FunctionParsingException{
+    public char addFunction(Character functionName, String functionString, Color lineColor) throws FunctionParsingException{
         // TODO RE Farbe weitergeben.
-        functionManager.parseAndAddFunction(functionName, functionString);
+        var name = functionManager.parseAndAddFunction(functionName, functionString);
         calculateAndDraw();
+        return name;
     }
     
     /**
@@ -98,14 +100,15 @@ public class BusinessLogic {
      * @param newFunctionName  Der neue Name der Funktion.
      * @param newFunctionString Der String, der als neue Funktion geparsed werden soll.
      * @param newLineColor Die Linienfarbe der Funktion.
+     * @return Der Funktionsname, den die editierte Funktion nach der Bearbeitung besitzt.
      * @throws FunctionParsingException Details zum Parsing Fehler.
      */
-    public void editFunction(Character targetFunctionName, Character newFunctionName, String newFunctionString, Color newLineColor) throws FunctionParsingException{
+    public char editFunction(Character targetFunctionName, Character newFunctionName, String newFunctionString, Color newLineColor) throws FunctionParsingException{
         var targetFunction = functionManager.getFunction(targetFunctionName);
         
         // Darf eigentlich nicht vorkommen. Wenn doch: Nichts tun.
         if(targetFunction == null){
-            return;
+            throw new FunctionParsingException(ParsingResponseCode.TargetFunctionEmpty, "Es muss ein Target-Funktionsname angegeben werden.");
         }
         
         // Platz machen, falls sich der Funktionsname nicht geändert hat. 
@@ -114,9 +117,10 @@ public class BusinessLogic {
         try {
             // Versuche neue Funktion zu speichern.
             // TODO RE Farbe weitergeben.
-            functionManager.parseAndAddFunction(newFunctionName, newFunctionString);
+            var name = functionManager.parseAndAddFunction(newFunctionName, newFunctionString);
             // Neu berechnen und Zeichnen.
             calculateAndDraw();
+            return name;
         }catch (FunctionParsingException f){
             // Falls parsen fehl schlägt bestehende Funktion wiederherstellen.
             functionManager.add(targetFunctionName, targetFunction);

@@ -150,12 +150,10 @@ public class BusinessLogic {
     
     /**
      * Aktualisiert die Intervallgröße zur Anpassung an die Fenstergröße und zeichnet neu.
-     * @param e Das Event, das die Plot Informationen enthält.
+     * @param newCanvasWidth neue Breite in Pixeln
+     * @param newCanvasHeight neue Höhe in Pixeln
      */
-    public void resize(PlotEvent e){
-        var newCanvasWidth = e.getPlotWidth();
-        var newCanvasHeight = e.getPlotHeight();
-        
+    public void resize(int newCanvasWidth, int newCanvasHeight){
         if(newCanvasWidth == 0 || newCanvasHeight == 0){
             return;
         }

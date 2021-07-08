@@ -9,8 +9,10 @@ package startup;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.FileHandler;
 
 import javax.swing.SwingUtilities;
 
@@ -45,6 +47,7 @@ public class PolynomialPlotter {
             FunctionManager model = new FunctionManager(availableParsers);
             GUI view = new GUI(settings);
             BusinessLogic logic = new BusinessLogic(view, model, settings);
+            initLogger("logs/logs.log");
 
             // Events Setzen
             view.addFunctionListener(new FunctionListener(view, logic));
@@ -63,6 +66,19 @@ public class PolynomialPlotter {
         } catch (IOException ex) {
             Logger.getLogger(PolynomialPlotter.class.getName()).log(Level.SEVERE, null, ex);
         } 
+    }
+    
+    private static void initLogger(String logFilePath){
+    	Settings.LOGGER = Logger.getGlobal();
+        FileHandler handler = null;
+		try {
+			handler = new FileHandler(logFilePath, true);
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+        Settings.LOGGER.addHandler(handler);
     }
 
 }

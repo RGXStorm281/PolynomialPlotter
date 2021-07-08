@@ -21,8 +21,6 @@ import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.awt.event.MouseAdapter;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import event.IFunctionListener;
 
@@ -31,7 +29,6 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
     private String functionString;
     private Character functionChar;
 
-    private JFunctionContextMenu contextMenu;
     private StyleClass styleClass;
     private FunctionDialog functionDialog;
 
@@ -77,7 +74,6 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
         this.functionString = functionString;
         this.functionChar = functionChar;
         this.styleClass = styleClass;
-        contextMenu = new JFunctionContextMenu();
         functionStringColor = styleClass.FUNCTION_CARD_FG;
         functionDialog = new FunctionDialog(this,DialogType.EDIT,styleClass);
         functionDialog.setFunctionString(functionString);
@@ -165,22 +161,22 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
             // paintEditButton(g2d);
         }
         
-        /**
-         * Malt den Editier-Button
-         * 
-         * @param g2d
-         */
-        private void paintEditButton(Graphics2D g2d) {
-            int rectY = (int) (cardVMargin + editButtonCircleMargin * 3.5);
-            int width = (int) (2 * (3 * editButtonCircleRadii + editButtonCircleMargin));
-            int rectX = (int) (getWidth() - cardMargins - editButtonCircleMargin * 3.5 - width);
-            g2d.setColor(editButtonCurrentColor);
-            for (int i = 0; i < 3; i++) {
-                g2d.fillOval(rectX + (i * (editButtonCircleMargin + editButtonCircleRadii * 2)), rectY,
-                editButtonCircleRadii * 2, editButtonCircleRadii * 2);
-            }
+        // /**
+        //  * Malt den Editier-Button
+        //  * 
+        //  * @param g2d
+        //  */
+        // private void paintEditButton(Graphics2D g2d) {
+        //     int rectY = (int) (cardVMargin + editButtonCircleMargin * 3.5);
+        //     int width = (int) (2 * (3 * editButtonCircleRadii + editButtonCircleMargin));
+        //     int rectX = (int) (getWidth() - cardMargins - editButtonCircleMargin * 3.5 - width);
+        //     g2d.setColor(editButtonCurrentColor);
+        //     for (int i = 0; i < 3; i++) {
+        //         g2d.fillOval(rectX + (i * (editButtonCircleMargin + editButtonCircleRadii * 2)), rectY,
+        //         editButtonCircleRadii * 2, editButtonCircleRadii * 2);
+        //     }
             
-        }
+        // }
         
         /**
          * malt den Close Button

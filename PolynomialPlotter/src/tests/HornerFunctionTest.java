@@ -6,7 +6,6 @@ import org.junit.Test;
 import model.HornerFunction;
 import model.Koordinate;
 
-import java.awt.Color;
 
 public class HornerFunctionTest {
 	

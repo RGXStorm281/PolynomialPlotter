@@ -9,7 +9,6 @@ import event.IPlotListener;
 import event.PlotEvent;
 import event.PlotMovedEvent;
 import event.PlotZoomedEvent;
-import model.Koordinate;
 import model.Tuple;
 
 /**

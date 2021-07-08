@@ -46,7 +46,7 @@ public class JPlotter extends JPanel {
 
     private double zoom; // Global zoomlevel
 
-    private final float SPACING; // Hardcoded Space-unit, |spacing| pixels = 1 numerical unit
+    // private final float SPACING; // Hardcoded Space-unit, |spacing| pixels = 1 numerical unit
     private float squareScale = 2;
     private int xAxisValueYOffset = 10;
     private int yAxisValueXOffset = 10;
@@ -74,7 +74,7 @@ public class JPlotter extends JPanel {
         // Scroll-Listener --> Zoom
         this.settings = settings;
         this.zoom = settings.INITIAL_ZOOM;
-        this.SPACING = settings.INITIAL_PIXEL_TO_UNIT_RATIO;
+        // this.SPACING = settings.INITIAL_PIXEL_TO_UNIT_RATIO;
         this.subGrid = settings.SUB_SQUARE_GRID;
         this.plotBackground = styleClass.PLOT_BG;
         this.gridColor = styleClass.GIRD_COLOR;
@@ -256,7 +256,7 @@ public class JPlotter extends JPanel {
         Tuple<Double,Double> yInterval = drawingInformation.getIntervallY();
         Tuple<Double,Double> heightInterval = new Tuple<Double,Double>((double)0, (double)getHeight());
         Tuple<Double,Double> widthInterval = new Tuple<Double,Double>((double)0, (double)getWidth());
-        double xStep = drawingInformation.getStep();
+        // double xStep = drawingInformation.getStep();
         FunctionInfoContainer[] functionInfo = drawingInformation.getFunctionInfo();
         for(FunctionInfoContainer functionContainer: functionInfo){
             IFunction func = functionContainer.getFunction();

@@ -13,14 +13,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.SwingUtilities;
-import java.awt.Color;
 
-import event.*;
 import logic.BusinessLogic;
 import logic.FunctionListener;
 import logic.FunctionManager;
 import logic.PlotListener;
-import model.Koordinate;
 import view.GUI;
 
 /**

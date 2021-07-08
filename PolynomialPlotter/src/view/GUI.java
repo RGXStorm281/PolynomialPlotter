@@ -1,12 +1,8 @@
 package view;
 
 import java.awt.BorderLayout;
-import java.net.URL;
 import java.awt.Font;
 import java.awt.Color;
-import java.awt.FontFormatException;
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,8 +17,6 @@ import model.DrawingInformationContainer;
 import startup.Settings;
 import event.IFunctionListener;
 import event.IPlotListener;
-import java.util.Locale;
-import java.util.ResourceBundle;
 
 /**
  * @author raphaelsack

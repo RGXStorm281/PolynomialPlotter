@@ -1,6 +1,5 @@
 package event;
 
-import model.Koordinate;
 import model.Tuple;
 
 public class PlotMovedEvent extends PlotEvent{

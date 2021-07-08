@@ -40,4 +40,8 @@ public class Tuple<Type1,Type2> {
     public String toString() {
         return "mode.Tuple[item1:"+this.item1+",item2:"+this.item2+"]";
     }
+
+    public static Tuple<Double,Double> swap(Tuple<Double,Double> tuple){
+        return new Tuple<Double,Double>(tuple.getItem2(),tuple.getItem1());
+    }
 }

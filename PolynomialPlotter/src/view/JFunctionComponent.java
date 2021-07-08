@@ -70,6 +70,7 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
     private int cardMargins; // Margin left and right to the border
     private Color functionStringColor;
 
+    
     public JFunctionComponent(StyleClass styleClass, char functionChar, String functionString, Color circleColor) {
         super();
         this.circleColor = circleColor;
@@ -78,34 +79,34 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
         this.styleClass = styleClass;
         contextMenu = new JFunctionContextMenu();
         functionStringColor = styleClass.FUNCTION_CARD_FG;
-        functionDialog = new FunctionDialog(DialogType.EDIT,styleClass);
+        functionDialog = new FunctionDialog(this,DialogType.EDIT,styleClass);
         functionDialog.setFunctionString(functionString);
         functionDialog.setColor(circleColor);
         functionDialog.setLastFunctionChar(this.functionChar);
         functionDialog.setLocationRelativeTo(this);
-
+        
         defaultCardBg = styleClass.FUNCTION_CARD_BG;
         currentCardBg = defaultCardBg;
         hoverCardBg = styleClass.FUNCTION_CARD_BG_HOVER;
         cardWidthPercent = .9f;
         cardVMargin = 7;
-
+        
         circleRadius = 17;
         circleMargin = 16;
-
+        
         closeButtonBgDefaultColor = styleClass.FUNCTION_CARD_CLOSE_BUTTON_BG;
         closeButtonBgHoverColor = closeButtonBgDefaultColor.darker();
         closeButtonBgCurrentColor = closeButtonBgDefaultColor;
         closeButtonCrossDefaultColor = styleClass.FUNCTION_CARD_CLOSE_BUTTON_FG;
         closeButtonCrossHoverColor = closeButtonCrossDefaultColor.darker();
         closeButtonCrossCurrentColor = closeButtonCrossDefaultColor;
-
+        
         closeButtonRadius = 7;
         closeButtonMargin = 8;
         closeButtonStrokeWidth = 1.5f;
         closeButtonCrossStroke = new BasicStroke(closeButtonStrokeWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
         closeButtonCrossLenghtFactor = 0.5f;
-
+        
         editButtonDefaultColor = styleClass.FUNCTION_CARD_EDIT_BUTTON_BG;
         editButtonCurrentColor = editButtonDefaultColor;
         editButtonHoverColor = editButtonDefaultColor.darker();
@@ -117,112 +118,119 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
             public void mouseExited(MouseEvent e) {
                 resetAllStyles();
             }
-
+            
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (isInCardBounds(e)) {
                     requestFocus();
                     if (isInCloseButtonBounds(e)) {
                         for (IFunctionListener listener : functionListeners)
-                            ((IFunctionListener) listener).functionDeleted(
-                                    new FunctionEvent(e.getSource(), circleColor, functionString, functionChar));
-                        destroy();
-                    } else{
-                        functionDialog.start();
+                        ((IFunctionListener) listener).functionDeleted(
+                            new FunctionEvent(e.getSource(), circleColor, functionString, functionChar));
+                            destroy();
+                        } else{
+                            functionDialog.start();
+                        }
                     }
                 }
-            }
-        });
-       
-    }
-
-    /**
-     * Enternt sich selbst aus seinem Parent und löscht das Objekt
-     */
-    protected void destroy() {
-        ((Sidebar) getParent().getParent()).removeJFunctionComponent(this);
-    }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        if (cardMargins == 0.0f)
+            });
+            
+        }
+        
+        /**
+         * Enternt sich selbst aus seinem Parent und löscht das Objekt
+         */
+        protected void destroy() {
+            ((Sidebar) getParent().getParent()).removeJFunctionComponent(this);
+        }
+        
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            if (cardMargins == 0.0f)
             cardMargins = (int) (getWidth() * ((1 - cardWidthPercent) / 2));
-        addMouseMotionListener(this);
-        cardWidth = (int) (getWidth() * cardWidthPercent);
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2d.setColor(Color.BLACK);
-        // g2d.drawRect(0,0,getWidth()-1,getHeight()-1);
-        g2d.translate(getWidth() / 2, getHeight() / 2);
-        g2d.setColor(currentCardBg);
-        g2d.fillRoundRect((int) (-cardWidth / 2), (int) (-getHeight() / 2 + cardVMargin), (int) (cardWidth),
-                (int) (getHeight() - cardVMargin * 2), 20, 20);
-        paintColorCircle(g2d);
-        paintFunctionString(g2d);
-        paintCloseButton(g2d);
-        // paintEditButton(g2d);
-    }
-
-    /**
-     * Malt den Editier-Button
-     * 
-     * @param g2d
-     */
-    private void paintEditButton(Graphics2D g2d) {
-        int rectY = (int) (cardVMargin + editButtonCircleMargin * 3.5);
-        int width = (int) (2 * (3 * editButtonCircleRadii + editButtonCircleMargin));
-        int rectX = (int) (getWidth() - cardMargins - editButtonCircleMargin * 3.5 - width);
-        g2d.setColor(editButtonCurrentColor);
-        for (int i = 0; i < 3; i++) {
-            g2d.fillOval(rectX + (i * (editButtonCircleMargin + editButtonCircleRadii * 2)), rectY,
-                    editButtonCircleRadii * 2, editButtonCircleRadii * 2);
+            addMouseMotionListener(this);
+            cardWidth = (int) (getWidth() * cardWidthPercent);
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2d.setColor(Color.BLACK);
+            // g2d.drawRect(0,0,getWidth()-1,getHeight()-1);
+            g2d.translate(getWidth() / 2, getHeight() / 2);
+            g2d.setColor(currentCardBg);
+            g2d.fillRoundRect((int) (-cardWidth / 2), (int) (-getHeight() / 2 + cardVMargin), (int) (cardWidth),
+            (int) (getHeight() - cardVMargin * 2), 20, 20);
+            paintColorCircle(g2d);
+            paintFunctionString(g2d);
+            paintCloseButton(g2d);
+            // paintEditButton(g2d);
         }
-
-    }
-
-    /**
-     * malt den Close Button
-     * 
-     * @param g2d
-     */
-    private void paintCloseButton(Graphics2D g2d) {
-        g2d.translate(-getWidth() / 2, -getHeight() / 2);
-        if (closeCrossPath == null) { // Speichert einen Pfad nach dem ersten berechnen ab (Spart etwas Rechenzeit
-                                      // ein)
-            closeCrossPath = new GeneralPath();
-            int x1 = (int) (Math.sin(0.25 * Math.PI) * closeButtonRadius * closeButtonCrossLenghtFactor + cardMargins
-                    + closeButtonMargin + closeButtonRadius);
-            int y1 = (int) (Math.cos(0.25 * Math.PI) * closeButtonRadius * closeButtonCrossLenghtFactor + cardVMargin
-                    + closeButtonMargin + closeButtonRadius);
-            int x2 = (int) (Math.sin(1.25 * Math.PI) * closeButtonRadius * closeButtonCrossLenghtFactor + cardMargins
-                    + closeButtonMargin + closeButtonRadius);
-            int y2 = (int) (Math.cos(1.25 * Math.PI) * closeButtonRadius * closeButtonCrossLenghtFactor + cardVMargin
-                    + closeButtonMargin + closeButtonRadius);
-            closeCrossPath.moveTo(x1, y1);
-            closeCrossPath.lineTo(x2, y2);
-            int x3 = (int) (Math.sin(0.75 * Math.PI) * closeButtonRadius * closeButtonCrossLenghtFactor + cardMargins
-                    + closeButtonMargin + closeButtonRadius);
-            int y3 = (int) (Math.cos(0.75 * Math.PI) * closeButtonRadius * closeButtonCrossLenghtFactor + cardVMargin
-                    + closeButtonMargin + closeButtonRadius);
-            int x4 = (int) (Math.sin(1.75 * Math.PI) * closeButtonRadius * closeButtonCrossLenghtFactor + cardMargins
-                    + closeButtonMargin + closeButtonRadius);
-            int y4 = (int) (Math.cos(1.75 * Math.PI) * closeButtonRadius * closeButtonCrossLenghtFactor + cardVMargin
-                    + closeButtonMargin + closeButtonRadius);
-            closeCrossPath.moveTo(x3, y3);
-            closeCrossPath.lineTo(x4, y4);
+        
+        /**
+         * Malt den Editier-Button
+         * 
+         * @param g2d
+         */
+        private void paintEditButton(Graphics2D g2d) {
+            int rectY = (int) (cardVMargin + editButtonCircleMargin * 3.5);
+            int width = (int) (2 * (3 * editButtonCircleRadii + editButtonCircleMargin));
+            int rectX = (int) (getWidth() - cardMargins - editButtonCircleMargin * 3.5 - width);
+            g2d.setColor(editButtonCurrentColor);
+            for (int i = 0; i < 3; i++) {
+                g2d.fillOval(rectX + (i * (editButtonCircleMargin + editButtonCircleRadii * 2)), rectY,
+                editButtonCircleRadii * 2, editButtonCircleRadii * 2);
+            }
+            
         }
-        g2d.setColor(closeButtonBgCurrentColor);
-        g2d.fillOval(cardMargins + closeButtonMargin, (int) cardVMargin + closeButtonMargin, closeButtonRadius * 2,
-                closeButtonRadius * 2);
-        g2d.setStroke(closeButtonCrossStroke);
-        g2d.setPaint(closeButtonCrossCurrentColor);
-        g2d.draw(closeCrossPath);
-
-    }
-
-    /**
-     * Malt den Funktions-String
+        
+        /**
+         * malt den Close Button
+         * 
+         * @param g2d
+         */
+        private void paintCloseButton(Graphics2D g2d) {
+            g2d.translate(-getWidth() / 2, -getHeight() / 2);
+            if (closeCrossPath == null) { // Speichert einen Pfad nach dem ersten berechnen ab (Spart etwas Rechenzeit
+                // ein)
+                closeCrossPath = new GeneralPath();
+                int x1 = (int) (Math.sin(0.25 * Math.PI) * closeButtonRadius * closeButtonCrossLenghtFactor + cardMargins
+                + closeButtonMargin + closeButtonRadius);
+                int y1 = (int) (Math.cos(0.25 * Math.PI) * closeButtonRadius * closeButtonCrossLenghtFactor + cardVMargin
+                + closeButtonMargin + closeButtonRadius);
+                int x2 = (int) (Math.sin(1.25 * Math.PI) * closeButtonRadius * closeButtonCrossLenghtFactor + cardMargins
+                + closeButtonMargin + closeButtonRadius);
+                int y2 = (int) (Math.cos(1.25 * Math.PI) * closeButtonRadius * closeButtonCrossLenghtFactor + cardVMargin
+                + closeButtonMargin + closeButtonRadius);
+                closeCrossPath.moveTo(x1, y1);
+                closeCrossPath.lineTo(x2, y2);
+                int x3 = (int) (Math.sin(0.75 * Math.PI) * closeButtonRadius * closeButtonCrossLenghtFactor + cardMargins
+                + closeButtonMargin + closeButtonRadius);
+                int y3 = (int) (Math.cos(0.75 * Math.PI) * closeButtonRadius * closeButtonCrossLenghtFactor + cardVMargin
+                + closeButtonMargin + closeButtonRadius);
+                int x4 = (int) (Math.sin(1.75 * Math.PI) * closeButtonRadius * closeButtonCrossLenghtFactor + cardMargins
+                + closeButtonMargin + closeButtonRadius);
+                int y4 = (int) (Math.cos(1.75 * Math.PI) * closeButtonRadius * closeButtonCrossLenghtFactor + cardVMargin
+                + closeButtonMargin + closeButtonRadius);
+                closeCrossPath.moveTo(x3, y3);
+                closeCrossPath.lineTo(x4, y4);
+            }
+            g2d.setColor(closeButtonBgCurrentColor);
+            g2d.fillOval(cardMargins + closeButtonMargin, (int) cardVMargin + closeButtonMargin, closeButtonRadius * 2,
+            closeButtonRadius * 2);
+            g2d.setStroke(closeButtonCrossStroke);
+            g2d.setPaint(closeButtonCrossCurrentColor);
+            g2d.draw(closeCrossPath);
+            
+        }
+        
+        public void setFunctionString(String functionString){
+            this.functionString = functionString;
+            revalidate();
+            repaint();
+        }
+    
+        
+        /**
+         * Malt den Funktions-String
      * 
      * @param g2d
      */
@@ -424,6 +432,13 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
         int blue = (int) (a.getBlue() + (b.getBlue() - a.getBlue()) * t);
         int alpha = (int) (a.getAlpha() + (b.getAlpha() - a.getAlpha()) * t);
         return new Color(red, green, blue, alpha);
+    }
+
+    public void editFunction(String fs, Color functionColor) {
+        this.functionString = fs;
+        this.circleColor = functionColor;
+        revalidate();
+        repaint();
     }
 
 }

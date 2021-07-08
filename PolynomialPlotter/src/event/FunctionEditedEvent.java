@@ -15,7 +15,7 @@ public class FunctionEditedEvent extends FunctionEvent {
      * @param functionName   Funktions Name/Buchstabe/Identifier [f,g,h,...]
      * @param oldFunctionChar Alter Funktions-Name (falls sich dieser geändert hat, als identifikation)
      */
-    public FunctionEditedEvent(Object source, Color functionColor, String functionString, char functionName,
+    public FunctionEditedEvent(Object source, Color functionColor, String functionString, Character functionName,
             char oldFunctionChar) {
         super(source, functionColor, functionString, functionName);
         this.oldFunctionChar = oldFunctionChar;

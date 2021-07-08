@@ -59,7 +59,7 @@ public class FunctionDialog extends JFrame {
     private JPanel colorPanel;
     private List<IFunctionListener> functionListeners = new ArrayList<IFunctionListener>();
 
-    FunctionDialog(DialogType dialogType, StyleClass styleClass) {
+    FunctionDialog(JFunctionComponent caller,DialogType dialogType, StyleClass styleClass) {
         this.styleClass = styleClass;
         buttonBackground = this.styleClass.BUTTON_BG;
         buttonForeground = this.styleClass.BUTTON_FG;
@@ -151,8 +151,8 @@ public class FunctionDialog extends JFrame {
                         ((IFunctionListener)listener).functionEdited(new FunctionEditedEvent(e.getSource(), colorPanel.getBackground(), functionInput.getText().trim(), functionStringToChar(functionInput.getText().trim()),lastFunctionChar));
                         hideWarn();
                         closeDialog();
-                        functionInput.setText("");
-                        colorPanel.setBackground(randomColor());
+                        caller.editFunction(functionInput.getText().trim(),colorPanel.getBackground());
+
                     } catch (FunctionParsingException ex) {
                         Logger.getLogger(FunctionDialog.class.getName()).log(Level.SEVERE, null, ex);
                         enableWarn(ex.getMessage());

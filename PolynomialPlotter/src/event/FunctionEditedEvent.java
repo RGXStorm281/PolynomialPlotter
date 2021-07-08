@@ -3,7 +3,7 @@ package event;
 import java.awt.Color;
 
 public class FunctionEditedEvent extends FunctionEvent {
-    char oldFunctionChar;
+    String oldFunctionChar;
 
     /**
      * Child von FunctioEvent
@@ -15,13 +15,13 @@ public class FunctionEditedEvent extends FunctionEvent {
      * @param functionName   Funktions Name/Buchstabe/Identifier [f,g,h,...]
      * @param oldFunctionChar Alter Funktions-Name (falls sich dieser geändert hat, als identifikation)
      */
-    public FunctionEditedEvent(Object source, Color functionColor, String functionString, Character functionName,
-            char oldFunctionChar) {
+    public FunctionEditedEvent(Object source, Color functionColor, String functionString, String functionName,
+            String oldFunctionChar) {
         super(source, functionColor, functionString, functionName);
         this.oldFunctionChar = oldFunctionChar;
     }
 
-    public char getOldFunctionChar() {
+    public String getOldFunctionChar() {
         return this.oldFunctionChar;
     }
 

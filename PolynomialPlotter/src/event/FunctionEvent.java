@@ -4,7 +4,7 @@ public class FunctionEvent extends java.util.EventObject{
 
     Color functionColor;
     String functionString;
-    Character functionName;
+    String functionName;
     /**
      * FunctionEvent wird als Event genutzt für jegliches EventHandling mit Funktionen
      * Sprich: Funktionen adden, löschen oder ändern
@@ -13,7 +13,7 @@ public class FunctionEvent extends java.util.EventObject{
      * @param functionString Funktions-String
      * @param functionName   Funktions Name/Buchstabe/Identifier [f,g,h,...]
      */
-    public FunctionEvent(Object source, Color functionColor, String functionString, Character functionName) {
+    public FunctionEvent(Object source, Color functionColor, String functionString, String functionName) {
         super(source);
         this.functionColor = functionColor;
         this.functionString = functionString;
@@ -40,7 +40,7 @@ public class FunctionEvent extends java.util.EventObject{
     /** Gibt den Funktions-Identifier/Namen zurück [f,g,h,...]
      * @return char
      */
-    public Character getFunctionChar(){
+    public String getFunctionChar(){
         return this.functionName;
     }
 }

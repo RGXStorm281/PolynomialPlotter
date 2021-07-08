@@ -16,7 +16,7 @@ import model.IFunction;
  */
 public class FunctionManager {
 
-    private HashMap<Character, IFunction> functionMap;
+    private HashMap<String, IFunction> functionMap;
     
 	private static IParser[] parserArray = new IParser[] {
     		new HornerParser(),
@@ -33,7 +33,7 @@ public class FunctionManager {
      * @param functionName
      * @return functionName hinterlegt.
      */
-    private boolean functionNameExists(char functionName) {
+    private boolean functionNameExists(String functionName) {
     	return this.functionMap.containsKey(functionName);
     }
 
@@ -50,7 +50,7 @@ public class FunctionManager {
      * @param c
      * @return Die zugehrige Funktion oder null.
      */
-    public IFunction getFunction(char c){
+    public IFunction getFunction(String c){
         if(functionNameExists(c)){
             return this.functionMap.get(c);
         }
@@ -62,7 +62,7 @@ public class FunctionManager {
      * @param functionName
      * @return function gelöscht.
      */
-    public boolean delete(Character functionName) {
+    public boolean delete(String functionName) {
     	
     	if(functionName != null
     			&& this.functionNameExists(functionName)) {
@@ -80,12 +80,13 @@ public class FunctionManager {
      * @return (neuen) functionName.
      * @throws FunctionParsingException
      */
-    public Character parseAndAddFunction(Character functionName, String functionString) throws FunctionParsingException{
+    public String parseAndAddFunction(String functionName, String functionString) throws FunctionParsingException{
     	
         if(functionName == null) {
-        	for(char tempFunctionName = 'a'; tempFunctionName <= 'z'; tempFunctionName++) {
-        		if(!this.functionNameExists(tempFunctionName)) {
-        			functionName = tempFunctionName;
+        	for(char tempFunctionName = 'a'; tempFunctionName <= 'x'; tempFunctionName++) {
+
+        		if(!this.functionNameExists(""+tempFunctionName)) {
+        			functionName = ""+tempFunctionName;
         			break;
         		}
         	}
@@ -110,7 +111,7 @@ public class FunctionManager {
      * @param functionString
      * @return Function wurde gespeichert.
      */
-    private boolean add(char functionName, String functionString) {
+    private boolean add(String functionName, String functionString) {
     	
     	if(!functionNameAddable(functionName)) {
     		return false;
@@ -132,7 +133,7 @@ public class FunctionManager {
      * @param function Das Funktionsobjekt.
      * @return True, wenn die Funktion erfolgreich gespeichert wurde.
      */
-    public boolean add(char functionName, IFunction function) {
+    public boolean add(String functionName, IFunction function) {
         // Funktionsname okay?
         if(!functionNameAddable(functionName)) {
             return false;
@@ -151,11 +152,8 @@ public class FunctionManager {
      * @param functionName Der Funktionsname.
      * @return True, wenn der Name okay ist.
      */
-    private boolean functionNameAddable(char functionName){
-        if(functionName <= 'a' || functionName >= 'z') {
-            return false;
-    	}
-        
+    private boolean functionNameAddable(String functionName){
+
         if(this.functionNameExists(functionName)){
             return false;
         }

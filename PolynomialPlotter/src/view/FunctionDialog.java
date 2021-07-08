@@ -46,7 +46,7 @@ public class FunctionDialog extends JFrame {
     private JButton okButton;
     private JButton cancelButton;
 
-    private Character lastFunctionChar;
+    private String lastFunctionChar;
 
     private JTextField functionInput;
     private JLabel functionInputLabel;
@@ -235,12 +235,20 @@ public class FunctionDialog extends JFrame {
         repaint();
     }
 
-    protected Character functionStringToChar(String string) {
+    protected String functionStringToChar(String string) {
         String[] arr = string.split("=");
         if(arr.length == 1){
             return null;
         }else{
-            return arr[0].toCharArray()[0];
+            char toParse[] = arr[0].toCharArray();
+            String name = "";
+            for(char c:toParse){
+                if(c == '('){
+                    break;
+                }
+                name+=c;
+            }
+            return name;
         }
     }
 
@@ -348,7 +356,7 @@ public class FunctionDialog extends JFrame {
     /** Wenn der Dialog als Edit-Dialog gecallt wird, dann soll am anfang der alte Character mitgegeben werden
      * @param functionChar
      */
-    public void setLastFunctionChar(Character functionChar) {
+    public void setLastFunctionChar(String functionChar) {
         this.lastFunctionChar = functionChar;
     }
 

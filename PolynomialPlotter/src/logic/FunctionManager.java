@@ -18,14 +18,12 @@ public class FunctionManager {
 
     private HashMap<String, IFunction> functionMap;
     
-	private static IParser[] parserArray = new IParser[] {
-    		new HornerParser(),
-    		new UniversalParser()
-    };
+	private final IParser[] parserArray;
 	
-    public FunctionManager(){
+    public FunctionManager(IParser[] availableParsers){
     	// Initialisiert FunctionMap
     	functionMap = new HashMap<>();
+        parserArray = availableParsers;
     }
     
     /**

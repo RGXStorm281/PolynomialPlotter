@@ -9,15 +9,20 @@ package startup;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.FileHandler;
 
 import javax.swing.SwingUtilities;
 
 import logic.BusinessLogic;
 import logic.FunctionListener;
 import logic.FunctionManager;
+import logic.HornerParser;
+import logic.IParser;
 import logic.PlotListener;
+import logic.UniversalParser;
 import view.GUI;
 
 /**
@@ -31,11 +36,18 @@ public class PolynomialPlotter {
      */
     public static void main(String[] args) {
         try {
+            // Vorbereitungen
+            IParser[] availableParsers = new IParser[] {
+    		new HornerParser(),
+    		new UniversalParser()
+            };
+            
             // Objekte initialisieren
             Settings settings = new Settings("src/startup/settings.properties");
-            FunctionManager model = new FunctionManager();
+            FunctionManager model = new FunctionManager(availableParsers);
             GUI view = new GUI(settings);
             BusinessLogic logic = new BusinessLogic(view, model, settings);
+            initLogger("logs/logs.log");
 
             // Events Setzen
             view.addFunctionListener(new FunctionListener(view, logic));
@@ -54,6 +66,19 @@ public class PolynomialPlotter {
         } catch (IOException ex) {
             Logger.getLogger(PolynomialPlotter.class.getName()).log(Level.SEVERE, null, ex);
         } 
+    }
+    
+    private static void initLogger(String logFilePath){
+    	Settings.LOGGER = Logger.getGlobal();
+        FileHandler handler = null;
+		try {
+			handler = new FileHandler(logFilePath, true);
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+        Settings.LOGGER.addHandler(handler);
     }
 
 }

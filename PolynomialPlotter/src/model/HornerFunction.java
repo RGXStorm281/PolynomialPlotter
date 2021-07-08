@@ -14,16 +14,13 @@ public class HornerFunction implements IFunction {
 
 	@Override
 	public Koordinate calculate(double xValue) {
-
 		Koordinate koordinate;
 		double yValue = hornerElements[hornerElements.length-1];
 		
-		for (int i = (hornerElements.length-2); i > 0; i--)
+		for (int i = (hornerElements.length-2); i >= 0; i--)
 		{
 			yValue = yValue*xValue + hornerElements[i];
 		}
-		
-		yValue = yValue + hornerElements[0];
 		
 		koordinate = new Koordinate(xValue, yValue);
 		return koordinate;

@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.logging.*;
 
 /**
  *
@@ -16,6 +17,9 @@ import java.util.Properties;
  */
 public class Settings {
     
+	//Logging.
+	public static Logger LOGGER;
+	
     // Plot.
     public final int INITIAL_PLOT_WIDTH;
     public final int INITIAL_PLOT_HEIGHT;
@@ -59,7 +63,6 @@ public class Settings {
 
         this.CALCULATE_EVERY_X_PIXELS = Integer.parseInt(propertiesFile.getProperty("calculateEveryXPixels"));
         this.THREADPOOL_SIZE = Integer.parseInt(propertiesFile.getProperty("threadpoolSize"));
-    }
-
-    
+        
+    }    
 }

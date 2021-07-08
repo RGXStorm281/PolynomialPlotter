@@ -25,7 +25,7 @@ public class PlotListener implements IPlotListener {
     
     @Override
     public void plotResized(PlotEvent e) {
-        logic.resize(e);
+        logic.resize(e.getPlotWidth(), e.getPlotHeight());
 
     }
 

@@ -26,29 +26,34 @@ public class FunctionListener implements IFunctionListener {
     }
     
     @Override
-    public void functionAdded(FunctionEvent e) throws FunctionParsingException {
+    public char functionAdded(FunctionEvent e) throws FunctionParsingException {
         String functionString = e.getFunctionString();
         Color functionColor = e.getFunctionColor();    
-        String functionChar = e.getFunctionChar();
-        if(functionChar != null){
-            System.out.println("New function \""+functionChar+"\" with: "+functionString+" and the Color"+functionColor);
+        Character functionName = e.getFunctionChar();
+        
+        if(functionName != null){
+            System.out.println("New function \""+functionName+"\" with: "+functionString+" and the Color"+functionColor);
         }else{
-            System.out.println("New function \""+functionChar+"\" with: "+functionString+" and the Color"+functionColor);
+            System.out.println("New function \""+functionName+"\" with: "+functionString+" and the Color"+functionColor);
         }
-        logic.addFunction(functionChar, functionString, functionColor);
-        view.addJFunctionComponent(functionChar,functionString, functionColor);
+        
+        functionName = logic.addFunction(functionName, functionString, functionColor);
+        view.addJFunctionComponent(functionName,functionString, functionColor);
         view.updateTheme();
-
+        return functionName;
     }
 
     @Override
-    public void functionEdited(FunctionEditedEvent e) throws FunctionParsingException {
+    public char functionEdited(FunctionEditedEvent e) throws FunctionParsingException {
         var targetFunctionName = e.getOldFunctionChar();
         var newFunctionName = e.getFunctionChar();
         var newFunctionString = e.getFunctionString();
         var functionColor = e.getFunctionColor();
+        
         System.out.println(targetFunctionName+"-Function was edited to: "+newFunctionString+" with the color: "+functionColor);
-        logic.editFunction(targetFunctionName, newFunctionName, newFunctionString, functionColor);
+        
+        newFunctionName = logic.editFunction(targetFunctionName, newFunctionName, newFunctionString, functionColor);
+        return newFunctionName;
     }
 
     @Override

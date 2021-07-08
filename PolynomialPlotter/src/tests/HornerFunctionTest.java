@@ -33,8 +33,8 @@ public class HornerFunctionTest {
 		};	
 		
 		Koordinate[] expectedValues = new Koordinate[] {
-				new Koordinate(3.5, 112307.376),
-				new Koordinate(-4.83, 2193056.525)
+				new Koordinate(3.5, -1192514.608),
+				new Koordinate(-4.83, 11004746.07)
 		};		
 		
 		//Act
@@ -48,7 +48,7 @@ public class HornerFunctionTest {
 		Assert.assertEquals("y-Value, position"+ 0, expectedValues[0].getY(), returnedValues[0].getY(), 0.001);
 				
 		Assert.assertEquals("x-Value, position "+ 1, expectedValues[1].getX(), returnedValues[1].getX(), 0.0);
-		Assert.assertEquals("y-Value, position"+ 1, expectedValues[1].getY(), returnedValues[1].getY(), 0.001);
+		Assert.assertEquals("y-Value, position"+ 1, expectedValues[1].getY(), returnedValues[1].getY(), 0.01);
 	}
 
 }

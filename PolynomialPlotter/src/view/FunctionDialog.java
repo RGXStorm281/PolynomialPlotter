@@ -127,7 +127,7 @@ public class FunctionDialog extends JFrame {
                 public void actionPerformed(ActionEvent e) {
                 for(IFunctionListener listener: functionListeners){
                     try {
-                        ((IFunctionListener)listener).functionAdded(new FunctionEvent(e.getSource(), colorPanel.getBackground(), functionInput.getText().trim(), functionStringToChar(functionInput.getText().trim())));
+                        String functionName = ((IFunctionListener)listener).functionAdded(new FunctionEvent(e.getSource(), colorPanel.getBackground(), functionInput.getText().trim(), functionStringToChar(functionInput.getText().trim())));
                         hideWarn();
                         closeDialog();
                         functionInput.setText("");

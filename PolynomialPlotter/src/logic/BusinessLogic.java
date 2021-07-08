@@ -87,7 +87,7 @@ public class BusinessLogic {
      * @return Der Funktionsname, der für die angelegte Funktion vergeben wurde.
      * @throws FunctionParsingException Details zum Parsing Fehler.
      */
-    public char addFunction(Character functionName, String functionString, Color lineColor) throws FunctionParsingException{
+    public String addFunction(String functionName, String functionString, Color lineColor) throws FunctionParsingException{
         // TODO RE Farbe weitergeben.
         var name = functionManager.parseAndAddFunction(functionName, functionString);
         calculateAndDraw();
@@ -103,7 +103,7 @@ public class BusinessLogic {
      * @return Der Funktionsname, den die editierte Funktion nach der Bearbeitung besitzt.
      * @throws FunctionParsingException Details zum Parsing Fehler.
      */
-    public char editFunction(Character targetFunctionName, Character newFunctionName, String newFunctionString, Color newLineColor) throws FunctionParsingException{
+    public String editFunction(String targetFunctionName, String newFunctionName, String newFunctionString, Color newLineColor) throws FunctionParsingException{
         var targetFunction = functionManager.getFunction(targetFunctionName);
         
         // Darf eigentlich nicht vorkommen. Wenn doch: Nichts tun.
@@ -133,7 +133,7 @@ public class BusinessLogic {
      * Löscht die Funktion, falls vorhanden.
      * @param functionName Der Caracter, mit der die Funktion bezeichnet ist.
      */
-    public void deleteFunction(char functionName){
+    public void deleteFunction(String functionName){
         functionManager.delete(functionName);
         calculateAndDraw();
     }

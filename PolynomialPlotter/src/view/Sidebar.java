@@ -39,7 +39,7 @@ public class Sidebar extends JPanel {
         });
         this.styleClass = styleClass;
         setBackground(this.styleClass.SIDEBAR_BG_COLOR);
-        functionDialog = new FunctionDialog(DialogType.ADD,styleClass);
+        functionDialog = new FunctionDialog(null,DialogType.ADD,styleClass);
         functionDialog.setLocationRelativeTo(this);
         addFunctionButton = new JAddButton(this.styleClass);
         addFunctionButton.addMouseListener(new MouseAdapter(){

@@ -195,7 +195,7 @@ public class JPlotter extends JPanel {
     /** 
      * @param g
      */
-    public void paint(Graphics g) {
+    public void paint(Graphics g) {                                                             
         Graphics2D g2d = (Graphics2D) g;
         // Antialiasing für bessere Diagonalen
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -207,10 +207,10 @@ public class JPlotter extends JPanel {
         //                                                      // Drag-Funktionalität
         // g2d.translate(getWidth() / 2, getHeight() / 2); // View auf die Mitte des Panels translaten/
         if(drawingInformation != null){
-            drawFunctions(g2d);
             drawGrid(g2d);
             drawAxes(g2d);
             drawValues(g2d);
+            drawFunctions(g2d);
         }
         // drawFunction(g2d, x -> (float) ((x * x) + 1), Color.RED);
         // drawFunction(g2d, x -> (float) (Math.sin(x) * x * x), Color.BLUE);
@@ -266,9 +266,9 @@ public class JPlotter extends JPanel {
                 continue;
             }
             GeneralPath gp = new GeneralPath();
-            gp.moveTo(Utils.mapToInterval(values[0].getX(), xInterval, widthInterval),Utils.mapToInterval(values[0].getY(), yInterval, heightInterval));
+            gp.moveTo(Utils.mapToInterval(values[0].getX(), xInterval, widthInterval),Utils.mapToInterval(-values[0].getY(), yInterval, heightInterval));
             for(int i = 1;i<values.length;i++){
-                gp.lineTo(Utils.mapToInterval(values[i].getX(), xInterval, widthInterval),Utils.mapToInterval(values[0].getY(), yInterval, heightInterval));
+                gp.lineTo(Utils.mapToInterval(values[i].getX(), xInterval, widthInterval),Utils.mapToInterval(-values[0].getY(), yInterval, heightInterval));
             }
             g2d.draw(gp);
         }

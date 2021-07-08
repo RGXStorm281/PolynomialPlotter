@@ -21,6 +21,8 @@ import model.DrawingInformationContainer;
 import startup.Settings;
 import event.IFunctionListener;
 import event.IPlotListener;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 /**
  * @author raphaelsack
@@ -45,7 +47,6 @@ public class GUI extends JFrame implements IGUI {
 
     public GUI(Settings settings) throws FileNotFoundException, IOException {
         super();
-        
         this.settings = settings;
         this.styleClass = new StyleClass(settings.THEME);
         UIManager.put("MenuItem.selectionBackground", styleClass.MENU_BG_SELECTION);
@@ -103,6 +104,10 @@ public class GUI extends JFrame implements IGUI {
         menubar.recolor();
         sidebar_panel.recolor();
         plotter_panel.recolor();
+    }
+
+    public JPlotter getPlotter(){
+        return this.plotter_panel;
     }
 
     public void start() {

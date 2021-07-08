@@ -5,10 +5,14 @@
  */
 package model;
 
-import java.awt.Point;
+import java.awt.Color;
 
 public interface IFunction {
     
     public Koordinate calculate(double xValue);
+    
+    public void setColor(Color color);
+    
+    public Color getColor();
     
 }

@@ -1,10 +1,11 @@
 package model;
 
-import java.awt.Point;
+import java.awt.Color;
 
 public class HornerFunction implements IFunction {
 	
-	double[] hornerElements;
+	private double[] hornerElements;
+	private Color functionColor; 
 	
 	public HornerFunction(double[] elements)
 	{
@@ -15,15 +16,25 @@ public class HornerFunction implements IFunction {
 	public Koordinate calculate(double xValue) {
 
 		Koordinate koordinate;
-		double yValue = hornerElements[0];
+		double yValue = hornerElements[hornerElements.length-1];
 		
-		for (int i = 1; i < hornerElements.length; i++)
+		for (int i = (hornerElements.length-1); i >= 0; i--)
 		{
 			yValue = yValue*xValue + hornerElements[i];
 		}
 		
 		koordinate = new Koordinate(xValue, yValue);
 		return koordinate;
+	}
+
+	@Override
+	public void setColor(Color color) {
+		functionColor = color;
+	}
+
+	@Override
+	public Color getColor() {
+		return functionColor;
 	}
 
 }

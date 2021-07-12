@@ -47,7 +47,7 @@ public class PolynomialPlotter {
             FunctionManager model = new FunctionManager(availableParsers);
             GUI view = new GUI(settings);
             BusinessLogic logic = new BusinessLogic(view, model, settings);
-            initLogger("logs/logs.log");
+            initLogger();
 
             // Events Setzen
             view.addFunctionListener(new FunctionListener(view, logic));
@@ -68,11 +68,11 @@ public class PolynomialPlotter {
         } 
     }
     
-    private static void initLogger(String logFilePath){
+    private static void initLogger(){
     	Settings.LOGGER = Logger.getGlobal();
         FileHandler handler = null;
 		try {
-			handler = new FileHandler(logFilePath, true);
+			handler = new FileHandler("logs/logs%g.log", 50000, 2, true);
 		} catch (SecurityException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

@@ -268,7 +268,7 @@ public class JPlotter extends JPanel {
             GeneralPath gp = new GeneralPath();
             gp.moveTo(Utils.mapToInterval(values[0].getX(), xInterval, widthInterval),Utils.mapToInterval(-values[0].getY(), yInterval, heightInterval));
             for(int i = 1;i<values.length;i++){
-                gp.lineTo(Utils.mapToInterval(values[i].getX(), xInterval, widthInterval),Utils.mapToInterval(-values[0].getY(), yInterval, heightInterval));
+                gp.lineTo(Utils.mapToInterval(values[i].getX(), xInterval, widthInterval),Utils.mapToInterval(-values[i].getY(), yInterval, heightInterval));
             }
             g2d.draw(gp);
         }

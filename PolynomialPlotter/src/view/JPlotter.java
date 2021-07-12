@@ -83,7 +83,7 @@ public class JPlotter extends JPanel {
             public void mouseWheelMoved(MouseWheelEvent e) {
                 float dZoom = e.isControlDown() ? 0.1f : 0.05f;
                 dZoom*=e.getWheelRotation();
-                for(IPlotListener listener: plotListeners)listener.plotZoomed(new PlotZoomedEvent(e.getSource(), getWidth(), getHeight(), dZoom));
+                for(IPlotListener listener: plotListeners)listener.plotZoomed(new PlotZoomedEvent(e.getSource(), getWidth(), getHeight(), dZoom, new Tuple<Integer,Integer>(e.getX(), e.getY())));
             }
         });
         // Mouse Listener für die Drag-Funktionalität und um den Cursor zu ändern

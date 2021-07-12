@@ -178,13 +178,27 @@ public class BusinessLogic {
      * Passt die berechneten Intervalle an, um dem Zoomfaktor gerecht zu werden.
      * @param scale Der Wert, mit dem die Intervalle skaliert werden.
      */
-    public void zoom(float scale){
-        // Skalierung der X-Achse anpassen.
-        intervallSizeX *= 1 + scale;
+    public void zoom(float scale, Tuple<Integer,Integer> zoomOnPixel){
+        
+        // Skalierung der Achsen anpassen.
+        intervallSizeX *= 1 + scale;        
         // Skalierung auf Y-Achse übertragen.
         intervallSizeY = intervallSizeX * ((double)cachedCanvasHeight / cachedCanvasWidth);
+        
+        // Vom Zentrum auf den Zoompunkt.
+        double offsetX = (double)zoomOnPixel.getItem1() - ((double)cachedCanvasWidth / 2);
+        double offsetY = (double)zoomOnPixel.getItem2() - ((double)cachedCanvasHeight / 2);
+        
+        // Vektor mitskalieren.
+        double newOffsetX = offsetX / (1 + scale);
+        double newOffsetY = offsetY / (1 + scale);
+        
+        // um den Überhang verschieben:
+        int moveX = (int)Math.round(offsetX - newOffsetX);
+        int moveY = (int)Math.round(offsetY - newOffsetY);
+                
         debugIntervallSize();
-        calculateAndDraw();
+        moveCanvas(new Tuple<Integer,Integer>(-moveX, -moveY));
     }
     
     private void debugIntervallSize(){

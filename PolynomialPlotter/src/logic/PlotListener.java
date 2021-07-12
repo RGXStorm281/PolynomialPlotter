@@ -31,7 +31,7 @@ public class PlotListener implements IPlotListener {
 
     @Override
     public void plotZoomed(PlotZoomedEvent e) {
-        logic.zoom(e.getZoomAmount());
+        logic.zoom(e.getZoomAmount(), e.getMousePosition());
 
     }
 

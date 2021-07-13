@@ -89,7 +89,7 @@ public class BusinessLogic {
      */
     public String addFunction(String functionName, String functionString, Color lineColor) throws FunctionParsingException{
         // TODO RE Farbe weitergeben.
-        var name = functionManager.parseAndAddFunction(functionName, functionString);
+        var name = functionManager.parseAndAddFunction(functionName, functionString, lineColor);
         calculateAndDraw();
         return name;
     }
@@ -117,7 +117,7 @@ public class BusinessLogic {
         try {
             // Versuche neue Funktion zu speichern.
             // TODO RE Farbe weitergeben.
-            var name = functionManager.parseAndAddFunction(newFunctionName, newFunctionString);
+            var name = functionManager.parseAndAddFunction(newFunctionName, newFunctionString, newLineColor);
             // Neu berechnen und Zeichnen.
             calculateAndDraw();
             return name;

@@ -7,6 +7,7 @@ package logic;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.awt.Color;
 
 import model.IFunction;
 
@@ -78,7 +79,7 @@ public class FunctionManager {
      * @return (neuen) functionName.
      * @throws FunctionParsingException
      */
-    public String parseAndAddFunction(String functionName, String functionString) throws FunctionParsingException{
+    public String parseAndAddFunction(String functionName, String functionString, Color lineColor) throws FunctionParsingException{
     	
         if(functionName == null) {
         	for(char tempFunctionName = 'a'; tempFunctionName <= 'x'; tempFunctionName++) {
@@ -94,7 +95,7 @@ public class FunctionManager {
         	}
         }
         
-        boolean added = this.add(functionName, functionString);
+        boolean added = this.add(functionName, functionString, lineColor);
         if(added) {
         	return functionName;
         }
@@ -109,7 +110,7 @@ public class FunctionManager {
      * @param functionString
      * @return Function wurde gespeichert.
      */
-    private boolean add(String functionName, String functionString) {
+    private boolean add(String functionName, String functionString, Color lineColor) {
     	
     	if(!functionNameAddable(functionName)) {
     		return false;
@@ -119,6 +120,7 @@ public class FunctionManager {
     	if(function == null) {
     		return false;
     	}
+        function.setColor(lineColor);
     	
 		this.functionMap.put(functionName, function);
 		return true;

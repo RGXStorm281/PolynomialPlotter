@@ -20,41 +20,33 @@ public class HornerParser implements IParser {
 	}
 	
 	@Override
-	public IFunction parse(String function) throws FunctionParsingException {
+	public HornerFunction parse(String function) throws FunctionParsingException {
 	
 		try {
-			return new HornerFunction(this.parseToArray(function));
+			String fnct = function.replaceAll("\\s", "");
+			
+			// Entfernt ggf. den FunctionName
+			String[] functionTempArray = fnct.split("\\=");
+			if(functionTempArray.length == 2){
+				fnct = functionTempArray[1];
+			}
+
+			// Prüft, ob Funktion korrekt beginnt
+			if(!Character.isDigit(fnct.charAt(0))
+					&& fnct.charAt(0) != 'x'
+					&& fnct.charAt(0) != '+'
+					&& fnct.charAt(0) != '-'
+					&& fnct.charAt(0) != '(') {
+				throw new FunctionParsingException(ParsingResponseCode.ParsingFailed, "Startwert '" + fnct.charAt(0) + "' ungültig");
+			}
+			
+			double[] hornerElementArray = innerParse(fnct.toCharArray(), 0, fnct.length(), 0);
+			
+			return new HornerFunction(hornerElementArray);
 		}
 		catch(Exception e) {
 			throw new FunctionParsingException(ParsingResponseCode.ParsingFailed, "'" + function + "' konnte nicht geparsed werden");
 		}
-	}
-	
-	/**
-	 * Dient den UnitTests bis das endgültige AusgabeObjekt existiert
-	 * @param function
-	 * @return
-	 * @throws Exception
-	 */
-	public double[] parseToArray(String function) throws Exception {
-		String fnct = function.replaceAll("\\s", "");
-		
-		// Entfernt ggf. den FunctionName
-		String[] functionTempArray = fnct.split("\\=");
-		if(functionTempArray.length == 2){
-			fnct = functionTempArray[1];
-		}
-
-		// Prüft, ob Funktion korrekt beginnt
-		if(!Character.isDigit(fnct.charAt(0))
-				&& fnct.charAt(0) != 'x'
-				&& fnct.charAt(0) != '+'
-				&& fnct.charAt(0) != '-'
-				&& fnct.charAt(0) != '(') {
-			throw new FunctionParsingException(ParsingResponseCode.ParsingFailed, "Startwert '" + fnct.charAt(0) + "' ungültig");
-		}
-		
-		return innerParse(fnct.toCharArray(), 0, fnct.length(), 0);
 	}
 
 	/**

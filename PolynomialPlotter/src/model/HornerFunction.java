@@ -1,6 +1,7 @@
 package model;
 
 import java.awt.Color;
+import java.util.Arrays;
 
 public class HornerFunction implements IFunction {
 	
@@ -36,4 +37,16 @@ public class HornerFunction implements IFunction {
 		return functionColor;
 	}
 
+	/**
+	 * Gibt das HornerElement als String eines gerundeten Doubles zurück (5 Nachkommastellen).
+	 */
+	@Override
+	public String toString() {
+		double[] roundetHornerElements = new double[hornerElements.length];
+		for(int i = 0; i < hornerElements.length; i++) {
+			roundetHornerElements[i] = (double) Math.round(hornerElements[i] * 100000) / 100000;
+		}
+		
+		return Arrays.toString(roundetHornerElements);
+	}
 }

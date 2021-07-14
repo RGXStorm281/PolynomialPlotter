@@ -5,6 +5,7 @@ import java.util.Arrays;
 import org.junit.Assert;
 import org.junit.Test;
 
+import logic.FunctionParsingException;
 import logic.HornerParser;
 
 public class HornerParserTests {
@@ -36,23 +37,26 @@ public class HornerParserTests {
 		
 		for(int i = 0; i < functions.length; i++) {
 			
+			String erwartetString = Arrays.toString(erwarteteFaktoren[i]);
 			try {
-				double[] pHA = hP.parseToArray(functions[i]);
+				String functionString = hP.parse(functions[i]).toString();
 				
 				// gibt Werte aus
 				System.out.println("In: " + functions[i]);
-				System.out.println("Out: " + Arrays.toString(pHA) + "\n");
+				System.out.println("Out: " + functionString);
 				
 				// Vergleicht Werte für die function
-				Assert.assertEquals(erwarteteFaktoren[i].length, pHA.length);
-				for(int grad = pHA.length - 1; grad >= 0; grad--){
-					Assert.assertEquals(erwarteteFaktoren[i][grad], pHA[grad], 0.0001);
-				}
+				Assert.assertEquals(erwartetString, functionString);
+			} 
+			catch (FunctionParsingException e) {
+				System.out.println("Es ist ein unerwarteter Fehler aufgetreten: \n");
+				e.printStackTrace();
 			}
-			catch(Exception e) {
-				System.out.println(e);
-				Assert.assertEquals(e, null);
+			catch (AssertionError e) {
+				System.out.println("FEHLER!! Erwartet: " + erwartetString);
+				throw e;
 			}
+			System.out.println("");
 		}
 	}
 }

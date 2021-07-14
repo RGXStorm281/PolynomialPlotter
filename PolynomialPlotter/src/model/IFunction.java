@@ -15,4 +15,8 @@ public interface IFunction {
     
     public Color getColor();
     
+    public void setVisible(boolean visible);
+    
+    public boolean isVisible();
+    
 }

@@ -46,14 +46,22 @@ public class FunctionManager {
     
     /**
      * Gibt die Funktion mit dem entsprechenden Namen zurück, sofern vorhanden.
-     * @param c
+     * @param functionName
      * @return Die zugehrige Funktion oder null.
      */
-    public IFunction getFunction(String c){
-        if(functionNameExists(c)){
-            return this.functionMap.get(c);
+    public IFunction getFunction(String functionName){
+        if(functionNameExists(functionName)){
+            return this.functionMap.get(functionName);
         }
         return null;
+    }
+    
+    public void toggleFunctionVisible(String functionName){
+        if(!functionNameExists(functionName)){
+            return;
+        }
+        var function = this.functionMap.get(functionName);
+        function.setVisible(!function.isVisible());
     }
     
     /**

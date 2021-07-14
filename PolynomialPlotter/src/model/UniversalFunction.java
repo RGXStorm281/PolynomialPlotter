@@ -6,7 +6,7 @@ import net.objecthunter.exp4j.*;
 import net.objecthunter.exp4j.tokenizer.UnknownFunctionOrVariableException;
 
 
-public class UniversalFunction implements IFunction {
+public class UniversalFunction extends Function implements IFunction {
 
 	private String functionalTerm;
 	private Color functionColor;

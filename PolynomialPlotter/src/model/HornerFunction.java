@@ -3,7 +3,7 @@ package model;
 import java.awt.Color;
 import java.util.Arrays;
 
-public class HornerFunction implements IFunction {
+public class HornerFunction extends Function implements IFunction {
 	
 	private double[] hornerElements;
 	private Color functionColor; 

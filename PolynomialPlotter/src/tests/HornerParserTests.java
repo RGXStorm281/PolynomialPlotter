@@ -51,6 +51,7 @@ public class HornerParserTests {
 			catch (FunctionParsingException e) {
 				System.out.println("Es ist ein unerwarteter Fehler aufgetreten: \n");
 				e.printStackTrace();
+				throw new AssertionError("Es ist ein Fehler bei dem parsen eines Objekts aufgetreten.");
 			}
 			catch (AssertionError e) {
 				System.out.println("FEHLER!! Erwartet: " + erwartetString);

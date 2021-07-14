@@ -11,13 +11,7 @@ public class HornerParser implements IParser {
 	 * Enum der Operatoren. 
 	 * Reihenfolge muss der umgekehrten Priorisierung entsprechen
 	 */
-	private enum operator {
-		addition,
-		subtraktion,
-		multiplikation,
-		division,
-		potenz
-	}
+	private static char[] operators = {'+', '-', '*', '/', '^'};
 	
 	@Override
 	public HornerFunction parse(String function) throws FunctionParsingException {
@@ -40,11 +34,12 @@ public class HornerParser implements IParser {
 				throw new FunctionParsingException(ParsingResponseCode.ParsingFailed, "Startwert '" + fnct.charAt(0) + "' ungültig");
 			}
 			
-			double[] hornerElementArray = innerParse(fnct.toCharArray(), 0, fnct.length(), 0);
+			double[] hornerElementArray = innerParse(fnct.toCharArray(), 0, fnct.length(), 0, 0);
 			
 			return new HornerFunction(hornerElementArray);
 		}
 		catch(Exception e) {
+			// TODO TV: Loggen
 			throw new FunctionParsingException(ParsingResponseCode.ParsingFailed, "'" + function + "' konnte nicht geparsed werden");
 		}
 	}
@@ -56,7 +51,7 @@ public class HornerParser implements IParser {
 	 * @return
 	 * @throws Exception
 	 */
-	private double[] innerParse(char[] function, int startIndex, int length, int rekCounter) throws Exception {		
+	private double[] innerParse(char[] function, int startIndex, int length, int operator, int rekCounter) throws Exception {		
 		// TODO TV Addition-Subtraktion und Multiplikation-Division zusammenführen
 		// TODO TV ggf. Operator-Positionen zu Beginn bestimmen um das nicht immer wieder aufs neue ermitteln zu müssen
 		
@@ -84,32 +79,16 @@ public class HornerParser implements IParser {
 			return getPHAFromFunctionArray(function, startIndex, length);
 		}
 		
+		if(this.isFunctionUmklammert(function, startIndex, endIndex)) {
+			// Wenn gesamter functionteil in Klammern ist, dann wird der Teil darin ohne diese äußeren Klammern geparsed
+			return innerParse(function, startIndex + 1, length - 2, 0, rekCounter);
+		}
+		
 		// Rekursives zerteilen der function in atomare Teile entsprechend des Operators
-		for(operator op:
-				operator.values()) {
-			char operatorChar;
-			switch (op) {
-				case addition:
-					operatorChar = '+';
-					break;
-				case subtraktion:
-					operatorChar = '-';
-					break;
-				case multiplikation:
-					operatorChar = '*';
-					break;
-				case division:
-					operatorChar = '/';
-					break;
-				default:
-					operatorChar = '^';
-					break;
-			}
+		for(int operatorIndex = operator; operatorIndex < operators.length; operatorIndex++) {
 			
 			// gibt an, wie tief der aktuelle Punkt in Klammern ist
 			int klammerZahl = 0;
-			// gibt die Anzahl der Character an, welche nicht von Klammern eingeschlossen sind
-			int unumklammertCount = 0;
 			
 			for(int i = endIndex; i >= startIndex; i--) {
 				
@@ -122,18 +101,19 @@ public class HornerParser implements IParser {
 				if(klammerZahl == 0) {
 
 					// prüft, ob der aktuell zu bearbeitende Operator der aktuelle char ist
-					if(function[i] == operatorChar) {
+					if(function[i] == operators[operatorIndex]) {
 						
 						int leftLength = i - startIndex;
 						
-						// parsed rekursiv alles links und rechts vom Operator
-						double[] pHALeft = innerParse(function, startIndex, leftLength, rekCounter);
-						double[] pHARight = innerParse(function, i + 1, length - leftLength - 1, rekCounter);
+						// parsed rekursiv alles links und rechts vom Operator 
+						// rechte rekursion kann mit nächstem Operator vorgesetzt werden
+						double[] pHALeft = innerParse(function, startIndex, leftLength, 0, rekCounter);
+						double[] pHARight = innerParse(function, i + 1, length - leftLength - 1, operatorIndex + 1, rekCounter);
 						
-						return combineRechenobjekte(pHALeft, pHARight, op);
+						return combineRechenobjekte(pHALeft, pHARight, operatorIndex);
 					}
 					// Prüft ggf., ob eine ungeschriebene Multiplikation vorliegt 
-					else if(op == operator.multiplikation
+					else if(operators[operatorIndex] == '*'
 							&& i > startIndex
 							&& (function[i-1] == 'x' && (Character.isDigit(function[i]) || function[i] == 'x' || function[i] == '(')
 								|| Character.isDigit(function[i-1]) && (function[i] == 'x' || function[i] == '(')
@@ -142,32 +122,65 @@ public class HornerParser implements IParser {
 						int leftLength = i - startIndex;
 						
 						// parsed rekursiv alles links und rechts vom ungeschriebenen Operator
-						double[] pHALeft = innerParse(function, startIndex, leftLength, rekCounter);
-						double[] pHARight = innerParse(function, i, length - leftLength, rekCounter);
+						double[] pHALeft = innerParse(function, startIndex, leftLength, 0, rekCounter);
+						double[] pHARight = innerParse(function, i, length - leftLength, operatorIndex + 1, rekCounter);
 						
-						return combineRechenobjekte(pHALeft, pHARight, op);
+						return combineRechenobjekte(pHALeft, pHARight, operatorIndex);
 					}
-					
-					// erhöht die Anzahl der sich nicht innerhalb Klammern befindlichen Character
-					unumklammertCount++;
 				}
 
 				// erhöht ggf. klammerEbene
 				if(function[i] == ')') {
 					klammerZahl++;
 				}
-			}
-			
-			// Wenn komplette function in Klammern können diese Klammern aufgelöst werden
-			if(unumklammertCount == 2
-					&& function[startIndex] == '('
-					&& function[endIndex] == ')') {
-				return innerParse(function, startIndex + 1, length - 2, rekCounter);
-			}			
+			}		
 		}
 
 		// Wenn alle Operatoren erfolglos durchgearbeitet wurden ist das parsen gescheitert
 		throw new FunctionParsingException(ParsingResponseCode.ParsingFailed, "String konnte nicht geparsed werden: '" + new String(Arrays.copyOfRange(function, startIndex, startIndex + length)) + "'");
+	}
+
+	/**
+	 * Ermittelt, ob der aktuelle Functionsteil vollständig umklammert ist.
+	 * @param function
+	 * @param startIndex
+	 * @param endIndex
+	 * @return
+	 */
+	private boolean isFunctionUmklammert(char[] function, int startIndex, int endIndex) {
+		
+		// gibt an, wie tief der aktuelle Punkt in Klammern ist
+		int klammerZahl = 0;
+		// gibt die Anzahl der Character an, welche nicht von Klammern eingeschlossen sind
+		int unumklammertCount = 0;
+		
+		for(int i = endIndex; i >= startIndex; i--) {
+			
+			// reduziert ggf. klammerEbene
+			if(function[i] == '(') {
+				klammerZahl--;
+			}
+			
+			// Funktion darf nur außerhalb einer Klammer getrennt werden
+			if(klammerZahl == 0) {
+				// erhöht die Anzahl der sich nicht innerhalb Klammern befindlichen Character
+				unumklammertCount++;
+			}
+
+			// erhöht ggf. klammerEbene
+			if(function[i] == ')') {
+				klammerZahl++;
+			}
+		}
+		
+		// Wenn komplette function in Klammern können diese Klammern aufgelöst werden
+		if(unumklammertCount == 2
+				&& function[startIndex] == '('
+				&& function[endIndex] == ')') {
+			return true;
+		}
+		
+		return false;
 	}
 
 	/**
@@ -205,22 +218,22 @@ public class HornerParser implements IParser {
 	 * @return
 	 * @throws Exception 
 	 */
-	private static double[] combineRechenobjekte(double[] pHALeft, double[] pHARight, operator op) throws Exception {
+	private static double[] combineRechenobjekte(double[] pHALeft, double[] pHARight, int opIndex) throws Exception {
 
-		switch (op) {
-			case addition:
+		switch (operators[opIndex]) {
+			case '+':
 				return addition(pHALeft, pHARight);
-			case subtraktion:
+			case '-':
 				return subtraktion(pHALeft, pHARight);
-			case multiplikation:
+			case '*':
 				return multiplikation(pHALeft, pHARight);
-			case division:
+			case '/':
 				return division(pHALeft, pHARight);
-			case potenz:
+			case '^':
 				return potenzierung(pHALeft, pHARight);
+			default:
+				throw new Exception("Operator '" + opIndex + "' not implemented.");
 		}
-		
-		throw new Exception("Operator '" + op + "' not implemented.");
 	}
 
 	private static double[] addition(double[] pHALeft, double[] pHARight) {

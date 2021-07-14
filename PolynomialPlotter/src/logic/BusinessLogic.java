@@ -139,6 +139,15 @@ public class BusinessLogic {
     }
     
     /**
+     * Schält die Sichtbarkeit einer Funktion um.
+     * @param functionName der Name der Funktion.
+     */
+    public void toggleFunctionVisible(String functionName){
+        functionManager.toggleFunctionVisible(functionName);
+        calculateAndDraw();
+    }
+    
+    /**
      * Bewegt die Position des sichtbaren Intervalls und zeichnet neu.Achtung: X und Y werden positiv addiert.Wenn mit der Maus "gezogen" wird, dann muss hier der Gegenvektor zum "Ziehen" mitgegeben werden.
      * @param distance Die Distanz in Pixeln, um die das Feld bewegt werden soll.
      */
@@ -251,6 +260,11 @@ public class BusinessLogic {
         var futureValues = new Future[numberOfFunctions][numberOfCalculations];
         for(int i = 0; i < numberOfFunctions; i++){
             var currentFunction = functions.get(i);
+            // Nicht sichtbare Funktionen überspringen.
+            if(!currentFunction.isVisible()){
+                continue;
+            }
+            // Zukünftige Werte speichern.
             for(int j = 0; j < numberOfCalculations; j++){
                 var calculator = new FunctionCalculationThread(currentFunction, xValues[j]);
                 futureValues[i][j] = functionCalculationPool.submit(calculator);
@@ -260,6 +274,11 @@ public class BusinessLogic {
         // Ergebnisse einsammeln.
         var functionValues = new Koordinate[numberOfFunctions][numberOfCalculations];
         for(int i = 0; i < numberOfFunctions; i++){
+            var currentFunction = functions.get(i);
+            // Nicht sichtbare Funktionen überspringen.
+            if(!currentFunction.isVisible()){
+                continue;
+            }
             for(int j = 0; j < numberOfCalculations; j++){
                 functionValues[i][j] = (Koordinate)futureValues[i][j].get();
             }

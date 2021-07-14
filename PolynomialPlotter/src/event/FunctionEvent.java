@@ -40,7 +40,7 @@ public class FunctionEvent extends java.util.EventObject{
     /** Gibt den Funktions-Identifier/Namen zurück [f,g,h,...]
      * @return char
      */
-    public String getFunctionChar(){
+    public String getFunctionName(){
         return this.functionName;
     }
 }

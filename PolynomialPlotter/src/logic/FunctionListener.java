@@ -7,6 +7,7 @@ package logic;
 
 import event.FunctionEditedEvent;
 import event.FunctionEvent;
+import event.FunctionVisibilityToggledEvent;
 import event.IFunctionListener;
 import java.awt.Color;
 import view.IGUI;
@@ -29,7 +30,7 @@ public class FunctionListener implements IFunctionListener {
     public String functionAdded(FunctionEvent e) throws FunctionParsingException {
         String functionString = e.getFunctionString();
         Color functionColor = e.getFunctionColor();    
-        String functionName = e.getFunctionChar();
+        String functionName = e.getFunctionName();
         
         if(functionName != null){
             System.out.println("New function \""+functionName+"\" with: "+functionString+" and the Color"+functionColor);
@@ -46,7 +47,7 @@ public class FunctionListener implements IFunctionListener {
     @Override
     public String functionEdited(FunctionEditedEvent e) throws FunctionParsingException {
         var targetFunctionName = e.getOldFunctionChar();
-        var newFunctionName = e.getFunctionChar();
+        var newFunctionName = e.getFunctionName();
         var newFunctionString = e.getFunctionString();
         var functionColor = e.getFunctionColor();
         
@@ -59,6 +60,12 @@ public class FunctionListener implements IFunctionListener {
     @Override
     public void functionDeleted(FunctionEvent e) {
         System.out.println("Event Triggered: Function Delete \""+e.getFunctionString()+"\"");
+    }
+
+    @Override
+    public void functionVisibilityToggled(FunctionVisibilityToggledEvent e) {
+        String functionName = e.getFunctionName();
+        logic.toggleFunctionVisible(functionName);
     }
     
 }

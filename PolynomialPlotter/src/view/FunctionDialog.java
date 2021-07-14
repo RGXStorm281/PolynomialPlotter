@@ -112,9 +112,9 @@ public class FunctionDialog extends JFrame {
                     @Override
                     public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
                     throws BadLocationException {
+                        System.out.println(text);
                         if(text.equals(last) && last.equals("^")){
                             text = "";
-                            System.out.println("Doubled");
                 }
                 last=text;
                 super.replace(fb, offset, length, text, attrs);

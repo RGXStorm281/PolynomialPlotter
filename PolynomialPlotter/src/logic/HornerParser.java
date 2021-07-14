@@ -119,10 +119,10 @@ public class HornerParser implements IParser {
 			// gibt die Anzahl der Character an, welche nicht von Klammern eingeschlossen sind
 			int unumklammertCount = 0;
 			
-			for(int i = startIndex; i <= endIndex; i++) {
+			for(int i = endIndex; i >= startIndex; i--) {
 				
 				// reduziert ggf. klammerEbene
-				if(function[i] == ')') {
+				if(function[i] == '(') {
 					klammerZahl--;
 				}
 				
@@ -143,7 +143,7 @@ public class HornerParser implements IParser {
 					// Prüft ggf., ob eine ungeschriebene Multiplikation vorliegt 
 					else if(op == operator.multiplikation
 							&& i > startIndex
-							&& (function[i-1] == 'x' && (Character.isDigit(function[i]) || function[i] == '(' || function[i] == 'x')
+							&& (function[i-1] == 'x' && (Character.isDigit(function[i]) || function[i] == 'x' || function[i] == '(')
 								|| Character.isDigit(function[i-1]) && (function[i] == 'x' || function[i] == '(')
 								|| function[i-1] == ')' && (Character.isDigit(function[i]) || function[i] == 'x' || function[i] == '('))){
 
@@ -161,7 +161,7 @@ public class HornerParser implements IParser {
 				}
 
 				// erhöht ggf. klammerEbene
-				if(function[i] == '(') {
+				if(function[i] == ')') {
 					klammerZahl++;
 				}
 			}

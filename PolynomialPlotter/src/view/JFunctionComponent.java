@@ -11,6 +11,7 @@ import java.awt.Point;
 import javax.swing.JComponent;
 
 import event.FunctionEvent;
+import event.FunctionVisibilityToggledEvent;
 import view.FunctionDialog.DialogType;
 import view.GUI.FontFamily;
 import view.GUI.FontStyle;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import event.IFunctionListener;
+import model.Tuple;
 
 public class JFunctionComponent extends JComponent implements MouseMotionListener {
 
@@ -124,12 +126,19 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
                         ((IFunctionListener) listener).functionDeleted(
                             new FunctionEvent(e.getSource(), circleColor, functionString, functionChar));
                             destroy();
-                        } else{
-                            functionDialog.start();
+                            return;
                         }
+                    if (isInCircleButtonBounds(e)) {
+                        var toggleVisibleEvent = new FunctionVisibilityToggledEvent(e.getSource(), circleColor, functionString, functionChar);
+                        for(IFunctionListener listener : functionListeners){
+                            listener.functionVisibilityToggled(toggleVisibleEvent);
+                        }
+                        return;
                     }
+                    functionDialog.start();
                 }
-            });
+            }
+        });
             
         }
         
@@ -246,9 +255,20 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
      */
     private void paintColorCircle(Graphics2D g2d) {
         g2d.setColor(circleColor);
-        g2d.fillOval((int) (-cardWidth / 2 + closeButtonMargin * 2 + closeButtonRadius * 2), (int) (-circleRadius),
+        var position = getColorCirclePosition();
+        g2d.fillOval(position.getItem1(), position.getItem2(),
                 circleRadius * 2, circleRadius * 2);
 
+    }
+    
+    /**
+     * Gibt die position für den farbigen Kreis relativ von der Mitte zurück.
+     * @return Die Positionskordinaten (negaive Werte)
+     */
+    private Tuple<Integer,Integer> getColorCirclePosition(){
+        var positionX = (int) (-cardWidth / 2 + closeButtonMargin * 2 + closeButtonRadius * 2);
+        var positionY = (int) (-circleRadius);
+        return new Tuple<>(positionX, positionY);
     }
 
     /**
@@ -386,6 +406,22 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
                 .distance(new Point(
                         (int) (getWidth() * ((1 - cardWidthPercent) / 2) + closeButtonMargin + closeButtonRadius),
                         (int) cardVMargin + closeButtonMargin + closeButtonRadius)) < closeButtonRadius;
+    }
+    
+    /**
+     * Gibt an ob die Maus momentan über dem farbigen Kreis ist.
+     * @param e Das Maus-Event mit der aktuellen Position.
+     * @return True, wenn die Maus über dem Kreis ist.
+     */
+    private boolean isInCircleButtonBounds(MouseEvent e) {
+        var colorCirclePosition = getColorCirclePosition();
+        int x = (int) (colorCirclePosition.getItem1() + (getWidth() / 2) + circleRadius);
+        int y = (int) (colorCirclePosition.getItem2() + (getHeight() / 2) + circleRadius);
+        var circleCenter = new Point(x, y);
+        
+        // Treffer wenn der Punkt auf den geklickt wurde nicht weiter als der Radius vom Zentrum entfernt liegt.
+        var distance = e.getPoint().distance(circleCenter);
+        return distance < circleRadius;
     }
 
     /**

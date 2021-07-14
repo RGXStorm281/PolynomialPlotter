@@ -260,6 +260,11 @@ public class JPlotter extends JPanel {
         FunctionInfoContainer[] functionInfo = drawingInformation.getFunctionInfo();
         for(FunctionInfoContainer functionContainer: functionInfo){
             IFunction func = functionContainer.getFunction();
+            // ausgeblendete Funktionen überspringen.
+            if(!func.isVisible()){
+                continue;
+            }
+            
             g2d.setColor(func.getColor());
             Koordinate[] values = functionContainer.getFunctionValues();
             if(values.length == 0){

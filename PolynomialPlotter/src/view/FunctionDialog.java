@@ -19,6 +19,12 @@ import java.util.List;
 import java.awt.Color;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
+import javax.swing.text.PlainDocument;
 
 import event.FunctionEditedEvent;
 import event.FunctionEvent;
@@ -93,7 +99,27 @@ public class FunctionDialog extends JFrame {
         functionInput.setBorder(BorderFactory.createCompoundBorder(
             functionInput.getBorder(),BorderFactory.createMatteBorder(0, 0, 1, 0, this.styleClass.DIALOG_FG)
         ));
-
+        ((PlainDocument) functionInput.getDocument()).setDocumentFilter(new DocumentFilter(){
+            private static final String REGEX = "\\^{2}";
+            private String last = "";
+            @Override
+            public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr)
+                    throws BadLocationException {
+                        string = string.replaceAll(REGEX, "^");
+                        super.insertString(fb, offset, string, attr);
+                    }
+                    
+                    @Override
+                    public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
+                    throws BadLocationException {
+                        if(text.equals(last) && last.equals("^")){
+                            text = "";
+                            System.out.println("Doubled");
+                }
+                last=text;
+                super.replace(fb, offset, length, text, attrs);
+            }
+        });
         functionInputLabel = new JLabel("Funktionausdruck");
         functionInputLabel.setFont(font.deriveFont(11f));
         functionInputLabel.setForeground(this.styleClass.DIALOG_FG);

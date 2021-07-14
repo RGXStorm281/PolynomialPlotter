@@ -112,6 +112,8 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
         editButtonCircleMargin = 2;
         setPreferredSize(new Dimension(getWidth(), 80));
         addMouseListener(new MouseAdapter() {
+
+
             @Override
             public void mouseExited(MouseEvent e) {
                 resetAllStyles();

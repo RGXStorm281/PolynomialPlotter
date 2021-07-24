@@ -16,6 +16,8 @@ import java.awt.event.MouseAdapter;
 
 import javax.swing.JPanel;
 
+
+
 import event.PlotEvent;
 import event.PlotMovedEvent;
 import event.PlotZoomedEvent;
@@ -44,10 +46,8 @@ import model.Utils;
 
 public class JPlotter extends JPanel {
 
-    private double zoom; // Global zoomlevel
 
-    // private final float SPACING; // Hardcoded Space-unit, |spacing| pixels = 1 numerical unit
-    private float squareScale = 2;
+    private float squareScale; // Um welchen Faktor welchen Faktor wird das Grid geteilt
     private int xAxisValueYOffset = 10;
     private int yAxisValueXOffset = 10;
     private float smallSquareStrokeWidth = 0.5f;
@@ -56,11 +56,10 @@ public class JPlotter extends JPanel {
     private Color plotBackground;
     private Color plotForeground;
     private StyleClass styleClass;
+    private Settings settings;
 
     private List<IPlotListener> plotListeners = new ArrayList<IPlotListener>();
-    private Point origin; // Point to keep track of the origin point (Used for dragging the screen)
     private Point mousePt; // Point to keep track of the last mouse-position
-    private Settings settings;
 
     private int subGrid;
 
@@ -73,12 +72,12 @@ public class JPlotter extends JPanel {
         this.styleClass = styleClass;
         // Scroll-Listener --> Zoom
         this.settings = settings;
-        this.zoom = settings.INITIAL_ZOOM;
         // this.SPACING = settings.INITIAL_PIXEL_TO_UNIT_RATIO;
         this.subGrid = settings.SUB_SQUARE_GRID;
         this.plotBackground = styleClass.PLOT_BG;
         this.gridColor = styleClass.GIRD_COLOR;
         this.plotForeground = styleClass.PLOT_FG;
+        this.squareScale = settings.SQUARE_SCALE;
         addMouseWheelListener(new MouseWheelListener() {
             public void mouseWheelMoved(MouseWheelEvent e) {
                 float dZoom = e.isControlDown() ? 0.1f : 0.05f;
@@ -153,10 +152,6 @@ public class JPlotter extends JPanel {
         setPreferredSize(new Dimension(settings.INITIAL_PLOT_WIDTH,settings.INITIAL_PLOT_HEIGHT));
     }
 
-    protected void resetZoom() {
-        zoom = 1f;
-    }
-
     /**
      * Kümmert sich um die Zoom-Funktionalität, indem es abhängig der
      * Scroll-Richtung den Zoom verändert Hochscrollen = Reinzoomen Runterscrollen =
@@ -167,28 +162,6 @@ public class JPlotter extends JPanel {
     protected void updateDrawingInformation(DrawingInformationContainer drawingInformation){
         this.drawingInformation = drawingInformation;
         repaint();
-    }
-
-    /**
-     * Vergrößert den Zoom-Faktor abhängig von dZoom
-     * 
-     * @param dZoom Um diesen Wert wird reingezoomt
-     */
-    public void zoomIn(float dZoom) {
-        if (dZoom > 0f && this.zoom + dZoom < settings.MAX_ZOOM) {
-            this.zoom += dZoom;
-        }
-    }
-
-    /**
-     * Verkleinert den Zoom-Faktor abhängig von dZoom
-     * 
-     * @param dZoom Um diesen Wert wird rausgezoomt
-     */
-    public void zoomOut(float dZoom) {
-        if (dZoom > 0f && this.zoom - dZoom > settings.MIN_ZOOM) {
-            this.zoom -= dZoom;
-        }
     }
 
     
@@ -273,6 +246,7 @@ public class JPlotter extends JPanel {
             GeneralPath gp = new GeneralPath();
             gp.moveTo(Utils.mapToInterval(values[0].getX(), xInterval, widthInterval),Utils.mapToInterval(-values[0].getY(), yInterval, heightInterval));
             for(int i = 1;i<values.length;i++){
+                // if(i+1 < values.length && values[i].distanceTo(values[i+1])>200)continue;
                 gp.lineTo(Utils.mapToInterval(values[i].getX(), xInterval, widthInterval),Utils.mapToInterval(-values[i].getY(), yInterval, heightInterval));
             }
             g2d.draw(gp);
@@ -388,67 +362,9 @@ public class JPlotter extends JPanel {
         
     }
 
-    /**
-     * 
-     * @param dPoint Delta-Vektor, um wie viel JPlotter.origin verschoben werden
-     *               soll
-     */
-    public void moveOrigin(Point dPoint) {
-        origin.translate(dPoint.x, dPoint.y);
-    }
-
+  
+ 
     
-    /** 
-     * @param factor
-     */
-    public void moveUp(float factor){
-        moveOrigin(new Point(0,(int)factor));
-    }
-    
-    /** 
-     * @param factor
-     */
-    public void moveDown(float factor){
-        moveOrigin(new Point(0,(int)-factor));
-    }
-    
-    /** 
-     * @param factor
-     */
-    public void moveRight(float factor){
-        moveOrigin(new Point((int)-factor,0));
-    }
-    
-    /** 
-     * @param factor
-     */
-    public void moveLeft(float factor){
-        moveOrigin(new Point((int)factor,0));
-    }
-
-    /**
-     * setter für JPlotter.zoom
-     * 
-     * @param zoom neuer zoom Wert
-     */
-    public void setZoom(float zoom) {
-        this.zoom = zoom;
-        repaint();
-    }
-
-    /**
-     * getter für JPlotter.zoom
-     * 
-     * @return float
-     */
-    public double getZoom() {
-        return this.zoom;
-    }
-
-    public void resetOrigin() {
-        origin = new Point(0, 0);
-    }
-
     
     /** Fügt einen PlotListener an das Event an
      * @param plotListener

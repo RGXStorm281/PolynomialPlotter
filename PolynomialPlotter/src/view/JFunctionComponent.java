@@ -69,6 +69,7 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
     private int cardMargins; // Margin left and right to the border
     private Color functionStringColor;
 
+    private boolean isVisible = true;
     
     public JFunctionComponent(StyleClass styleClass, String functionChar, String functionString, Color circleColor) {
         super();
@@ -135,6 +136,7 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
                         for(IFunctionListener listener : functionListeners){
                             listener.functionVisibilityToggled(toggleVisibleEvent);
                         }
+                        repaint();
                         return;
                     }
                     functionDialog.start();
@@ -163,7 +165,7 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
             g2d.setColor(Color.BLACK);
             // g2d.drawRect(0,0,getWidth()-1,getHeight()-1);
             g2d.translate(getWidth() / 2, getHeight() / 2);
-            g2d.setColor(currentCardBg);
+            g2d.setColor(isVisible ? currentCardBg : currentCardBg.darker());
             g2d.fillRoundRect((int) (-cardWidth / 2), (int) (-getHeight() / 2 + cardVMargin), (int) (cardWidth),
             (int) (getHeight() - cardVMargin * 2), 20, 20);
             paintColorCircle(g2d);
@@ -242,7 +244,7 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
      * @param g2d
      */
     private void paintFunctionString(Graphics2D g2d) {
-        g2d.setColor(functionStringColor);
+        g2d.setColor(isVisible ? functionStringColor : functionStringColor.darker());
         g2d.setFont(GUI.getFont(FontFamily.INCONSOLATA, FontStyle.ITALIC, 20));
         double height = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), "f").getVisualBounds().getHeight();
         g2d.drawString(GUI.decorate(functionString),
@@ -256,9 +258,13 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
      * @param g2d
      */
     private void paintColorCircle(Graphics2D g2d) {
-        g2d.setColor(circleColor);
+        g2d.setColor(isVisible? circleColor : currentCardBg);
         var position = getColorCirclePosition();
         g2d.fillOval(position.getItem1(), position.getItem2(),
+        circleRadius * 2, circleRadius * 2);
+        g2d.setColor(isVisible ? circleColor.darker() : currentCardBg.brighter());
+        g2d.setStroke(new BasicStroke(2f));
+        g2d.drawOval(position.getItem1(), position.getItem2(),
                 circleRadius * 2, circleRadius * 2);
 
     }
@@ -434,6 +440,14 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
     public void addFunctionListener(IFunctionListener functionListener) {
         functionDialog.addFunctionListener(functionListener);
         functionListeners.add(functionListener);
+    }
+
+    public void setVisibility(boolean b){
+        this.isVisible = b;
+    }
+
+    public boolean getVisibility(){
+        return this.isVisible;
     }
 
     /**

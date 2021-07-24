@@ -39,4 +39,8 @@ public class Koordinate {
     public String toString() {
         return "Koordinate[x: "+this.x+", y: "+this.y+"]";
     }
+
+    public double distanceTo(Koordinate other){
+        return Math.sqrt(Math.pow(other.x-this.x,2) + Math.pow(other.y-this.y,2));
+    }
 }

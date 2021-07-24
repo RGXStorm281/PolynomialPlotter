@@ -215,10 +215,7 @@ public class GUI extends JFrame implements IGUI {
         return plotter_panel.getHeight();
     }
 
-    public double getPlotZoom() {
-        return plotter_panel.getZoom();
-    }
-
+  
     @Override
     public void drawFunctions(DrawingInformationContainer drawingInformation) {
         // TODO RS von RE: Wäre wichtig das hier rüber zu zeichnen, damit ich testen

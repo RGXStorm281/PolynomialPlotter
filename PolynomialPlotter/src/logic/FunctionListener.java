@@ -11,6 +11,7 @@ import event.FunctionVisibilityToggledEvent;
 import event.IFunctionListener;
 import java.awt.Color;
 import view.IGUI;
+import view.JFunctionComponent;
 
 /**
  *
@@ -65,6 +66,8 @@ public class FunctionListener implements IFunctionListener {
     @Override
     public void functionVisibilityToggled(FunctionVisibilityToggledEvent e) {
         String functionName = e.getFunctionName();
+        JFunctionComponent jfc = (JFunctionComponent)e.getSource();
+        jfc.setVisibility(!jfc.getVisibility());
         logic.toggleFunctionVisible(functionName);
     }
     

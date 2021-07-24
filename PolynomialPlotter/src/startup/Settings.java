@@ -25,6 +25,7 @@ public class Settings {
     public final int INITIAL_PLOT_HEIGHT;
     public final int INITIAL_PIXEL_TO_UNIT_RATIO;
     public final int SUB_SQUARE_GRID;
+    public final int SQUARE_SCALE;
     public final String THEME;
     
     // Standardposition.
@@ -50,6 +51,7 @@ public class Settings {
         this.INITIAL_PLOT_HEIGHT = Integer.parseInt(propertiesFile.getProperty("initialPlotHeight"));
         this.INITIAL_PIXEL_TO_UNIT_RATIO = Integer.parseInt(propertiesFile.getProperty("pixelToUnitRatio"));
         this.SUB_SQUARE_GRID = Integer.parseInt(propertiesFile.getProperty("subSquareGrid"));
+        this.SQUARE_SCALE = Integer.parseInt(propertiesFile.getProperty("squareScale"));
         this.THEME = propertiesFile.getProperty("theme");
 
         this.INITIAL_ORIGIN_X = Integer.parseInt(propertiesFile.getProperty("initialOriginX"));

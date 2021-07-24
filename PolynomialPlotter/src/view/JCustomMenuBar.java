@@ -38,10 +38,10 @@ public class JCustomMenuBar extends JMenuBar{
 
 
     public JCustomMenuBar(GUI _gui, StyleClass styleClass){
+        this.gui = _gui;
         themeDialog = new ThemeDialog(gui,styleClass);
         ResourceBundle rb = ResourceBundle.getBundle("i18n.resource",Locale.US);
         setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
-        this.gui = _gui;
         this.styleClass = styleClass;
 
         // Datei 

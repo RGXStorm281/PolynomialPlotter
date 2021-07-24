@@ -88,7 +88,8 @@ public class ThemeDialog extends JFrame{
         button.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                gui.changeTheme((String)(jcb.getSelectedItem()));
+                String theme = (String) jcb.getSelectedItem();
+                gui.changeTheme((String)(theme));
                 Properties propertiesFile = new Properties();
                 try {
                     InputStream in = (getClass().getResourceAsStream("../startup/settings.properties"));

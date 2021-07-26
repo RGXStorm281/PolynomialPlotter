@@ -35,28 +35,13 @@ public class Sidebar extends JPanel {
     private JLabel headingText;
 
     public Sidebar(StyleClass styleClass) {
-        addMouseListener(new MouseAdapter(){
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                requestFocus();
-            }
-        });
         this.styleClass = styleClass;
         setBackground(this.styleClass.SIDEBAR_BG_COLOR);
-        functionDialog = new FunctionDialog(null,DialogType.ADD,styleClass);
-        functionDialog.setLocationRelativeTo(this);
         addFunctionButton = new JAddButton(this.styleClass);
-        addFunctionButton.addMouseListener(new MouseAdapter(){
-            @Override
-            public void mouseClicked(MouseEvent e) {
-
-                if(e.getButton() == 1 && addFunctionButton.isOverButton(e))functionDialog.start();
-            }
-        });
         vFunctionsBox = Box.createVerticalBox();
-
+        
         add(vFunctionsBox);
-
+        
         heading = new JPanel(); // Panel used for the Heading-Text (to set a Background)
         headingText = new JLabel("Polynomialplotter");
         headingText.setFont(GUI.getFont(FontFamily.ROBOTO,FontStyle.BOLD,30)); // Set the font to size 30
@@ -69,6 +54,19 @@ public class Sidebar extends JPanel {
         vFunctionsBox.add(addFunctionButton);
         // Remove any Padding
         FlowLayout layout = (FlowLayout)getLayout();
+        addFunctionButton.addMouseListener(new MouseAdapter(){
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                
+                if(e.getButton() == 1 && addFunctionButton.isOverButton(e)){
+                    functionDialog = new FunctionDialog(null, DialogType.ADD, styleClass);
+                    functionDialog.setLocationRelativeTo(heading.getParent());
+                    for(IFunctionListener functionListener : functionListeners)functionDialog.addFunctionListener(functionListener);
+                    functionDialog.start();
+                }
+                    
+            }
+        });
         layout.setHgap(0);
         layout.setVgap(0);
     }
@@ -123,7 +121,7 @@ public class Sidebar extends JPanel {
     public void addFunctionListener(IFunctionListener functionListener){
         functionListeners.add(functionListener);
         for(JFunctionComponent jfc: functionList)jfc.addFunctionListener(functionListener);
-        functionDialog.addFunctionListener(functionListener);
+        
     }
 
     

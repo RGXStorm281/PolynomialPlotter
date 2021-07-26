@@ -32,14 +32,14 @@ public class FunctionListener implements IFunctionListener {
         String functionString = e.getFunctionString();
         Color functionColor = e.getFunctionColor();    
         String functionName = e.getFunctionName();
-        
-        if(functionName != null){
-            System.out.println("New function \""+functionName+"\" with: "+functionString+" and the Color"+functionColor);
-        }else{
-            System.out.println("New function \""+functionName+"\" with: "+functionString+" and the Color"+functionColor);
-        }
+
         
         functionName = logic.addFunction(functionName, functionString, functionColor);
+        if(functionString.split("=").length == 1){
+            functionString = functionName+"(x) = "+functionString;
+        }
+            
+        
         view.addJFunctionComponent(functionName,functionString, functionColor);
         view.updateTheme();
         return functionName;

@@ -172,7 +172,6 @@ public class FunctionDialog extends JFrame {
                                 String functionName = ((IFunctionListener) listener).functionAdded(new FunctionEvent(
                                         e.getSource(), colorPanel.getBackground(), functionInput.getText().trim(),
                                         functionStringToChar(functionInput.getText().trim())));
-                                System.out.println(functionName);
                                 hideWarn();
                                 closeDialog();
                                 functionInput.setText("");
@@ -264,6 +263,7 @@ public class FunctionDialog extends JFrame {
             }
 
         });
+        getRootPane().setDefaultButton(okButton);
         getContentPane().add(colorPanel);
         pack();
         revalidate();

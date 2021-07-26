@@ -91,7 +91,6 @@ public class JPlotter extends JPanel {
             public void mousePressed(MouseEvent e) {
                 mousePt = e.getPoint();
                 repaint();
-                requestFocus();
             }
 
            

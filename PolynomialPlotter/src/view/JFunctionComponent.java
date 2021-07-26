@@ -83,11 +83,6 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
         this.functionChar = functionChar;
         this.styleClass = styleClass;
         functionStringColor = styleClass.FUNCTION_CARD_FG;
-        functionEditDialog = new FunctionDialog(this,DialogType.EDIT,styleClass);
-        functionEditDialog.setFunctionString(functionString);
-        functionEditDialog.setColor(circleColor);
-        functionEditDialog.setLastFunctionChar(this.functionChar);
-        functionEditDialog.setLocationRelativeTo(this);
         
         defaultCardBg = styleClass.FUNCTION_CARD_BG;
         currentCardBg = defaultCardBg;
@@ -123,7 +118,6 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (isInCardBounds(e)) {
-                    requestFocus();
                     if (isInCloseButtonBounds(e)) {
                         for (IFunctionListener listener : functionListeners)
                         ((IFunctionListener) listener).functionDeleted(
@@ -139,6 +133,13 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
                         repaint();
                         return;
                     }
+                    JFunctionComponent t = (JFunctionComponent)(e.getSource());
+                    functionEditDialog = new FunctionDialog(t,DialogType.EDIT,styleClass);
+                    functionEditDialog.setFunctionString(t.functionString);
+                    functionEditDialog.setColor(t.circleColor);
+                    functionEditDialog.setLastFunctionChar(t.functionChar);
+                    for(IFunctionListener listener : functionListeners)functionEditDialog.addFunctionListener(listener);
+                    functionEditDialog.setLocationRelativeTo(t);
                     functionEditDialog.start();
                 }
             }
@@ -391,7 +392,6 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
      * @param functionListener
      */
     public void addFunctionListener(IFunctionListener functionListener) {
-        functionEditDialog.addFunctionListener(functionListener);
         functionListeners.add(functionListener);
     }
 
@@ -419,8 +419,7 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
         closeButtonBgCurrentColor = closeButtonBgDefaultColor;
         closeButtonCrossHoverColor = closeButtonCrossDefaultColor.darker();
         closeButtonCrossCurrentColor = closeButtonCrossDefaultColor;
-        functionEditDialog.recolor();
-        repaint();
+        repaint();   
     }
 
     public static Color LerpRGB(Color a, Color b, float t) {
@@ -435,6 +434,7 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
     public void editFunction(String fs, Color functionColor) {
         this.functionString = fs;
         this.circleColor = functionColor;
+        System.out.println(this.functionString);
         revalidate();
         repaint();
     }

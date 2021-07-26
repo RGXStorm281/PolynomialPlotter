@@ -1,12 +1,14 @@
 package event;
 
 import java.awt.Color;
-
+/**
+ * @author raphaelsack
+ */
 public class FunctionEditedEvent extends FunctionEvent {
     String oldFunctionChar;
 
     /**
-     * Child von FunctioEvent
+     * Child von FunctionEvent
      * trägt einen Parameter mehr: oldFunctionChar. dieser wird als Identifikation der originalen Funktion verwendet.
      * 
      * @param source         Object das dieses Event gecalled hat

@@ -1,5 +1,7 @@
 package event;
-
+/**
+ * @author raphaelsack
+ */
 public interface IPlotListener extends java.util.EventListener{
 
     /**

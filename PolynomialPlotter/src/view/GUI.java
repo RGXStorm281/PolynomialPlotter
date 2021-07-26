@@ -31,13 +31,13 @@ public class GUI extends JFrame implements IGUI {
     enum FontStyle {
         THIN, ITALIC, BOLD, REGULAR, LIGHT
     }
-
-    private JPlotter plotter_panel;
+    // Aufteilung der GUI in 3 Hauptkomponenten
+    private JCustomMenuBar menubar;
     private Sidebar sidebar_panel;
+    private JPlotter plotter_panel;
 
     private final Settings settings;
     private StyleClass styleClass;
-    private JCustomMenuBar menubar;
 
     public GUI(Settings settings) throws FileNotFoundException, IOException {
         super();
@@ -66,14 +66,6 @@ public class GUI extends JFrame implements IGUI {
         // Split up in 2 Panes
         sidebar_panel = new Sidebar(styleClass);
         plotter_panel = new JPlotter(this.settings,styleClass);
-        sidebar_panel.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyReleased(KeyEvent e) {
-                if (e.getKeyCode() == 116) {
-                    updateTheme();
-                }
-            }
-        });
         menubar = new JCustomMenuBar(this,styleClass);
         getContentPane().add(menubar, BorderLayout.NORTH);
         getContentPane().add(sidebar_panel, BorderLayout.WEST);
@@ -110,100 +102,21 @@ public class GUI extends JFrame implements IGUI {
     }
 
     private static Font ttfBase = null;
-    private static Font telegraficoFont = null;
+    private static Font robotoFont = null;
     private static InputStream myStream = null;
-    private static final String FONT_PATH_TELEGRAFICO = "data/Roboto/Roboto-Regular.ttf";
+    private static final String FONT_PATH_ROBOTO_REGULAR = "data/Roboto/Roboto-Regular.ttf";
     
     public static Font getFont(FontFamily ft, FontStyle fs, float f) {
         
         try {
-            myStream = GUI.class.getResourceAsStream(FONT_PATH_TELEGRAFICO);
+            myStream = GUI.class.getResourceAsStream(FONT_PATH_ROBOTO_REGULAR);
             ttfBase = Font.createFont(Font.TRUETYPE_FONT, myStream);
-            telegraficoFont = ttfBase.deriveFont(Font.PLAIN, f);               
+            robotoFont = ttfBase.deriveFont(Font.PLAIN, f);               
         } catch (Exception ex) {
             ex.printStackTrace();
             System.err.println("Font not loaded.");
         }
-        return telegraficoFont;
-        // try {
-        //     switch (ft) {
-        //         case ROBOTO:
-        //             switch (fs) {
-        //                 case BOLD:
-        //                     return Font
-        //                             .createFont(Font.TRUETYPE_FONT,
-        //                                     Sidebar.class.getResourceAsStream("../data/Roboto/Roboto-Bold.ttf"))
-        //                             .deriveFont(f);
-        //                 case THIN:
-        //                     return Font
-        //                             .createFont(Font.TRUETYPE_FONT,
-        //                                     Sidebar.class.getResourceAsStream("../data/Roboto/Roboto-Thin.ttf"))
-        //                             .deriveFont(f);
-        //                 default:
-        //                     return Font
-        //                             .createFont(Font.TRUETYPE_FONT,
-        //                                     Sidebar.class.getResourceAsStream("../data/Roboto/Roboto-Regular.ttf"))
-        //                             .deriveFont(f);
-        //             }
-        //         case INCONSOLATA:
-        //             switch(fs){
-        //                 case BOLD:
-        //                 return Font
-        //                 .createFont(Font.TRUETYPE_FONT,
-        //                         Sidebar.class.getResourceAsStream("../data/Asap/Asap-Bold.ttf"))
-        //                 .deriveFont(f);
-        //                 case ITALIC:
-        //                 return Font
-        //                 .createFont(Font.TRUETYPE_FONT,
-        //                         Sidebar.class.getResourceAsStream("../data/Asap/Asap-Italic.ttf"))
-        //                 .deriveFont(f);
-        //                 default:
-        //                 return Font
-        //                 .createFont(Font.TRUETYPE_FONT,
-        //                         Sidebar.class.getResourceAsStream("../data/Asap/Asap-Regular.ttf"))
-        //                 .deriveFont(f);
-        //             }
-        //         case ASAP:
-        //         switch(fs){
-        //             case BOLD:
-        //             return Font
-        //             .createFont(Font.TRUETYPE_FONT,
-        //                     Sidebar.class.getResourceAsStream("../data/Inconsolata/Inconsolata-Bold.ttf"))
-        //             .deriveFont(f);
-        //             case LIGHT:
-        //             return Font
-        //             .createFont(Font.TRUETYPE_FONT,
-        //                     Sidebar.class.getResourceAsStream("../data/Inconsolata/Inconsolata-Light.ttf"))
-        //             .deriveFont(f);
-        //             default:
-        //             return Font
-        //             .createFont(Font.TRUETYPE_FONT,
-        //                     Sidebar.class.getResourceAsStream("../data/Inconsolata/Inconsolata-Regular.ttf"))
-        //             .deriveFont(f);
-        //             }
-        //         default:
-        //             switch (fs) {
-        //                 case BOLD:
-        //                     return Font
-        //                             .createFont(Font.TRUETYPE_FONT,
-        //                                     Sidebar.class.getResourceAsStream("../data/Rubik/Rubik-Bold.ttf"))
-        //                             .deriveFont(f); // Looks for The Font and returns the font with the size f
-        //                 case ITALIC:
-        //                     return Font
-        //                             .createFont(Font.TRUETYPE_FONT,
-        //                                     Sidebar.class.getResourceAsStream("../data/Rubik/Rubik-ITALIC.ttf"))
-        //                             .deriveFont(f); // Looks for The Font and returns the font with the size f
-        //                 default:
-        //                     return Font
-        //                             .createFont(Font.TRUETYPE_FONT,
-        //                                     Sidebar.class.getResourceAsStream("../data/Rubik/Rubik-Regular.ttf"))
-        //                             .deriveFont(f); // Looks for The Font and returns the font with the size f
-        //             }
-        //     }
-        // } catch (FontFormatException | IOException e) {
-        //     e.printStackTrace();
-        //     return Font.getFont(Font.SANS_SERIF); // If the Font is not found, return a Sans-Serif Font
-        // }
+        return robotoFont;
 
     }
 
@@ -218,19 +131,7 @@ public class GUI extends JFrame implements IGUI {
   
     @Override
     public void drawFunctions(DrawingInformationContainer drawingInformation) {
-        // TODO RS von RE: Wäre wichtig das hier rüber zu zeichnen, damit ich testen
-        // kann.
         plotter_panel.updateDrawingInformation(drawingInformation);
-    }
-
-    @Override
-    public String getFunction() {
-        return sidebar_panel.getFunction();
-    }
-
-    @Override
-    public Color getColor() {
-        return sidebar_panel.getFunctionDialog().getColor();
     }
 
     @Override

@@ -2,6 +2,11 @@ package event;
 
 import logic.FunctionParsingException;
 
+/**
+ * @author robinepple
+ * @author raphaelsack
+ */
+
 public interface IFunctionListener extends java.util.EventListener{
 
     /**

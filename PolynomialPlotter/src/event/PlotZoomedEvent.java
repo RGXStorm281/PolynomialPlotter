@@ -2,6 +2,9 @@ package event;
 
 import model.Tuple;
 
+/**
+ * @author raphaelsack
+ */
 public class PlotZoomedEvent extends PlotEvent{
 
     float zoomAmount;

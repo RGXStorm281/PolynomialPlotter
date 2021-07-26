@@ -19,6 +19,10 @@ import view.GUI.FontFamily;
 import view.GUI.FontStyle;
 import event.IFunctionListener;
 
+/**
+ * @author raphaelsack
+ */
+
 public class Sidebar extends JPanel {
 
     private Box vFunctionsBox;

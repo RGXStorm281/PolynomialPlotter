@@ -1,5 +1,10 @@
 package event;
 import java.awt.Color;
+
+/**
+ * @author raphaelsack
+ * @author robinepple
+ */
 public class FunctionEvent extends java.util.EventObject{
 
     Color functionColor;

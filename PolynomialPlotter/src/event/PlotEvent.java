@@ -1,4 +1,8 @@
 package event;
+
+/**
+ * @author raphaelsack
+ */
 public class PlotEvent extends java.util.EventObject{
 
     int plotWidth;

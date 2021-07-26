@@ -13,16 +13,20 @@ import java.awt.BasicStroke;
 import java.awt.RenderingHints;
 
 import javax.swing.JComponent;
+/**
+ * @author raphaelsack
+ */
 
 public class JAddButton extends JComponent implements MouseMotionListener {
 
     private Color bg;
     private Color hoverButtonBgCol;
 
-    private int radius;
-    private int padding;
-    private int margin;
-    private float strokeWidth;
+    private int radius; // Radius des Buttons
+    private int padding; // Abstand zwischen Button und Text
+    private int margin; // Abstand zwischen Button und Rand
+    private float strokeWidth; // StrokeWidth vom "+"-Zeichen
+
     private Color defaultButtonBgCol;
     private Color currentButtonBgCol;
     private Color defaultButtonCrossColor;
@@ -34,18 +38,18 @@ public class JAddButton extends JComponent implements MouseMotionListener {
         super();
         addMouseMotionListener(this);
         radius = 20;
+        strokeWidth = 3f;
+        padding = 12;
+        margin = 10;
         enableInputMethods(true);
         enableEvents(AWTEvent.ACTION_EVENT_MASK);
         bg = styleClass.SIDEBAR_BG_COLOR;
-        strokeWidth = 3f;
         defaultButtonBgCol = styleClass.SIDEBAR_ADD_BUTTON_BG;
         hoverButtonBgCol = defaultButtonBgCol.darker();
         currentButtonBgCol = defaultButtonBgCol;
         defaultButtonCrossColor = styleClass.SIDEBAR_ADD_BUTTON_FG;
         currentCrossCol = defaultButtonCrossColor;
         hoverButtonCrossCol = defaultButtonCrossColor.darker();
-        padding = 12;
-        margin = 10;
         crossStroke = new BasicStroke(strokeWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
         setPreferredSize(new Dimension(radius * 2 + margin, radius * 2 + margin * 2));
     }
@@ -56,8 +60,8 @@ public class JAddButton extends JComponent implements MouseMotionListener {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setColor(bg);
-        g2d.drawRect(0, 0, getWidth(), getHeight());
-        g2d.translate(getWidth() / 2, 0);
+        g2d.drawRect(0, 0, getWidth(), getHeight()); // Hintergrund zeichnen
+        g2d.translate(getWidth() / 2, 0); // Zentrieren
         g2d.setColor(currentButtonBgCol);
         g2d.fillOval(-radius, margin, radius * 2, radius * 2);
         g2d.setPaint(currentCrossCol);

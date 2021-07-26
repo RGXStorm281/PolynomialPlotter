@@ -40,16 +40,6 @@ public interface IGUI{
      * die Farbe des Graphens geholt und gespeichert werden. 
      */
 
-    /**
-     * Gibt die aktuelle Funktions-Eingabe als UniversalFunctionObjekt zurück
-     */
-    String getFunction();
-
-    /**
-     * 
-     * @return Farbe der neuen Funktion
-     */
-    Color getColor();
 
 
     /**

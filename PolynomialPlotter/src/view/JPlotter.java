@@ -10,7 +10,6 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-// import java.awt.BasicStroke;
 import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 
@@ -47,7 +46,8 @@ import model.Utils;
 public class JPlotter extends JPanel {
 
 
-    private float squareScale; // Um welchen Faktor welchen Faktor wird das Grid geteilt
+    private float squareScale; // Die Skalierung der Quadrate 
+    private float squareDivider; // Der Wert wie die Quadrate skaliert werden
     private int xAxisValueYOffset = 10;
     private int yAxisValueXOffset = 10;
     private float smallSquareStrokeWidth = 0.5f;
@@ -61,23 +61,23 @@ public class JPlotter extends JPanel {
     private List<IPlotListener> plotListeners = new ArrayList<IPlotListener>();
     private Point mousePt; // Point to keep track of the last mouse-position
 
-    private int subGrid;
+
+    private int subGrid; // Wie viele kleine Quadrate soll ein Großes Quadrat auf dem Grid haben
 
     private Color gridColor;
     // Temporäre Vars
 
     private DrawingInformationContainer drawingInformation;
 
-    public JPlotter(Settings settings, StyleClass styleClass) {
+    public JPlotter(Settings _settings, StyleClass styleClass) {
         this.styleClass = styleClass;
-        // Scroll-Listener --> Zoom
-        this.settings = settings;
-        // this.SPACING = settings.INITIAL_PIXEL_TO_UNIT_RATIO;
-        this.subGrid = settings.SUB_SQUARE_GRID;
+        this.settings = _settings;
+        this.subGrid = _settings.SUB_SQUARE_GRID;
         this.plotBackground = styleClass.PLOT_BG;
         this.gridColor = styleClass.GIRD_COLOR;
         this.plotForeground = styleClass.PLOT_FG;
-        this.squareScale = settings.SQUARE_SCALE;
+        this.squareDivider = _settings.SQUARE_SCALE;
+        this.squareScale = _settings.SQUARE_SCALE;
         addMouseWheelListener(new MouseWheelListener() {
             public void mouseWheelMoved(MouseWheelEvent e) {
                 float dZoom = e.isControlDown() ? 0.1f : 0.05f;
@@ -131,33 +131,24 @@ public class JPlotter extends JPanel {
             }
 
             @Override
-            public void componentMoved(ComponentEvent e) {
-                // TODO Auto-generated method stub
-                
+            public void componentMoved(ComponentEvent e) {                
             }
 
             @Override
-            public void componentShown(ComponentEvent e) {
-                // TODO Auto-generated method stub
-                
+            public void componentShown(ComponentEvent e) {     
             }
 
             @Override
-            public void componentHidden(ComponentEvent e) {
-                // TODO Auto-generated method stub
-                
+            public void componentHidden(ComponentEvent e) {    
             }
             
         });
-        setPreferredSize(new Dimension(settings.INITIAL_PLOT_WIDTH,settings.INITIAL_PLOT_HEIGHT));
+        setPreferredSize(new Dimension(_settings.INITIAL_PLOT_WIDTH,_settings.INITIAL_PLOT_HEIGHT));
     }
 
     /**
-     * Kümmert sich um die Zoom-Funktionalität, indem es abhängig der
-     * Scroll-Richtung den Zoom verändert Hochscrollen = Reinzoomen Runterscrollen =
-     * Runterzoomen
-     * 
-     * @param e
+     * Beim ändern der Funktionsinformationen wird der Plot neu gezeichnet
+     * @param drawingInformation 
      */
     protected void updateDrawingInformation(DrawingInformationContainer drawingInformation){
         this.drawingInformation = drawingInformation;
@@ -168,30 +159,26 @@ public class JPlotter extends JPanel {
     /** 
      * @param g
      */
-    public void paint(Graphics g) {                                                             
+    public void paintComponent(Graphics g) {                                                             
         Graphics2D g2d = (Graphics2D) g;
         // Antialiasing für bessere Diagonalen
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         // Hintergrund-Füllung
         g2d.setColor(this.plotBackground);
         g2d.fillRect(0, 0, getWidth(), getHeight());
-
-        // g2d.translate((double) origin.x, (double) origin.y); // View abhängig vom Ursprung translaten, wichtig für die
-        //                                                      // Drag-Funktionalität
-        // g2d.translate(getWidth() / 2, getHeight() / 2); // View auf die Mitte des Panels translaten/
         if(drawingInformation != null){
             drawGrid(g2d);
             drawAxes(g2d);
             drawValues(g2d);
             drawFunctions(g2d);
         }
-        // drawFunction(g2d, x -> (float) ((x * x) + 1), Color.RED);
-        // drawFunction(g2d, x -> (float) (Math.sin(x) * x * x), Color.BLUE);
     }
 
-    
+    /**
+     * Malt die Zahlen auf den X/Y-Achsen
+     * @param g2d
+     */
     private void drawValues(Graphics2D g2d) {
-        // TODO: Fensterbreite als Paramerter mit rein nehmen
         Tuple<Double,Double> xInterval = drawingInformation.getIntervallX();
         Tuple<Double,Double> yInterval = drawingInformation.getIntervallY();
         Tuple<Integer,Integer> heightInterval = new Tuple<Integer,Integer>(0, getHeight());
@@ -199,17 +186,35 @@ public class JPlotter extends JPanel {
         Font font = GUI.getFont(FontFamily.ROBOTO, FontStyle.REGULAR, 15);
         g2d.setPaint(plotForeground);
         g2d.setFont(font);
-        int stringHeight = (int) font.createGlyphVector(g2d.getFontRenderContext(), "1").getVisualBounds().getHeight();
-        int xAxis = Utils.clampToDimensions(Utils.mapToInterval(0, yInterval, heightInterval),heightInterval);
-        int yAxis = Utils.clampToDimensions(Utils.mapToInterval(0, xInterval, widthInterval),widthInterval);
+        int stringHeight = (int) font.createGlyphVector(g2d.getFontRenderContext(), "1").getVisualBounds().getHeight(); // Höhe ist immer gleich, wird am anfang berechnet
 
+        // Die 0-Achsen Punkte werden zuerst auf Höhe/Breite gemappt und danach wird über die Clamp-Funktion geschaut, ob diese Koordinate "sichtbar" ist, 
+        // Die Clamp funktion nimmt einen EingabeWert und ein Interval als Input, falls das entsprechende Intervall "sichtbar" ist, wird der EingabeWert zurückgegeben
+        // Wenn der Eingabewert kleiner ist als der Intervalstart, dann wird der Intervalstart zurückgegeben
+        // Wenn der Eingabewert größer ist als das Intervalende, dann wird der Intervalende zurückgegeben
+        // Somit ist die Koordiante der Achse entweder die Wirkliche Koordiante, oder der Rand des Plotters
+        int xAxis = Utils.clampToDimensions(Utils.mapToInterval(0, yInterval, heightInterval),heightInterval); // Y-Koordinate der x-Achse
+        int yAxis = Utils.clampToDimensions(Utils.mapToInterval(0, xInterval, widthInterval),widthInterval); // X-Koordinat der y-Achse
+
+        /**
+         * Starte unten auf der Y-Achse und runde den Wert auf einen Sinnvollen und passenden Wert runter
+         * z.B. das Y-Interval wäre (-4.35,4.35) und squareScale wäre noch auf 1. Dann würde man rechnen -4.35 - 0.35 - 1 = 3. der extra Offset wird benötigt um einen Visuellen Bug zu verhindern
+         * die Schleife geht dann von diesem Intervall-Start los und fügt i immer einmal den Wert von squareScale hinzu und zwar so lange bis das Ende des Intervalls erreicht ist plus dem Selben offset wie beim Anfang
+         * Wäre beim Selben interval, squareScale 2.0, dann würde die Schleife bei -2.0 Anfangen und bei jedem Schritt kommen 2 dazu bis man 6 erreicht hat
+         * Bei squareScale 0.5 wären es die Werte -4.5,-4,-3.5...
+         */
         for(double i = (yInterval.getItem1()-yInterval.getItem1()%squareScale-squareScale);i<yInterval.getItem2()+squareScale;i+=squareScale){
-            if(i == 0)continue;
-            int y = Utils.mapToDimension(i, yInterval,heightInterval);
-            int yOff = (int) (stringHeight/2);
-            int xOff = (int) (g2d.getFontMetrics().stringWidth(i+""));
-            g2d.drawString(-i+"", yAxis <= yAxisValueXOffset*2+xOff? yAxisValueXOffset : yAxis-xOff-yAxisValueXOffset, y+yOff);
+            if(i == 0)continue; // Zeichne nie die 0
+            int y = Utils.mapToDimension(i, yInterval,heightInterval); // Mappe i auf die Y-Achse (Wenn die Achse z.B. 100 Pixel hoch ist, das Interval von 1-10 geht und i = 5 dann ist y = 50)
+            int yOff = (int) (stringHeight/2); // In der Höhe zentrieren
+            int xOff = (int) (g2d.getFontMetrics().stringWidth(i+"")); // In der Breite zentrieren
+
+            // Wenn die Y-Achse nicht sichtbart ist, dann zeichne den String einfach mit einem Offset an die Seite des Canvas
+            // Da yAxisValueXOffset einmal für den Offset vom Rand und als Offset zur Achse verwendet wird, müssen wir den Offset in der überprüfung mal 2 nehmen.
+            // Wenn die y-Achse sichtbar ist, dann zeichne den String einfach mit einem Offset relativ zur Y-Achse^
+            g2d.drawString(-i+"", yAxis <= yAxisValueXOffset*2+xOff? yAxisValueXOffset : yAxis-xOff-yAxisValueXOffset, y+yOff); 
         }
+        // Gleiche wie oben nur mit der X-Achse
         for(double i = (xInterval.getItem1()-xInterval.getItem1()%squareScale-squareScale);i<xInterval.getItem2()+squareScale;i+=squareScale){
             if(i == 0)continue;
             int x = Utils.mapToDimension(i, xInterval,widthInterval);
@@ -223,13 +228,10 @@ public class JPlotter extends JPanel {
      * @param g2d
      */
     private void drawFunctions(Graphics2D g2d) {
-        // Um es wirklich an den canvas anzupassen, benötige ich entweder daten über den zoom+origin, oder den
-        // Sichtbaren y-Intervall. Anders kann ich nicht wissen wie ich die numerischen Werte an den Canvas anpassen soll
         Tuple<Double,Double> xInterval = drawingInformation.getIntervallX();
         Tuple<Double,Double> yInterval = drawingInformation.getIntervallY();
         Tuple<Double,Double> heightInterval = new Tuple<Double,Double>((double)0, (double)getHeight());
         Tuple<Double,Double> widthInterval = new Tuple<Double,Double>((double)0, (double)getWidth());
-        // double xStep = drawingInformation.getStep();
         FunctionInfoContainer[] functionInfo = drawingInformation.getFunctionInfo();
         for(FunctionInfoContainer functionContainer: functionInfo){
             IFunction func = functionContainer.getFunction();
@@ -246,7 +248,7 @@ public class JPlotter extends JPanel {
             GeneralPath gp = new GeneralPath();
             gp.moveTo(Utils.mapToInterval(values[0].getX(), xInterval, widthInterval),Utils.mapToInterval(-values[0].getY(), yInterval, heightInterval));
             for(int i = 1;i<values.length;i++){
-                // if(i+1 < values.length && values[i].distanceTo(values[i+1])>200)continue;
+                if(i+1 < values.length && values[i].distanceTo(values[i+1])>20)continue; // Für Pole mit VZW
                 gp.lineTo(Utils.mapToInterval(values[i].getX(), xInterval, widthInterval),Utils.mapToInterval(-values[i].getY(), yInterval, heightInterval));
             }
             g2d.draw(gp);
@@ -278,6 +280,7 @@ public class JPlotter extends JPanel {
         g2d.setPaint(plotForeground);
         g2d.setFont(GUI.getFont(FontFamily.ROBOTO, FontStyle.REGULAR, 15));
         g2d.setStroke(new BasicStroke(axisStrokeWidth));
+        // Wenn Achse sichbar ist, dann zeichne sie
         if(xInterval.getItem1()<=0 && xInterval.getItem2() >=0){
             g2d.setStroke(new BasicStroke(axisStrokeWidth,BasicStroke.CAP_ROUND,BasicStroke.JOIN_BEVEL));
             int x = (int)Utils.mapToInterval(0, xInterval, widthInterval);
@@ -313,6 +316,8 @@ public class JPlotter extends JPanel {
         Tuple<Double,Double> heightInterval = new Tuple<Double,Double>(0d, (double)getHeight());
         Tuple<Double,Double> widthInterval = new Tuple<Double,Double>(0d, (double)getWidth());
         int nSquares = (int) (Math.abs(intervallXTuple.getItem2()-intervallXTuple.getItem1())/squareScale); // so viele große Quadrate befinden sich in einer Reihe
+        
+        // Verschiedene Grenzen für die Anzahl an Quadraten in einer Reihe. Bei Fensterbreite von 1000, sind 10 Quadrate nicht viel, wenn die Bildschirmbreite aber nur 100 Pixel ist, dann sind 10 Quadrate zu viel.
         int upper;
         int lower;
         if(getWidth() >= 750){
@@ -329,9 +334,9 @@ public class JPlotter extends JPanel {
             lower = 1;
         }
         if(nSquares>=upper){ // Wenn zu viele in einer Reihe sind
-            squareScale*=2; // Squares "mergen"
+            squareScale*=squareDivider; // Squares "mergen"
         }else if(nSquares<=lower){ // Wenn es zu wenig sind
-            squareScale/=2; // Squares aufteilen
+            squareScale/=squareDivider; // Squares aufteilen
         }
         int substep = (int) Math.round(getHeight()/Math.abs(intervallYTuple.getItem2()-intervallYTuple.getItem1())/subGrid*squareScale);
 

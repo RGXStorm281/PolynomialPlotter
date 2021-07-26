@@ -30,6 +30,9 @@ import javax.swing.KeyStroke;
 import view.GUI.FontFamily;
 import view.GUI.FontStyle;
 
+/**
+ * @author raphaelsack
+ */
 
 public class JCustomMenuBar extends JMenuBar{
     private GUI gui;
@@ -40,7 +43,7 @@ public class JCustomMenuBar extends JMenuBar{
     public JCustomMenuBar(GUI _gui, StyleClass styleClass){
         this.gui = _gui;
         themeDialog = new ThemeDialog(gui,styleClass);
-        ResourceBundle rb = ResourceBundle.getBundle("i18n.resource",Locale.US);
+        ResourceBundle rb = ResourceBundle.getBundle("i18n.resource",getDefaultLocale()); // Resource Bundle for localization
         setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
         this.styleClass = styleClass;
 

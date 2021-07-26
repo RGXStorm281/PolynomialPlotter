@@ -28,6 +28,7 @@ import view.GUI;
 /**
  *
  * @author robinepple
+ * @author all
  */
 public class PolynomialPlotter {
 

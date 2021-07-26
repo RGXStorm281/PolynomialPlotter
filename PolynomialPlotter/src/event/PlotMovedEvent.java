@@ -1,7 +1,9 @@
 package event;
 
 import model.Tuple;
-
+/**
+ * @author raphaelsack
+ */
 public class PlotMovedEvent extends PlotEvent{
 
     Tuple<Integer,Integer> dist;

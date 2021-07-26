@@ -8,6 +8,10 @@ import java.io.InputStreamReader;
 import java.util.Properties;
 import java.awt.Color;
 
+/**
+ * @author raphaelsack
+ */
+
 public class StyleClass {
 
     public Color DIALOG_BG;
@@ -39,7 +43,7 @@ public class StyleClass {
     public StyleClass(String path) throws FileNotFoundException, IOException {
         currTheme = path;
         Properties propertiesFile = new Properties();
-        InputStream in = getClass().getResourceAsStream("themes/"+currTheme+".properties"); 
+        InputStream in = getClass().getResourceAsStream("themes/" + currTheme + ".properties");
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         propertiesFile.load(reader);
         this.SIDEBAR_BG_COLOR = Color.decode(propertiesFile.getProperty("sidebar-background-color"));
@@ -68,17 +72,17 @@ public class StyleClass {
         this.MENU_BG_SELECTION = Color.decode(propertiesFile.getProperty("menu-background-selection"));
         this.MENU_FG_SELECTION = Color.decode(propertiesFile.getProperty("menu-color-selection"));
         this.MENU_ACCEL = Color.decode(propertiesFile.getProperty("menu-accelerator-color"));
-        
+
     }
-    
+
     public void change(String newPath) {
         currTheme = newPath;
         update();
     }
-    
+
     public void update() {
         Properties propertiesFile = new Properties();
-        InputStream in = getClass().getResourceAsStream("themes/"+currTheme+".properties"); 
+        InputStream in = getClass().getResourceAsStream("themes/" + currTheme + ".properties");
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         try {
             propertiesFile.load(reader);
@@ -94,11 +98,11 @@ public class StyleClass {
         this.FUNCTION_CARD_BG_HOVER = Color.decode(propertiesFile.getProperty("function-card-bg-hover"));
         this.FUNCTION_CARD_FG = Color.decode(propertiesFile.getProperty("function-card-fg"));
         this.FUNCTION_CARD_CLOSE_BUTTON_BG = Color
-        .decode(propertiesFile.getProperty("function-card-close-button-background"));
+                .decode(propertiesFile.getProperty("function-card-close-button-background"));
         this.FUNCTION_CARD_CLOSE_BUTTON_FG = Color
-        .decode(propertiesFile.getProperty("function-card-close-button-color"));
+                .decode(propertiesFile.getProperty("function-card-close-button-color"));
         this.FUNCTION_CARD_EDIT_BUTTON_BG = Color
-        .decode(propertiesFile.getProperty("function-card-edit-button-background"));
+                .decode(propertiesFile.getProperty("function-card-edit-button-background"));
         this.BUTTON_BG = Color.decode(propertiesFile.getProperty("button-background"));
         this.BUTTON_FG = Color.decode(propertiesFile.getProperty("button-color"));
         this.DIALOG_BG = Color.decode(propertiesFile.getProperty("dialog-background"));
@@ -112,5 +116,5 @@ public class StyleClass {
         this.MENU_BG_SELECTION = Color.decode(propertiesFile.getProperty("menu-background-selection"));
         this.MENU_ACCEL = Color.decode(propertiesFile.getProperty("menu-accelerator-color"));
     }
-    
+
 }

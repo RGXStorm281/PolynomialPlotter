@@ -9,6 +9,7 @@ import java.awt.BasicStroke;
 import java.awt.Point;
 
 import javax.swing.JComponent;
+import javax.swing.plaf.FontUIResource;
 
 import event.FunctionEvent;
 import event.FunctionVisibilityToggledEvent;
@@ -232,10 +233,19 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
     private void paintFunctionString(Graphics2D g2d) {
         g2d.setColor(isVisible ? functionStringColor : functionStringColor.darker());
         g2d.setFont(GUI.getFont(FontFamily.INCONSOLATA, FontStyle.ITALIC, 20));
+        String visibleString = functionString;
+        boolean overflow = false;
         double height = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), "f").getVisualBounds().getHeight();
         int x = (int) (getColorCirclePosition().getItem1() + circleRadius * 2 + circleMargin);
         int y = (int) (height/2);
-        g2d.drawString(GUI.decorate(functionString),x,y);
+        int width = g2d.getFontMetrics().stringWidth(visibleString);
+        while(x+width >= getWidth()){
+            width = g2d.getFontMetrics().stringWidth(visibleString);
+            visibleString = visibleString.substring(0, visibleString.length()-1);
+            overflow = true;
+        }
+        if(overflow) visibleString+="...";
+        g2d.drawString(GUI.decorate(visibleString),x,y);
     }
 
     /**

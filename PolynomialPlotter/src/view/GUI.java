@@ -11,6 +11,7 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 
 import model.DrawingInformationContainer;
@@ -38,6 +39,7 @@ public class GUI extends JFrame implements IGUI {
     // Aufteilung der GUI in 3 Hauptkomponenten
     private JCustomMenuBar menubar;
     private Sidebar sidebar_panel;
+    private JScrollPane scroll_sidebar_panel;
     private JPlotter plotter_panel;
 
     private final Settings settings;
@@ -58,6 +60,7 @@ public class GUI extends JFrame implements IGUI {
         UIManager.put("MenuBar.background", styleClass.MENU_BG);
         UIManager.put("MenuBar.foreground", styleClass.MENU_FG);
         UIManager.put("MenuItem.acceleratorForeground", styleClass.MENU_ACCEL);
+        UIManager.put("ScrollBarUI", "view.MyScrollBarUI");
         // Add custom icon
         InputStream in = getClass().getResourceAsStream("data/icon.png");
         try {
@@ -70,9 +73,15 @@ public class GUI extends JFrame implements IGUI {
         // Split up in 2 Panes
         sidebar_panel = new Sidebar(styleClass);
         plotter_panel = new JPlotter(this.settings, styleClass);
+        scroll_sidebar_panel = new JScrollPane(sidebar_panel);
+        scroll_sidebar_panel.getVerticalScrollBar().setUI(new MyScrollBarUI(styleClass));
+        scroll_sidebar_panel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scroll_sidebar_panel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scroll_sidebar_panel.getVerticalScrollBar().setUnitIncrement(16);
+        scroll_sidebar_panel.setBorder(null);
         menubar = new JCustomMenuBar(this, styleClass);
         getContentPane().add(menubar, BorderLayout.NORTH);
-        getContentPane().add(sidebar_panel, BorderLayout.WEST);
+        getContentPane().add(scroll_sidebar_panel, BorderLayout.WEST);
         getContentPane().add(plotter_panel, BorderLayout.CENTER);
         pack();
         setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -134,7 +143,7 @@ public class GUI extends JFrame implements IGUI {
     private static Font ttfBase = null;
     private static Font robotoFont = null;
     private static InputStream myStream = null;
-    private static final String FONT_PATH_ROBOTO_REGULAR = "data/Roboto/Roboto-Regular.ttf";
+    private static final String FONT_PATH_ROBOTO_REGULAR = "data/Asap/Asap-Regular.ttf";
 
     public static Font getFont(FontFamily ft, FontStyle fs, float f) {
 

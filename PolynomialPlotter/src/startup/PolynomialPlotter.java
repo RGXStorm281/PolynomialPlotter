@@ -60,7 +60,9 @@ public class PolynomialPlotter {
                 @Override 
                 public void run(){
                     view.start();
-                    view.simulateAddFunction(Color.RED, "x^2", "f");
+                    view.simulateAddFunction(Color.RED, "x^2", null);
+                    view.simulateAddFunction(Color.BLUE, "10x^4+3x^3+5x^2+x+9", null);
+                    view.simulateAddFunction(Color.GREEN, "4x^10+3x^9+5x^8+4x^7+13x^6+93x^5+10x^4+3x^3+5x^2+x+9", null);
                 }
             });
             

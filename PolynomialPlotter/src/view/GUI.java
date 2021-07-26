@@ -15,8 +15,11 @@ import javax.swing.UIManager;
 
 import model.DrawingInformationContainer;
 import startup.Settings;
+import event.FunctionEditedEvent;
+import event.FunctionEvent;
 import event.IFunctionListener;
 import event.IPlotListener;
+import logic.FunctionParsingException;
 
 /**
  * @author raphaelsack
@@ -31,6 +34,7 @@ public class GUI extends JFrame implements IGUI {
     enum FontStyle {
         THIN, ITALIC, BOLD, REGULAR, LIGHT
     }
+
     // Aufteilung der GUI in 3 Hauptkomponenten
     private JCustomMenuBar menubar;
     private Sidebar sidebar_panel;
@@ -44,18 +48,18 @@ public class GUI extends JFrame implements IGUI {
         this.settings = settings;
         this.styleClass = new StyleClass(settings.THEME);
         UIManager.put("MenuItem.selectionBackground", styleClass.MENU_BG_SELECTION);
-		UIManager.put("MenuItem.selectionForeground", styleClass.MENU_FG_SELECTION);
-		UIManager.put("Menu.selectionBackground", styleClass.MENU_BG_SELECTION);
-		UIManager.put("Menu.selectionForeground", styleClass.MENU_FG_SELECTION);
+        UIManager.put("MenuItem.selectionForeground", styleClass.MENU_FG_SELECTION);
+        UIManager.put("Menu.selectionBackground", styleClass.MENU_BG_SELECTION);
+        UIManager.put("Menu.selectionForeground", styleClass.MENU_FG_SELECTION);
         UIManager.put("MenuItem.background", styleClass.MENU_BG);
-		UIManager.put("MenuItem.foreground", styleClass.MENU_FG);
-		UIManager.put("Menu.background", styleClass.MENU_BG);
-		UIManager.put("Menu.foreground", styleClass.MENU_FG);
-		UIManager.put("MenuBar.background", styleClass.MENU_BG);
-		UIManager.put("MenuBar.foreground", styleClass.MENU_FG);
-		UIManager.put("MenuItem.acceleratorForeground", styleClass.MENU_ACCEL);
+        UIManager.put("MenuItem.foreground", styleClass.MENU_FG);
+        UIManager.put("Menu.background", styleClass.MENU_BG);
+        UIManager.put("Menu.foreground", styleClass.MENU_FG);
+        UIManager.put("MenuBar.background", styleClass.MENU_BG);
+        UIManager.put("MenuBar.foreground", styleClass.MENU_FG);
+        UIManager.put("MenuItem.acceleratorForeground", styleClass.MENU_ACCEL);
         // Add custom icon
-        InputStream in = getClass().getResourceAsStream("data/icon.png"); 
+        InputStream in = getClass().getResourceAsStream("data/icon.png");
         try {
             setIconImage(new ImageIcon(in.readAllBytes()).getImage());
         } catch (IOException e2) {
@@ -65,8 +69,8 @@ public class GUI extends JFrame implements IGUI {
 
         // Split up in 2 Panes
         sidebar_panel = new Sidebar(styleClass);
-        plotter_panel = new JPlotter(this.settings,styleClass);
-        menubar = new JCustomMenuBar(this,styleClass);
+        plotter_panel = new JPlotter(this.settings, styleClass);
+        menubar = new JCustomMenuBar(this, styleClass);
         getContentPane().add(menubar, BorderLayout.NORTH);
         getContentPane().add(sidebar_panel, BorderLayout.WEST);
         getContentPane().add(plotter_panel, BorderLayout.CENTER);
@@ -84,7 +88,7 @@ public class GUI extends JFrame implements IGUI {
         sidebar_panel.recolor();
         plotter_panel.recolor();
     }
-    
+
     public void changeTheme(String newPath) {
         styleClass.change(newPath);
         menubar.recolor();
@@ -92,7 +96,33 @@ public class GUI extends JFrame implements IGUI {
         plotter_panel.recolor();
     }
 
-    public JPlotter getPlotter(){
+    public void simulateAddFunction(Color col, String functionString, String functionName) {
+        for (IFunctionListener fl : sidebar_panel.getFunctionListeners()) {
+            try {
+                fl.functionAdded(new FunctionEvent(plotter_panel, col, functionString, functionName));
+            } catch (FunctionParsingException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void simulateRemoveFunction(String functionName) {
+        for (IFunctionListener fl : sidebar_panel.getFunctionListeners()) {
+            fl.functionDeleted(new FunctionEvent(plotter_panel, null, null, functionName));
+        }
+    }
+
+    public void simulateEditFunction(Color col, String functionString, String functionName, String oldFunctionString) {
+        for (IFunctionListener fl : sidebar_panel.getFunctionListeners()) {
+            try {
+                fl.functionEdited(new FunctionEditedEvent(plotter_panel, col, functionString, functionName, oldFunctionString));
+            } catch (FunctionParsingException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public JPlotter getPlotter() {
         return this.plotter_panel;
     }
 
@@ -105,13 +135,13 @@ public class GUI extends JFrame implements IGUI {
     private static Font robotoFont = null;
     private static InputStream myStream = null;
     private static final String FONT_PATH_ROBOTO_REGULAR = "data/Roboto/Roboto-Regular.ttf";
-    
+
     public static Font getFont(FontFamily ft, FontStyle fs, float f) {
-        
+
         try {
             myStream = GUI.class.getResourceAsStream(FONT_PATH_ROBOTO_REGULAR);
             ttfBase = Font.createFont(Font.TRUETYPE_FONT, myStream);
-            robotoFont = ttfBase.deriveFont(Font.PLAIN, f);               
+            robotoFont = ttfBase.deriveFont(Font.PLAIN, f);
         } catch (Exception ex) {
             ex.printStackTrace();
             System.err.println("Font not loaded.");
@@ -128,7 +158,6 @@ public class GUI extends JFrame implements IGUI {
         return plotter_panel.getHeight();
     }
 
-  
     @Override
     public void drawFunctions(DrawingInformationContainer drawingInformation) {
         plotter_panel.updateDrawingInformation(drawingInformation);
@@ -155,8 +184,9 @@ public class GUI extends JFrame implements IGUI {
     }
 
     /**
-     * Funktion um einen "dekorierten" Polynominal-Ausdruck, in einen undekorierten String zu verwandeln.
-     * z.B.: 4x³+2x²+x+1 wird zu 4x^3+2x^2+x+1
+     * Funktion um einen "dekorierten" Polynominal-Ausdruck, in einen undekorierten
+     * String zu verwandeln. z.B.: 4x³+2x²+x+1 wird zu 4x^3+2x^2+x+1
+     * 
      * @param str dekorierter String
      * @return undekorierter String
      */
@@ -199,20 +229,23 @@ public class GUI extends JFrame implements IGUI {
 
         return res;
     }
+
     /**
-     * Funktion um einen "undekorierten" Polynominal-Ausdruck, in einen dekorierten String zu verwandeln.
-     * z.B.: 4x^3+2x^2+x+1 wird zu 4x³+2x²+x+1 
+     * Funktion um einen "undekorierten" Polynominal-Ausdruck, in einen dekorierten
+     * String zu verwandeln. z.B.: 4x^3+2x^2+x+1 wird zu 4x³+2x²+x+1
+     * 
      * @param str undekorierter String
      * @return dekorierter String
      */
     public static String decorate(String str) {
         char[] chars = str.toCharArray();
-        if(chars.length == 0)return "";
+        if (chars.length == 0)
+            return "";
         boolean superscripted = false;
         String res = "";
         for (int i = 0; i < chars.length; i++) {
             int uni = (int) chars[i];
-            if (uni == 94 ) {
+            if (uni == 94) {
                 superscripted = !superscripted;
                 continue;
             }
@@ -258,7 +291,8 @@ public class GUI extends JFrame implements IGUI {
                 res += chars[i];
             }
         }
-        if(chars[chars.length-1] == '^') res+='^';
+        if (chars[chars.length - 1] == '^')
+            res += '^';
         return res;
     }
 }

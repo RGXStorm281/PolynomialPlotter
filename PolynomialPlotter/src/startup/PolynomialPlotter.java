@@ -7,6 +7,7 @@ package startup;
 
 
 
+import java.awt.Color;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.logging.FileHandler;
@@ -59,6 +60,7 @@ public class PolynomialPlotter {
                 @Override 
                 public void run(){
                     view.start();
+                    view.simulateAddFunction(Color.RED, "x^2", "f");
                 }
             });
             

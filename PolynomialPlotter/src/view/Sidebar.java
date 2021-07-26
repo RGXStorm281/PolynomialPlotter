@@ -84,6 +84,11 @@ public class Sidebar extends JPanel {
         renderJFunctionComponents();
     }
 
+
+    public List<IFunctionListener> getFunctionListeners(){
+        return this.functionListeners;
+    }
+
     /**
      * Rendert alle JFunctionComponenten der JFunctionComponent-ArrayList
      */
@@ -143,7 +148,6 @@ public class Sidebar extends JPanel {
         addFunctionButton.recolor(this.styleClass);
         headingText.setForeground(this.styleClass.HEADING_FG_COLOR); 
         heading.setBackground(this.styleClass.HEADING_BG_COLOR);
-        functionDialog.recolor();
         for(JFunctionComponent fc: functionList){
             fc.recolor();
         }

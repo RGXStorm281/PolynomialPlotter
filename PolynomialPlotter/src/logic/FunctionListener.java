@@ -60,7 +60,8 @@ public class FunctionListener implements IFunctionListener {
 
     @Override
     public void functionDeleted(FunctionEvent e) {
-        System.out.println("Event Triggered: Function Delete \""+e.getFunctionString()+"\"");
+        System.out.println("Event Triggered: Function Delete \""+e.getFunctionName()+"\"");
+        logic.deleteFunction(e.getFunctionName());
     }
 
     @Override

@@ -8,6 +8,7 @@ package startup;
 
 
 import java.awt.Color;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.logging.FileHandler;
@@ -75,7 +76,8 @@ public class PolynomialPlotter {
     
     private static void initLogger(){
     	Settings.LOGGER = Logger.getGlobal();
-        FileHandler handler = null;
+    	FileHandler handler = null;
+    	new File("logs").mkdirs();
 		try {
 			handler = new FileHandler("logs/logs%g.log", 50000, 2, true);
 		} catch (SecurityException e) {
@@ -85,5 +87,4 @@ public class PolynomialPlotter {
 		}
         Settings.LOGGER.addHandler(handler);
     }
-
 }

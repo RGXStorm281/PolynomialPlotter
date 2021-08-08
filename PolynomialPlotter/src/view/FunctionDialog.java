@@ -51,6 +51,7 @@ public class FunctionDialog extends JFrame {
 
     private JButton okButton;
     private JButton cancelButton;
+    private JButton deriveButton;
 
     // Falls beim Editieren der Funktions-Character (f,g,h...) geändert wird, muss
     // der alte mitgegeben werden um ihn zu indicaten
@@ -166,6 +167,21 @@ public class FunctionDialog extends JFrame {
         okButton.setForeground(buttonForeground);
         okButton.setBorder(BorderFactory.createLineBorder(buttonBackground));
         okButton.setFont(font.deriveFont(15f));
+        
+        MouseAdapter buttonListener = new MouseAdapter(){
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                ((JButton) e.getSource()).setBackground(buttonBackground.darker());
+                ((JButton) e.getSource()).setBorder(BorderFactory.createLineBorder(buttonBackground.darker()));
+
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+                ((JButton) e.getSource()).setBackground(buttonBackground);
+                ((JButton) e.getSource()).setBorder(BorderFactory.createLineBorder(buttonBackground));
+            }
+        };
+        
         // TODO: Function char schlauer machen
         switch (dialogType) {
             case ADD:
@@ -216,21 +232,25 @@ public class FunctionDialog extends JFrame {
                         }
                     }
                 });
+                
+                deriveButton = new JButton("Ableiten");
+                deriveButton.setBackground(buttonBackground);
+                deriveButton.setOpaque(true);
+                deriveButton.setForeground(buttonForeground);
+                deriveButton.setBorder(BorderFactory.createLineBorder(buttonBackground));
+                deriveButton.setFont(font.deriveFont(15f));
+                deriveButton.setBounds(265, 69, 89, 33);
+                deriveButton.addMouseListener(buttonListener);
+                deriveButton.addActionListener(new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        //TODO LE Implement derive Action
+                    }
+                });
+                getContentPane().add(deriveButton);
         }
 
-        MouseAdapter buttonListener = new MouseAdapter(){
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                ((JButton) e.getSource()).setBackground(buttonBackground.darker());
-                ((JButton) e.getSource()).setBorder(BorderFactory.createLineBorder(buttonBackground.darker()));
-
-            }
-            @Override
-            public void mouseExited(MouseEvent e) {
-                ((JButton) e.getSource()).setBackground(buttonBackground);
-                ((JButton) e.getSource()).setBorder(BorderFactory.createLineBorder(buttonBackground));
-            }
-        };
         okButton.addMouseListener(buttonListener);
         getContentPane().add(okButton);
         cancelButton = new JButton("Cancel");

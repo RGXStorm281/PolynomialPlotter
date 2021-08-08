@@ -156,6 +156,7 @@ public class FunctionDialog extends JFrame {
         getContentPane().add(colorLabel);
 
         okButton = new JButton("O.K.");
+        okButton.setOpaque(true);
         okButton.setBounds(365, 25, 89, 33);
         okButton.setBackground(buttonBackground);
         okButton.setForeground(buttonForeground);
@@ -224,6 +225,7 @@ public class FunctionDialog extends JFrame {
         getContentPane().add(okButton);
         cancelButton = new JButton("Cancel");
         cancelButton.setBackground(buttonBackground);
+        cancelButton.setOpaque(true);
         cancelButton.setForeground(buttonForeground);
         cancelButton.setBorder(BorderFactory.createLineBorder(buttonBackground));
         cancelButton.setFont(font.deriveFont(15f));

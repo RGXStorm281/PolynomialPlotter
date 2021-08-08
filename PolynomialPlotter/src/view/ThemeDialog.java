@@ -89,6 +89,7 @@ public class ThemeDialog extends JFrame{
         button.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(buttonBackground),BorderFactory.createEmptyBorder(10,10,10,10)));
         button.setFont(font.deriveFont(15f));
         button.addMouseListener(buttonAdapter);
+        button.setOpaque(true);
         button.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {

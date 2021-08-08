@@ -17,9 +17,7 @@ public class HelpFrame {
     
   try {
    
-   URI uri= new URI("http://www.instanceofjava.com");
-   
-   java.awt.Desktop.getDesktop().browse(uri);
+  
     System.out.println("Web page opened in browser");
  
   } catch (Exception e) {

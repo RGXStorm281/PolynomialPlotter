@@ -145,15 +145,14 @@ public class GUI extends JFrame implements IGUI {
     private static final String FONT_PATH_REGULAR = "data/Asap/Asap-Regular.ttf";
 
     public static Font getFont(float f) {
-
-            try {
-                myStream = GUI.class.getResourceAsStream(FONT_PATH_REGULAR);
-                ttfBase = Font.createFont(Font.TRUETYPE_FONT, myStream);
-                font = ttfBase.deriveFont(Font.PLAIN, f);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                System.err.println("Font not loaded.");
-            }
+        try {
+            myStream = GUI.class.getResourceAsStream(FONT_PATH_REGULAR);
+            ttfBase = Font.createFont(Font.TRUETYPE_FONT, myStream);
+            font = ttfBase.deriveFont(Font.PLAIN, f);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            System.err.println("Font not loaded.");
+        }
         
         return font;
 
@@ -248,8 +247,9 @@ public class GUI extends JFrame implements IGUI {
      */
     public static String decorate(String str) {
         char[] chars = str.toCharArray();
-        if (chars.length == 0)
+        if (chars.length == 0) {
             return "";
+        }
         boolean superscripted = false;
         String res = "";
         for (int i = 0; i < chars.length; i++) {
@@ -258,50 +258,50 @@ public class GUI extends JFrame implements IGUI {
                 superscripted = !superscripted;
                 continue;
             }
-            if (superscripted) {
-                if (uni >= 48 && uni <= 57) {
-                    switch (chars[i]) {
-                        case '0':
-                            res += '⁰';
-                            break;
-                        case '1':
-                            res += '¹';
-                            break;
-                        case '2':
-                            res += '²';
-                            break;
-                        case '3':
-                            res += '³';
-                            break;
-                        case '4':
-                            res += '⁴';
-                            break;
-                        case '5':
-                            res += '⁵';
-                            break;
-                        case '6':
-                            res += '⁶';
-                            break;
-                        case '7':
-                            res += '⁷';
-                            break;
-                        case '8':
-                            res += '⁸';
-                            break;
-                        case '9':
-                            res += '⁹';
-                    }
-                } else {
-                    res += chars[i];
-                    superscripted = !superscripted;
-                }
-
-            } else {
+            if (!superscripted){
                 res += chars[i];
+                continue;
+            }
+            if(uni < 48 || uni > 57){
+                res += chars[i];
+                superscripted = !superscripted;
+                continue;
+            }
+            switch (chars[i]) {
+                case '0':
+                    res += '⁰';
+                    break;
+                case '1':
+                    res += '¹';
+                    break;
+                case '2':
+                    res += '²';
+                    break;
+                case '3':
+                    res += '³';
+                    break;
+                case '4':
+                    res += '⁴';
+                    break;
+                case '5':
+                    res += '⁵';
+                    break;
+                case '6':
+                    res += '⁶';
+                    break;
+                case '7':
+                    res += '⁷';
+                    break;
+                case '8':
+                    res += '⁸';
+                    break;
+                case '9':
+                    res += '⁹';
             }
         }
-        if (chars[chars.length - 1] == '^')
+        if (chars[chars.length - 1] == '^') {
             res += '^';
+        }
         return res;
     }
 }

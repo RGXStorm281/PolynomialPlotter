@@ -142,19 +142,21 @@ public class JCustomMenuBar extends JMenuBar{
         themeDialog.recolor();
         Font font = GUI.getFont(15);
         for(Component c: getComponents()){
-            if(c instanceof JMenu){
-                JMenu m = (JMenu) c;
-                m.getPopupMenu().setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-                m.getPopupMenu().setBackground(styleClass.MENU_BG);
-                m.setBorder(null);
-                m.setFont(font);
-                for(Component mc: m.getMenuComponents()){
-                    if(mc instanceof JMenuItem){
-                        JMenuItem mi = (JMenuItem) mc;
-                        mi.setBorder(BorderFactory.createEmptyBorder(4,0,4,0));
-                        mi.setFont(font.deriveFont(13));
-                    }
+            if(!(c instanceof JMenu)){
+                continue;
+            }
+            JMenu m = (JMenu) c;
+            m.getPopupMenu().setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+            m.getPopupMenu().setBackground(styleClass.MENU_BG);
+            m.setBorder(null);
+            m.setFont(font);
+            for(Component mc: m.getMenuComponents()){
+                if(!(mc instanceof JMenuItem)){
+                    continue;
                 }
+                JMenuItem mi = (JMenuItem) mc;
+                mi.setBorder(BorderFactory.createEmptyBorder(4,0,4,0));
+                mi.setFont(font.deriveFont(13));
             }
         }
 

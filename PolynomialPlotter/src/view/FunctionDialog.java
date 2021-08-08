@@ -104,15 +104,19 @@ public class FunctionDialog extends JFrame {
         functionInput.setColumns(10);
         functionInput.setBackground(this.styleClass.DIALOG_BG);
         functionInput.setBorder(BorderFactory.createLineBorder(this.styleClass.DIALOG_BG));
-        functionInput.setBorder(BorderFactory.createCompoundBorder(functionInput.getBorder(),
-                BorderFactory.createEmptyBorder(0, 0, 0, 0)));
-        functionInput.setBorder(BorderFactory.createCompoundBorder(functionInput.getBorder(),
-                BorderFactory.createMatteBorder(0, 0, 1, 0, this.styleClass.DIALOG_FG)));
+        functionInput.setBorder(
+                BorderFactory.createCompoundBorder(
+                        functionInput.getBorder(),
+                        BorderFactory.createEmptyBorder(0, 0, 0, 0)));
+        functionInput.setBorder(
+                BorderFactory.createCompoundBorder(
+                        functionInput.getBorder(),
+                        BorderFactory.createMatteBorder(0, 0, 1, 0, this.styleClass.DIALOG_FG)));
         // "Fixt" einen "Bug" auf MacOS bei dem das Circumflex doppelt eingegeben wird.
         // Unten stehende Code Filtert doppelte Circumflexe aus
         ((PlainDocument) functionInput.getDocument()).setDocumentFilter(new DocumentFilter() {
-            private static final String REGEX = "\\^{2}"; // Beim Copy+Paste werden alle doppelten Circumflexe ersetzt
-                                                          // durch ein einzelnes
+            // Beim Copy+Paste werden alle doppelten Circumflexe ersetzt durch ein einzelnes
+            private static final String REGEX = "\\^{2}"; 
             private String last = "";
 
             @Override
@@ -125,9 +129,9 @@ public class FunctionDialog extends JFrame {
             @Override
             public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
                     throws BadLocationException {
-                if (text.equals(last) && last.equals("^")) { // Wenn das letzte Zeichen gleich dem momentanen ist und
-                                                             // das Zeichen "^" ist, dann setze das neu eingebene
-                                                             // Zeichen gleich ""
+                // Wenn das letzte Zeichen gleich dem momentanen ist und das Zeichen "^" ist, dann setze das neu eingebene
+                // Zeichen gleich ""
+                if (text.equals(last) && last.equals("^")) { 
                     text = "";
                 }
                 last = text;
@@ -170,9 +174,12 @@ public class FunctionDialog extends JFrame {
                     public void actionPerformed(ActionEvent e) {
                         for (IFunctionListener listener : functionListeners) {
                             try {
-                                String functionName = ((IFunctionListener) listener).functionAdded(new FunctionEvent(
-                                        e.getSource(), colorPanel.getBackground(), functionInput.getText().trim(),
-                                        functionStringToChar(functionInput.getText().trim())));
+                                String functionName = ((IFunctionListener) listener).functionAdded(
+                                        new FunctionEvent(
+                                                e.getSource(), 
+                                                colorPanel.getBackground(), 
+                                                functionInput.getText().trim(),
+                                                functionStringToChar(functionInput.getText().trim())));
                                 hideWarn();
                                 closeDialog();
                                 functionInput.setText("");
@@ -192,9 +199,12 @@ public class FunctionDialog extends JFrame {
                     public void actionPerformed(ActionEvent e) {
                         for (IFunctionListener listener : functionListeners) {
                             try {
-                                ((IFunctionListener) listener).functionEdited(new FunctionEditedEvent(e.getSource(),
-                                        colorPanel.getBackground(), functionInput.getText().trim(),
-                                        functionStringToChar(functionInput.getText().trim()), lastFunctionChar));
+                                ((IFunctionListener) listener).functionEdited(
+                                        new FunctionEditedEvent(
+                                                e.getSource(),
+                                                colorPanel.getBackground(), 
+                                                functionInput.getText().trim(),
+                                                functionStringToChar(functionInput.getText().trim()), lastFunctionChar));
                                 hideWarn();
                                 closeDialog();
                                 caller.editFunction(functionInput.getText().trim(), colorPanel.getBackground());
@@ -423,10 +433,14 @@ public class FunctionDialog extends JFrame {
         cancelButton.setBorder(BorderFactory.createLineBorder(buttonBackground));
         functionInput.setBackground(this.styleClass.DIALOG_BG);
         functionInput.setBorder(BorderFactory.createLineBorder(this.styleClass.DIALOG_BG));
-        functionInput.setBorder(BorderFactory.createCompoundBorder(functionInput.getBorder(),
-                BorderFactory.createEmptyBorder(0, 0, 0, 0)));
-        functionInput.setBorder(BorderFactory.createCompoundBorder(functionInput.getBorder(),
-                BorderFactory.createMatteBorder(0, 0, 1, 0, this.styleClass.DIALOG_FG)));
+        functionInput.setBorder(
+                BorderFactory.createCompoundBorder(
+                        functionInput.getBorder(),
+                        BorderFactory.createEmptyBorder(0, 0, 0, 0)));
+        functionInput.setBorder(
+                BorderFactory.createCompoundBorder(
+                        functionInput.getBorder(),
+                        BorderFactory.createMatteBorder(0, 0, 1, 0, this.styleClass.DIALOG_FG)));
         getContentPane().setBackground(styleClass.DIALOG_BG);
         revalidate();
         repaint();

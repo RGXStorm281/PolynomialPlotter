@@ -118,31 +118,34 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
             
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (isInCardBounds(e)) {
-                    if (isInCloseButtonBounds(e)) {
-                        for (IFunctionListener listener : functionListeners)
-                        ((IFunctionListener) listener).functionDeleted(
-                            new FunctionEvent(e.getSource(), circleColor, functionString, functionChar));
-                            destroy();
-                            return;
-                        }
-                    if (isInCircleButtonBounds(e)) {
-                        var toggleVisibleEvent = new FunctionVisibilityToggledEvent(e.getSource(), circleColor, functionString, functionChar);
-                        for(IFunctionListener listener : functionListeners){
-                            listener.functionVisibilityToggled(toggleVisibleEvent);
-                        }
-                        repaint();
-                        return;
-                    }
-                    JFunctionComponent t = (JFunctionComponent)(e.getSource());
-                    functionEditDialog = new FunctionDialog(t,DialogType.EDIT,styleClass);
-                    functionEditDialog.setFunctionString(t.functionString);
-                    functionEditDialog.setColor(t.circleColor);
-                    functionEditDialog.setLastFunctionChar(t.functionChar);
-                    for(IFunctionListener listener : functionListeners)functionEditDialog.addFunctionListener(listener);
-                    functionEditDialog.setLocationRelativeTo(t);
-                    functionEditDialog.start();
+                if (!isInCardBounds(e)) {
+                    return;
                 }
+                
+                if (isInCloseButtonBounds(e)) {
+                    var functionDeletedEvent = new FunctionEvent(e.getSource(), circleColor, functionString, functionChar);
+                    for (IFunctionListener listener : functionListeners){
+                        listener.functionDeleted(functionDeletedEvent);
+                    }
+                    destroy();
+                    return;
+                }
+                if (isInCircleButtonBounds(e)) {
+                    var toggleVisibleEvent = new FunctionVisibilityToggledEvent(e.getSource(), circleColor, functionString, functionChar);
+                    for(IFunctionListener listener : functionListeners){
+                        listener.functionVisibilityToggled(toggleVisibleEvent);
+                    }
+                    repaint();
+                    return;
+                }
+                JFunctionComponent t = (JFunctionComponent)(e.getSource());
+                functionEditDialog = new FunctionDialog(t,DialogType.EDIT,styleClass);
+                functionEditDialog.setFunctionString(t.functionString);
+                functionEditDialog.setColor(t.circleColor);
+                functionEditDialog.setLastFunctionChar(t.functionChar);
+                for(IFunctionListener listener : functionListeners)functionEditDialog.addFunctionListener(listener);
+                functionEditDialog.setLocationRelativeTo(t);
+                functionEditDialog.start();
             }
         });
             
@@ -152,7 +155,9 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
          * Enternt sich selbst aus seinem Parent und löscht das Objekt
          */
         protected void destroy() {
-            ((Sidebar) getParent().getParent()).removeJFunctionComponent(this);
+            var vBox = getParent();
+            var sideBar = (Sidebar) vBox.getParent();
+            sideBar.removeJFunctionComponent(this);
         }
         
         @Override
@@ -181,7 +186,8 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
         private void paintCloseButton(Graphics2D g2d) {
             g2d.translate(0, -getHeight() / 2);
             Koordinate buttonCenter = new Koordinate(cardHMargin + closeButtonMargin, cardVMargin + closeButtonMargin);
-            if (closeCrossPath == null) { // Speichert einen Pfad nach dem ersten berechnen ab (Spart etwas Rechenzeit ein)
+            if (closeCrossPath == null) { 
+                // Speichert einen Pfad nach dem ersten berechnen ab (Spart etwas Rechenzeit ein)
 
                 // Nach: e^i*a = (sin(a)+cos(a)i)
                 /**
@@ -255,14 +261,19 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
      */
     private void paintColorCircle(Graphics2D g2d) {
         g2d.translate(0, getHeight()/2); // In die Mitte der Höhe zentrieren um den Kreis horizontal zu zentrieren
-        g2d.setColor(isVisible? circleColor : currentCardBg);
+        g2d.setColor(isVisible ? circleColor : currentCardBg);
         var position = getColorCirclePosition();
-        g2d.fillOval(position.getItem1(), position.getItem2(),
-        circleRadius * 2, circleRadius * 2);
+        g2d.fillOval(
+                position.getItem1(), 
+                position.getItem2(),circleRadius * 2, 
+                circleRadius * 2);
         g2d.setColor(isVisible ? circleColor.darker() : currentCardBg.brighter());
         g2d.setStroke(new BasicStroke(2f));
-        g2d.drawOval(position.getItem1(), position.getItem2(),
-                circleRadius * 2, circleRadius * 2);
+        g2d.drawOval(
+                position.getItem1(), 
+                position.getItem2(),
+                circleRadius * 2, 
+                circleRadius * 2);
 
     }
     
@@ -337,6 +348,7 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
         if (isInCardBounds(e)) {
             if (currentCardBg != hoverCardBg)
                 callCardHover(true);
+            
             if (isInCloseButtonBounds(e) && closeButtonBgCurrentColor != closeButtonBgHoverColor)
                 callCloseButtonHover(true);
             else if (!isInCloseButtonBounds(e) && closeButtonBgCurrentColor != closeButtonBgDefaultColor)

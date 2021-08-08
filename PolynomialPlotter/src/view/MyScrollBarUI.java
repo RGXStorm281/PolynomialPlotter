@@ -16,9 +16,9 @@ import javax.swing.JButton;
 
 public class MyScrollBarUI extends BasicScrollBarUI{
 
-
     private StyleClass styleClass;
     private int thumbOffset = 2;
+    
     public MyScrollBarUI(StyleClass styleClass){
         this.styleClass = styleClass;
     }
@@ -35,7 +35,6 @@ public class MyScrollBarUI extends BasicScrollBarUI{
         Graphics2D g2d = (Graphics2D) g;
         g2d.setPaint(styleClass.FUNCTION_CARD_BG);
         g2d.fillRoundRect(thumbBounds.x+thumbOffset, thumbBounds.y, thumbBounds.width-thumbOffset*2, thumbBounds.height, 10, 10);
-
     }
 
     @Override

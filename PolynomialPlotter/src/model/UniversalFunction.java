@@ -17,9 +17,8 @@ public class UniversalFunction extends Function implements IFunction {
 	
 	
 	/**
-	 * Berechnet die Wertetabelle (y-Werte) fuer Polynomfunktionen in der allgemeinen Form
-	 * @return Koordinaten-Array mit allen Werten im Zielbereich (x-Koordinate, y-Koordinate)
-	 */	
+    * @inheritDoc 
+    */	
 	@Override
 	public Koordinate calculate(double xValue) {
 		
@@ -36,17 +35,25 @@ public class UniversalFunction extends Function implements IFunction {
 		}
 	}
 
+    /**
+    * @inheritDoc 
+    */
 	@Override
 	public String toString(){
 		return functionalTerm;
 	}
 
-
+    /**
+    * @inheritDoc 
+    */
 	@Override
 	public void setColor(Color color) {
 		functionColor = color;
 	}
 
+    /**
+    * @inheritDoc 
+    */
 	@Override
 	public Color getColor() {
 		return functionColor;

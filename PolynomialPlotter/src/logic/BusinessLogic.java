@@ -5,7 +5,6 @@
  */
 package logic;
 
-import event.PlotEvent;
 import java.awt.Color;
 import startup.Settings;
 import java.util.ArrayList;
@@ -13,6 +12,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.logging.Logger;
 import model.DrawingInformationContainer;
 import model.FunctionInfoContainer;
 import model.IFunction;
@@ -30,6 +30,7 @@ public class BusinessLogic {
     private final IGUI gui;
     private final FunctionManager functionManager;
     private final Settings settings;
+    private final Logger logger;
     
     private double positionX;
     private double positionY;
@@ -47,6 +48,7 @@ public class BusinessLogic {
         this.functionManager = functionManager;
         this.settings = settings;
         this.functionCalculationPool = Executors.newFixedThreadPool(settings.THREADPOOL_SIZE);
+        this.logger = settings.LOGGER;
         
         initPositon(settings);
     }
@@ -76,7 +78,7 @@ public class BusinessLogic {
      */
     private void evaluateStep(){
         double numberOfCalculations = (double)cachedCanvasWidth / settings.CALCULATE_EVERY_X_PIXELS;
-        this.step = intervallSizeX / numberOfCalculations;
+        step = intervallSizeX / numberOfCalculations;
     }
     
     /**
@@ -88,8 +90,9 @@ public class BusinessLogic {
      * @throws FunctionParsingException Details zum Parsing Fehler.
      */
     public String addFunction(String functionName, String functionString, Color lineColor) throws FunctionParsingException{
-        // TODO RE Farbe weitergeben.
         var name = functionManager.parseAndAddFunction(functionName, functionString, lineColor);
+        logger.info("Neue Funktion '" + name + " hinzugefügt.");
+        
         calculateAndDraw();
         return name;
     }
@@ -108,22 +111,25 @@ public class BusinessLogic {
         
         // Darf eigentlich nicht vorkommen. Wenn doch: Nichts tun.
         if(targetFunction == null){
-            throw new FunctionParsingException(ParsingResponseCode.TargetFunctionEmpty, "Es muss ein Target-Funktionsname angegeben werden.");
+            throw new FunctionParsingException(ParsingResponseCode.TargetFunctionEmpty, "Target-Funktion nicht gefunden.");
         }
         
+        logger.info("Edit von Funktion '" + targetFunctionName + "' gestartet...");
         // Platz machen, falls sich der Funktionsname nicht geändert hat. 
         functionManager.delete(targetFunctionName);
+        logger.info("... Funktion ‘" + targetFunctionName + "' entfernt.");
         
         try {
             // Versuche neue Funktion zu speichern.
-            // TODO RE Farbe weitergeben.
             var name = functionManager.parseAndAddFunction(newFunctionName, newFunctionString, newLineColor);
+            logger.info("... neue Funktion '" + newFunctionName + "' erfolgreich geparsed und eingefügt.");
             // Neu berechnen und Zeichnen.
             calculateAndDraw();
             return name;
         }catch (FunctionParsingException f){
             // Falls parsen fehl schlägt bestehende Funktion wiederherstellen.
             functionManager.add(targetFunctionName, targetFunction);
+            logger.info("... parsen fehlgeschlagen, Funktion wurde wiederhergestellt.");
             // Dann Fehler an die GUI weitergeben, damit Problemdetails an den Bentzer weiter gegeben werden können.
             throw f;
         }
@@ -135,6 +141,7 @@ public class BusinessLogic {
      */
     public void deleteFunction(String functionName){
         functionManager.delete(functionName);
+        logger.info("Funktion '" + functionName + " entfernt.");
         calculateAndDraw();
     }
     
@@ -214,7 +221,7 @@ public class BusinessLogic {
         // System.out.println("Intervall X: " + intervallSizeX + "; Intervall Y: " + intervallSizeY);
     }
     private void debugPosition(){
-        System.out.println("Position X: " + positionX + "; Position Y: " + positionY);
+        // System.out.println("Position X: " + positionX + "; Position Y: " + positionY);
     }
     
     /**
@@ -231,7 +238,7 @@ public class BusinessLogic {
         try {
             functionInfo = calculateFunctionValues(intervallX);
         } catch (InterruptedException | ExecutionException ex) {
-            // TODO RE Errorhandling (Logging).
+            logger.warning("Fehler bei der Funktionswertberechnung: " + ex.getMessage());
             functionInfo = new FunctionInfoContainer[0];
         }
         

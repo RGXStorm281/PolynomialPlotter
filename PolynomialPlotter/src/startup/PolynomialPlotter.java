@@ -45,12 +45,12 @@ public class PolynomialPlotter {
     		new UniversalParser()
             };
             
+            initLogger();
             // Objekte initialisieren
             Settings settings = new Settings("src/startup/settings.properties");
             FunctionManager model = new FunctionManager(availableParsers);
             GUI view = new GUI(settings);
             BusinessLogic logic = new BusinessLogic(view, model, settings);
-            initLogger();
 
             // Events Setzen
             view.addFunctionListener(new FunctionListener(view, logic));

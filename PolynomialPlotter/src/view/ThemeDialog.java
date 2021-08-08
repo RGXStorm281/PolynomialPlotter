@@ -46,7 +46,7 @@ public class ThemeDialog extends JFrame{
         buttonBackground = styleClass.BUTTON_BG;
         this.styleClass = styleClass;
         buttonForeground = styleClass.BUTTON_FG;
-        Font font = GUI.getFont(FontFamily.ROBOTO,FontStyle.REGULAR,16);
+        Font font = GUI.getFont(16);
         getContentPane().setBackground(styleClass.DIALOG_BG);
         MouseAdapter buttonAdapter = new MouseAdapter(){
             @Override

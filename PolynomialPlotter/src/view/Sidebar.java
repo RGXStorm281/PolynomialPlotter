@@ -44,7 +44,7 @@ public class Sidebar extends JPanel {
         
         heading = new JPanel(); // Panel used for the Heading-Text (to set a Background)
         headingText = new JLabel("Polynomialplotter");
-        headingText.setFont(GUI.getFont(FontFamily.ROBOTO,FontStyle.BOLD,30)); // Set the font to size 30
+        headingText.setFont(GUI.getFont(30)); // Set the font to size 30
         headingText.setForeground(this.styleClass.HEADING_FG_COLOR); 
         headingText.setAlignmentX(Component.CENTER_ALIGNMENT);
         headingText.setBorder(new EmptyBorder(10,50,10,50)); // Add a margin around the Text

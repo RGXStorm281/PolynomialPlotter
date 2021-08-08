@@ -84,7 +84,7 @@ public class FunctionDialog extends JFrame {
         }
 
         // Font setzen
-        Font font = GUI.getFont(FontFamily.ROBOTO, FontStyle.REGULAR, 16);
+        Font font = GUI.getFont(16);
         setFont(font);
 
         // Frame zum Dialog machen

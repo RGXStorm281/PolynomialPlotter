@@ -182,7 +182,7 @@ public class JPlotter extends JPanel {
         Tuple<Double,Double> yInterval = drawingInformation.getIntervallY();
         Tuple<Integer,Integer> heightInterval = new Tuple<Integer,Integer>(0, getHeight());
         Tuple<Integer,Integer> widthInterval = new Tuple<Integer,Integer>(0, getWidth());
-        Font font = GUI.getFont(FontFamily.ROBOTO, FontStyle.REGULAR, 15);
+        Font font = GUI.getFont(15);
         g2d.setPaint(plotForeground);
         g2d.setFont(font);
         int stringHeight = (int) font.createGlyphVector(g2d.getFontRenderContext(), "1").getVisualBounds().getHeight(); // Höhe ist immer gleich, wird am anfang berechnet
@@ -277,9 +277,9 @@ public class JPlotter extends JPanel {
         Tuple<Integer,Integer> heightInterval = new Tuple<Integer,Integer>(0, getHeight());
         Tuple<Integer,Integer> widthInterval = new Tuple<Integer,Integer>(0, getWidth());
         g2d.setPaint(plotForeground);
-        g2d.setFont(GUI.getFont(FontFamily.ROBOTO, FontStyle.REGULAR, 15));
+        g2d.setFont(GUI.getFont(15));
         g2d.setStroke(new BasicStroke(axisStrokeWidth));
-        // Wenn Achse sichbar ist, dann zeichne sie
+        // Wenn Achse sichtbar ist, dann zeichne sie
         if(xInterval.getItem1()<=0 && xInterval.getItem2() >=0){
             g2d.setStroke(new BasicStroke(axisStrokeWidth,BasicStroke.CAP_ROUND,BasicStroke.JOIN_BEVEL));
             int x = (int)Utils.mapToInterval(0, xInterval, widthInterval);

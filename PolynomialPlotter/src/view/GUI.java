@@ -124,7 +124,8 @@ public class GUI extends JFrame implements IGUI {
     public void simulateEditFunction(Color col, String functionString, String functionName, String oldFunctionString) {
         for (IFunctionListener fl : sidebar_panel.getFunctionListeners()) {
             try {
-                fl.functionEdited(new FunctionEditedEvent(plotter_panel, col, functionString, functionName, oldFunctionString));
+                fl.functionEdited(
+                        new FunctionEditedEvent(plotter_panel, col, functionString, functionName, oldFunctionString));
             } catch (FunctionParsingException e) {
                 e.printStackTrace();
             }
@@ -141,21 +142,22 @@ public class GUI extends JFrame implements IGUI {
     }
 
     private static Font ttfBase = null;
-    private static Font robotoFont = null;
+    private static Font font = null;
     private static InputStream myStream = null;
-    private static final String FONT_PATH_ROBOTO_REGULAR = "data/Asap/Asap-Regular.ttf";
+    private static final String FONT_PATH_REGULAR = "data/Asap/Asap-Regular.ttf";
 
-    public static Font getFont(FontFamily ft, FontStyle fs, float f) {
+    public static Font getFont(float f) {
 
-        try {
-            myStream = GUI.class.getResourceAsStream(FONT_PATH_ROBOTO_REGULAR);
-            ttfBase = Font.createFont(Font.TRUETYPE_FONT, myStream);
-            robotoFont = ttfBase.deriveFont(Font.PLAIN, f);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            System.err.println("Font not loaded.");
-        }
-        return robotoFont;
+            try {
+                myStream = GUI.class.getResourceAsStream(FONT_PATH_REGULAR);
+                ttfBase = Font.createFont(Font.TRUETYPE_FONT, myStream);
+                font = ttfBase.deriveFont(Font.PLAIN, f);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                System.err.println("Font not loaded.");
+            }
+        
+        return font;
 
     }
 

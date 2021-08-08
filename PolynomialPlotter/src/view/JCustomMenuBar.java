@@ -140,7 +140,7 @@ public class JCustomMenuBar extends JMenuBar{
 
     public  void recolor() { 
         themeDialog.recolor();
-        Font font = GUI.getFont(FontFamily.ROBOTO, FontStyle.REGULAR, 15);
+        Font font = GUI.getFont(15);
         for(Component c: getComponents()){
             if(c instanceof JMenu){
                 JMenu m = (JMenu) c;

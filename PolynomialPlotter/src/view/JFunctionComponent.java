@@ -232,7 +232,7 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
      */
     private void paintFunctionString(Graphics2D g2d) {
         g2d.setColor(isVisible ? functionStringColor : functionStringColor.darker());
-        g2d.setFont(GUI.getFont(FontFamily.INCONSOLATA, FontStyle.ITALIC, 20));
+        g2d.setFont(GUI.getFont(20));
         String visibleString = functionString;
         boolean overflow = false;
         double height = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), "f").getVisualBounds().getHeight();

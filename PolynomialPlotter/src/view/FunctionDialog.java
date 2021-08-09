@@ -24,6 +24,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
 import javax.swing.text.PlainDocument;
 
+import event.FunctionDerivedEvent;
 import event.FunctionEditedEvent;
 import event.FunctionEvent;
 import view.GUI.FontFamily;
@@ -245,7 +246,24 @@ public class FunctionDialog extends JFrame {
 
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        //TODO LE Implement derive Action
+                    	for (IFunctionListener listener : functionListeners) {
+                            try {
+                                ((IFunctionListener) listener).functionDerived(
+                                        new FunctionDerivedEvent(
+                                                e.getSource(),
+                                                colorPanel.getBackground(), 
+                                                functionInput.getText().trim(),
+                                                functionStringToChar(functionInput.getText().trim()), lastFunctionChar));
+                                hideWarn();
+                                closeDialog();
+                                //TODO LE implement edit function with derived functionString
+                                //caller.editFunction(<FUNCTION_STRING_DER_ABLEITUNG>, colorPanel.getBackground());
+
+                            } catch (FunctionParsingException ex) {
+                                Logger.getLogger(FunctionDialog.class.getName()).log(Level.SEVERE, null, ex);
+                                enableWarn(ex.getMessage());
+                            }
+                        }
                     }
                 });
                 getContentPane().add(deriveButton);

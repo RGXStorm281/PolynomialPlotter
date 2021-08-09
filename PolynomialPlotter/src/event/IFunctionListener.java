@@ -24,6 +24,14 @@ public interface IFunctionListener extends java.util.EventListener{
      * @throws FunctionParsingException Wenn das Parsen der Funktion fehlschlägt, enthält die Exception die Informationen darüber, was das Problem war.
      */
     String functionEdited(FunctionEditedEvent e) throws FunctionParsingException;
+    
+    /**
+     * 
+     * @param e Das Event, das die Funktionsdetails enth�lt
+     * @return Der Funktionsname, den die Funktion nach dem Ableiten besitzt (alter Funktionsname + Apostroph)
+     * @throws FunctionParsingException Wenn das Parsen der Funktion fehlschlägt, enthält die Exception die Informationen darüber, was das Problem war.
+     */
+    String functionDerived(FunctionDerivedEvent e) throws FunctionParsingException;
 
     /**
      * Wird gecallt wenn eine Funktion gelöscht wird

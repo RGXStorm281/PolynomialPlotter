@@ -5,6 +5,7 @@
  */
 package logic;
 
+import event.FunctionDerivedEvent;
 import event.FunctionEditedEvent;
 import event.FunctionEvent;
 import event.FunctionVisibilityToggledEvent;
@@ -56,6 +57,13 @@ public class FunctionListener implements IFunctionListener {
         
         newFunctionName = logic.editFunction(targetFunctionName, newFunctionName, newFunctionString, functionColor);
         return newFunctionName;
+    }
+    
+    @Override
+    public String functionDerived(FunctionDerivedEvent e)throws FunctionParsingException {
+		//TODO RE implement
+    	System.out.println("Function " + e.getFunctionName() + " was derived.");
+    	return null;    	
     }
 
     @Override

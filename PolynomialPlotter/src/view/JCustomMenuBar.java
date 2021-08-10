@@ -140,7 +140,7 @@ public class JCustomMenuBar extends JMenuBar {
             public void actionPerformed(ActionEvent e) {
                 URI uri;
                 try {
-                    uri = new URI("https://www2.ba-horb.de/~i20029/programmieren/polynomialplotter/info.html");
+                    uri = new URI("https://www2.ba-horb.de/~i20029/programmieren/polynomialplotter/about.html");
                     java.awt.Desktop.getDesktop().browse(uri);
                 } catch (URISyntaxException e1) {
                     e1.printStackTrace();

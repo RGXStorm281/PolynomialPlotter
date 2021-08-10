@@ -34,6 +34,12 @@ public class UniversalFunction extends Function implements IFunction {
 			return null;
 		}
 	}
+	
+	@Override
+	public IFunction getAbleitung() throws Exception {
+		
+		throw new Exception("Das Ableiten von Nicht-Polynomialen Funktionen wird nicht unterstützt.");
+	}
 
     /**
     * @inheritDoc 

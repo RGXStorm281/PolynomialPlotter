@@ -11,7 +11,7 @@ import logic.HornerParser;
 public class HornerParserTests {
 	
 	@Test
-	public void calculatesCorrectValues_LinearFunction()
+	public void testparsing_HornerFunction()
 	{
 		HornerParser hP = new HornerParser();
 		

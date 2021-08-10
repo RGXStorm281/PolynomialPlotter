@@ -15,6 +15,13 @@ public interface IFunction {
      * @return Die Koordinate, bestehend aus X- und Y-Wert.
      */
     public Koordinate calculate(double xValue);
+	
+	/**
+	 * Berechnet die Ableitung der Function, sofern möglich.
+	 * @return Ableitung.
+	 * @throws Exception
+	 */
+	public IFunction getAbleitung() throws Exception;
     
     /**
      * Setzt die Farbe der Funktion.

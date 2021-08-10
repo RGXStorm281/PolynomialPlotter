@@ -7,6 +7,8 @@ package model;
 
 import java.awt.Color;
 
+import logic.FunctionParsingException;
+
 public interface IFunction {
     
     /**
@@ -21,7 +23,7 @@ public interface IFunction {
 	 * @return Ableitung.
 	 * @throws Exception
 	 */
-	public IFunction getAbleitung() throws Exception;
+	public IFunction getAbleitung() throws FunctionParsingException;
     
     /**
      * Setzt die Farbe der Funktion.

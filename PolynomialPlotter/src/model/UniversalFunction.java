@@ -2,6 +2,8 @@ package model;
 
 import java.awt.Color;
 
+import logic.FunctionParsingException;
+import logic.ParsingResponseCode;
 import net.objecthunter.exp4j.*;
 import net.objecthunter.exp4j.tokenizer.UnknownFunctionOrVariableException;
 
@@ -36,9 +38,9 @@ public class UniversalFunction extends Function implements IFunction {
 	}
 	
 	@Override
-	public IFunction getAbleitung() throws Exception {
+	public IFunction getAbleitung() throws FunctionParsingException {
 		
-		throw new Exception("Das Ableiten von Nicht-Polynomialen Funktionen wird nicht unterstützt.");
+		throw new FunctionParsingException(ParsingResponseCode.AbleitenFailed,"Das Ableiten von Nicht-Polynomialen Funktionen wird nicht unterstützt.");
 	}
 
     /**

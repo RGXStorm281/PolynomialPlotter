@@ -56,6 +56,10 @@ public class FunctionManager {
         return null;
     }
     
+    /**
+     * Ändert die Sichtbarkeit der Function zu (un-)sichtbar.
+     * @param functionName
+     */
     public void toggleFunctionVisible(String functionName){
         if(!functionNameExists(functionName)){
             return;
@@ -90,17 +94,7 @@ public class FunctionManager {
     public String parseAndAddFunction(String functionName, String functionString, Color lineColor) throws FunctionParsingException{
     	
         if(functionName == null) {
-        	for(char tempFunctionName = 'a'; tempFunctionName <= 'x'; tempFunctionName++) {
-
-        		if(!this.functionNameExists(""+tempFunctionName)) {
-        			functionName = ""+tempFunctionName;
-        			break;
-        		}
-        	}
-        	
-        	if(functionName == null) {
-        		throw new FunctionParsingException(ParsingResponseCode.NoMoreNamesAvailable, "Es existiert kein weiterer FunctionName (a-z).");
-        	}
+        	functionName = getAddableFunctionName();
         }
         
         boolean added = this.add(functionName, functionString, lineColor);
@@ -110,6 +104,28 @@ public class FunctionManager {
         else {
         	return null;
         }
+    }
+    
+    /**
+     * Leitet die mitgegebene Function ab, fügt diese als neue Function der Sammlung hinzu.
+     * @param functionName
+     * @return AbleitungFunctionName
+     * @throws Exception
+     */
+    public String functionAbleitenForFunctionName(String functionName) throws FunctionParsingException {
+    	
+    	IFunction ableitung =  getFunction(functionName).getAbleitung();
+		String ableitungFunctionName = functionName + "'";
+    	if(!functionNameAddable(ableitungFunctionName)) {
+    		ableitungFunctionName = getAddableFunctionName();
+    	}
+    	
+    	boolean ableitungAdded = this.add(ableitungFunctionName, ableitung);
+    	if(!ableitungAdded) {
+    		throw new FunctionParsingException(ParsingResponseCode.AbleitenFailed, "Es ist ein unbekannter Fehler beim Hinzufügen der abgeleiteten Function aufgetreten.");
+    	}
+
+		return ableitungFunctionName;
     }
     
     /** 
@@ -187,5 +203,31 @@ public class FunctionManager {
     	}
     	
     	return null;
+    }
+    
+    /**
+     * Versucht der Function einen Namen zu geben, der noch nicht hinterlegt ist.
+     * @return unbenutzter FunctionName.
+     * @throws FunctionParsingException
+     */
+    private String getAddableFunctionName() throws FunctionParsingException {
+    	
+    	for(char tempFunctionName = 'a'; tempFunctionName <= 'x'; tempFunctionName++) {
+    		if(!this.functionNameExists(""+tempFunctionName)) {
+    			return "" + tempFunctionName;
+    		}
+    	}
+    	
+    	// Wenn kein Name von a-w frei ist, so wird es mit zweistelligen Namen versucht
+    	for(char tempFunctionName1 = 'a'; tempFunctionName1 <= 'x'; tempFunctionName1++) {
+        	for(char tempFunctionName2 = 'a'; tempFunctionName2 <= 'x'; tempFunctionName2++) {
+        		if(!this.functionNameExists("" + tempFunctionName1 + tempFunctionName2)) {
+        			return "" + tempFunctionName1 + tempFunctionName2;
+        		}
+        	}
+    	}
+    	
+    	// Wenn keiner der 23^2 Namen verfügbar ist, dann such dir gefälligst einen selbst aus ;)
+		throw new FunctionParsingException(ParsingResponseCode.NoMoreNamesAvailable, "Es existiert kein weiterer FunctionName (a-z).");
     }
 }

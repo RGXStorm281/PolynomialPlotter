@@ -3,7 +3,6 @@ package logic;
 import java.util.Arrays;
 
 import model.HornerFunction;
-import model.IFunction;
 
 public class HornerParser implements IParser {
 		

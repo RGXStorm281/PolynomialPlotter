@@ -8,15 +8,16 @@ package model;
 import java.awt.Color;
 
 public interface IFunction {
-    
-    public Koordinate calculate(double xValue);
-    
-    public void setColor(Color color);
-    
-    public Color getColor();
-    
-    public void setVisible(boolean visible);
-    
-    public boolean isVisible();
-    
+	
+	public Koordinate calculate(double xValue);
+	
+	public IFunction getAbleitung() throws Exception;
+	
+	public void setColor(Color color);
+	
+	public Color getColor();
+	
+	public void setVisible(boolean visible);
+	
+	public boolean isVisible();
 }

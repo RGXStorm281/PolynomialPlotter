@@ -12,7 +12,10 @@ public class HornerFunction extends Function implements IFunction {
 	{
 		hornerElements = elements;
 	}
-
+        
+    /**
+     * @inheritDoc 
+     */
 	@Override
 	public Koordinate calculate(double xValue) {
 		Koordinate koordinate;
@@ -27,11 +30,17 @@ public class HornerFunction extends Function implements IFunction {
 		return koordinate;
 	}
 
+    /**
+    * @inheritDoc 
+    */
 	@Override
 	public void setColor(Color color) {
 		functionColor = color;
 	}
 
+    /**
+    * @inheritDoc 
+    */
 	@Override
 	public Color getColor() {
 		return functionColor;

@@ -365,10 +365,6 @@ public class JPlotter extends JPanel {
 
         
     }
-
-  
- 
-    
     
     /** Fügt einen PlotListener an das Event an
      * @param plotListener

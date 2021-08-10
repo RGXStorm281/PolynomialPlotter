@@ -24,6 +24,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
 import javax.swing.text.PlainDocument;
 
+import event.FunctionDerivedEvent;
 import event.FunctionEditedEvent;
 import event.FunctionEvent;
 import view.GUI.FontFamily;
@@ -51,6 +52,7 @@ public class FunctionDialog extends JFrame {
 
     private JButton okButton;
     private JButton cancelButton;
+    private JButton deriveButton;
 
     // Falls beim Editieren der Funktions-Character (f,g,h...) geändert wird, muss
     // der alte mitgegeben werden um ihn zu indicaten
@@ -104,15 +106,19 @@ public class FunctionDialog extends JFrame {
         functionInput.setColumns(10);
         functionInput.setBackground(this.styleClass.DIALOG_BG);
         functionInput.setBorder(BorderFactory.createLineBorder(this.styleClass.DIALOG_BG));
-        functionInput.setBorder(BorderFactory.createCompoundBorder(functionInput.getBorder(),
-                BorderFactory.createEmptyBorder(0, 0, 0, 0)));
-        functionInput.setBorder(BorderFactory.createCompoundBorder(functionInput.getBorder(),
-                BorderFactory.createMatteBorder(0, 0, 1, 0, this.styleClass.DIALOG_FG)));
+        functionInput.setBorder(
+                BorderFactory.createCompoundBorder(
+                        functionInput.getBorder(),
+                        BorderFactory.createEmptyBorder(0, 0, 0, 0)));
+        functionInput.setBorder(
+                BorderFactory.createCompoundBorder(
+                        functionInput.getBorder(),
+                        BorderFactory.createMatteBorder(0, 0, 1, 0, this.styleClass.DIALOG_FG)));
         // "Fixt" einen "Bug" auf MacOS bei dem das Circumflex doppelt eingegeben wird.
         // Unten stehende Code Filtert doppelte Circumflexe aus
         ((PlainDocument) functionInput.getDocument()).setDocumentFilter(new DocumentFilter() {
-            private static final String REGEX = "\\^{2}"; // Beim Copy+Paste werden alle doppelten Circumflexe ersetzt
-                                                          // durch ein einzelnes
+            // Beim Copy+Paste werden alle doppelten Circumflexe ersetzt durch ein einzelnes
+            private static final String REGEX = "\\^{2}"; 
             private String last = "";
 
             @Override
@@ -125,9 +131,9 @@ public class FunctionDialog extends JFrame {
             @Override
             public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
                     throws BadLocationException {
-                if (text.equals(last) && last.equals("^")) { // Wenn das letzte Zeichen gleich dem momentanen ist und
-                                                             // das Zeichen "^" ist, dann setze das neu eingebene
-                                                             // Zeichen gleich ""
+                // Wenn das letzte Zeichen gleich dem momentanen ist und das Zeichen "^" ist, dann setze das neu eingebene
+                // Zeichen gleich ""
+                if (text.equals(last) && last.equals("^")) { 
                     text = "";
                 }
                 last = text;
@@ -156,11 +162,27 @@ public class FunctionDialog extends JFrame {
         getContentPane().add(colorLabel);
 
         okButton = new JButton("O.K.");
+        okButton.setOpaque(true);
         okButton.setBounds(365, 25, 89, 33);
         okButton.setBackground(buttonBackground);
         okButton.setForeground(buttonForeground);
         okButton.setBorder(BorderFactory.createLineBorder(buttonBackground));
         okButton.setFont(font.deriveFont(15f));
+        
+        MouseAdapter buttonListener = new MouseAdapter(){
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                ((JButton) e.getSource()).setBackground(buttonBackground.darker());
+                ((JButton) e.getSource()).setBorder(BorderFactory.createLineBorder(buttonBackground.darker()));
+
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+                ((JButton) e.getSource()).setBackground(buttonBackground);
+                ((JButton) e.getSource()).setBorder(BorderFactory.createLineBorder(buttonBackground));
+            }
+        };
+        
         // TODO: Function char schlauer machen
         switch (dialogType) {
             case ADD:
@@ -169,9 +191,12 @@ public class FunctionDialog extends JFrame {
                     public void actionPerformed(ActionEvent e) {
                         for (IFunctionListener listener : functionListeners) {
                             try {
-                                String functionName = ((IFunctionListener) listener).functionAdded(new FunctionEvent(
-                                        e.getSource(), colorPanel.getBackground(), functionInput.getText().trim(),
-                                        functionStringToChar(functionInput.getText().trim())));
+                                String functionName = ((IFunctionListener) listener).functionAdded(
+                                        new FunctionEvent(
+                                                e.getSource(), 
+                                                colorPanel.getBackground(), 
+                                                functionInput.getText().trim(),
+                                                functionStringToChar(functionInput.getText().trim())));
                                 hideWarn();
                                 closeDialog();
                                 functionInput.setText("");
@@ -191,9 +216,12 @@ public class FunctionDialog extends JFrame {
                     public void actionPerformed(ActionEvent e) {
                         for (IFunctionListener listener : functionListeners) {
                             try {
-                                ((IFunctionListener) listener).functionEdited(new FunctionEditedEvent(e.getSource(),
-                                        colorPanel.getBackground(), functionInput.getText().trim(),
-                                        functionStringToChar(functionInput.getText().trim()), lastFunctionChar));
+                                ((IFunctionListener) listener).functionEdited(
+                                        new FunctionEditedEvent(
+                                                e.getSource(),
+                                                colorPanel.getBackground(), 
+                                                functionInput.getText().trim(),
+                                                functionStringToChar(functionInput.getText().trim()), lastFunctionChar));
                                 hideWarn();
                                 closeDialog();
                                 caller.editFunction(functionInput.getText().trim(), colorPanel.getBackground());
@@ -205,25 +233,47 @@ public class FunctionDialog extends JFrame {
                         }
                     }
                 });
+                
+                deriveButton = new JButton("Ableiten");
+                deriveButton.setBackground(buttonBackground);
+                deriveButton.setOpaque(true);
+                deriveButton.setForeground(buttonForeground);
+                deriveButton.setBorder(BorderFactory.createLineBorder(buttonBackground));
+                deriveButton.setFont(font.deriveFont(15f));
+                deriveButton.setBounds(265, 69, 89, 33);
+                deriveButton.addMouseListener(buttonListener);
+                deriveButton.addActionListener(new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                    	for (IFunctionListener listener : functionListeners) {
+                            try {
+                                ((IFunctionListener) listener).functionDerived(
+                                        new FunctionDerivedEvent(
+                                                e.getSource(),
+                                                colorPanel.getBackground(), 
+                                                functionInput.getText().trim(),
+                                                functionStringToChar(functionInput.getText().trim()), lastFunctionChar));
+                                hideWarn();
+                                closeDialog();
+                                //TODO LE implement edit function with derived functionString
+                                //caller.editFunction(<FUNCTION_STRING_DER_ABLEITUNG>, colorPanel.getBackground());
+
+                            } catch (FunctionParsingException ex) {
+                                Logger.getLogger(FunctionDialog.class.getName()).log(Level.SEVERE, null, ex);
+                                enableWarn(ex.getMessage());
+                            }
+                        }
+                    }
+                });
+                getContentPane().add(deriveButton);
         }
 
-        MouseAdapter buttonListener = new MouseAdapter(){
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                ((JButton) e.getSource()).setBackground(buttonBackground.darker());
-                ((JButton) e.getSource()).setBorder(BorderFactory.createLineBorder(buttonBackground.darker()));
-
-            }
-            @Override
-            public void mouseExited(MouseEvent e) {
-                ((JButton) e.getSource()).setBackground(buttonBackground);
-                ((JButton) e.getSource()).setBorder(BorderFactory.createLineBorder(buttonBackground));
-            }
-        };
         okButton.addMouseListener(buttonListener);
         getContentPane().add(okButton);
         cancelButton = new JButton("Cancel");
         cancelButton.setBackground(buttonBackground);
+        cancelButton.setOpaque(true);
         cancelButton.setForeground(buttonForeground);
         cancelButton.setBorder(BorderFactory.createLineBorder(buttonBackground));
         cancelButton.setFont(font.deriveFont(15f));
@@ -421,10 +471,14 @@ public class FunctionDialog extends JFrame {
         cancelButton.setBorder(BorderFactory.createLineBorder(buttonBackground));
         functionInput.setBackground(this.styleClass.DIALOG_BG);
         functionInput.setBorder(BorderFactory.createLineBorder(this.styleClass.DIALOG_BG));
-        functionInput.setBorder(BorderFactory.createCompoundBorder(functionInput.getBorder(),
-                BorderFactory.createEmptyBorder(0, 0, 0, 0)));
-        functionInput.setBorder(BorderFactory.createCompoundBorder(functionInput.getBorder(),
-                BorderFactory.createMatteBorder(0, 0, 1, 0, this.styleClass.DIALOG_FG)));
+        functionInput.setBorder(
+                BorderFactory.createCompoundBorder(
+                        functionInput.getBorder(),
+                        BorderFactory.createEmptyBorder(0, 0, 0, 0)));
+        functionInput.setBorder(
+                BorderFactory.createCompoundBorder(
+                        functionInput.getBorder(),
+                        BorderFactory.createMatteBorder(0, 0, 1, 0, this.styleClass.DIALOG_FG)));
         getContentPane().setBackground(styleClass.DIALOG_BG);
         revalidate();
         repaint();

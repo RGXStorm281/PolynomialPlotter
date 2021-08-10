@@ -78,9 +78,8 @@ public class JAddButton extends JComponent implements MouseMotionListener {
      * @return boolean
      */
     public boolean isOverButton(MouseEvent e) {
-        return e.getPoint().distance(new Point(getWidth() / 2, getHeight() / 2)) < radius; // Distanz zwischen Maus und
-                                                                                           // Mitte des Buttons < radius
-                                                                                           // (Button ist ein Kreis)
+        // Distanz zwischen Maus und Mitte des Buttons < radius (Button ist ein Kreis)
+        return e.getPoint().distance(new Point(getWidth() / 2, getHeight() / 2)) < radius; 
     }
 
     /**

@@ -19,16 +19,14 @@ public abstract class Function {
     }
 
     /**
-     * Gibt zurück, ob die Funktion aktuell sichtbar ist.
-     * @return 
+     * @ihneritDoc
      */
     public boolean isVisible() {
         return visible;
     }
 
     /**
-     * Setzt die Funktion (un-)sichtbar.
-     * @param visible Ob die Funktion sichtbar/unsichtbar werden soll.
+     * @inheritDoc 
      */
     public void setVisible(boolean visible) {
         this.visible = visible;

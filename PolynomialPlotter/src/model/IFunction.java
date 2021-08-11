@@ -7,6 +7,8 @@ package model;
 
 import java.awt.Color;
 
+import logic.FunctionParsingException;
+
 public interface IFunction {
     
     /**
@@ -15,6 +17,13 @@ public interface IFunction {
      * @return Die Koordinate, bestehend aus X- und Y-Wert.
      */
     public Koordinate calculate(double xValue);
+	
+	/**
+	 * Berechnet die Ableitung der Function, sofern möglich.
+	 * @return Ableitung.
+	 * @throws Exception
+	 */
+	public IFunction getAbleitung() throws FunctionParsingException;
     
     /**
      * Setzt die Farbe der Funktion.

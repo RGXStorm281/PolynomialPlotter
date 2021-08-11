@@ -45,7 +45,24 @@ public class HornerFunction extends Function implements IFunction {
 	public Color getColor() {
 		return functionColor;
 	}
-
+	
+	/**
+	 * 
+	 */
+	@Override
+	public IFunction getAbleitung() {
+		if(hornerElements.length < 2) {
+			return new HornerFunction(new double[] {0});
+		}
+		
+		double[] ableitung = new double[hornerElements.length - 1];
+		for(int i = hornerElements.length - 1; i > 0; i--) {
+			ableitung[i - 1] = i * hornerElements[i];
+		}
+		
+		return new HornerFunction(ableitung);
+	}
+	
 	/**
 	 * Gibt das HornerElement als String eines gerundeten Doubles zurück (5 Nachkommastellen).
 	 */

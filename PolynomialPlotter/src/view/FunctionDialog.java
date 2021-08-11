@@ -106,19 +106,15 @@ public class FunctionDialog extends JFrame {
         functionInput.setColumns(10);
         functionInput.setBackground(this.styleClass.DIALOG_BG);
         functionInput.setBorder(BorderFactory.createLineBorder(this.styleClass.DIALOG_BG));
-        functionInput.setBorder(
-                BorderFactory.createCompoundBorder(
-                        functionInput.getBorder(),
-                        BorderFactory.createEmptyBorder(0, 0, 0, 0)));
-        functionInput.setBorder(
-                BorderFactory.createCompoundBorder(
-                        functionInput.getBorder(),
-                        BorderFactory.createMatteBorder(0, 0, 1, 0, this.styleClass.DIALOG_FG)));
+        functionInput.setBorder(BorderFactory.createCompoundBorder(functionInput.getBorder(),
+                BorderFactory.createEmptyBorder(0, 0, 0, 0)));
+        functionInput.setBorder(BorderFactory.createCompoundBorder(functionInput.getBorder(),
+                BorderFactory.createMatteBorder(0, 0, 1, 0, this.styleClass.DIALOG_FG)));
         // "Fixt" einen "Bug" auf MacOS bei dem das Circumflex doppelt eingegeben wird.
         // Unten stehende Code Filtert doppelte Circumflexe aus
         ((PlainDocument) functionInput.getDocument()).setDocumentFilter(new DocumentFilter() {
             // Beim Copy+Paste werden alle doppelten Circumflexe ersetzt durch ein einzelnes
-            private static final String REGEX = "\\^{2}"; 
+            private static final String REGEX = "\\^{2}";
             private String last = "";
 
             @Override
@@ -131,9 +127,10 @@ public class FunctionDialog extends JFrame {
             @Override
             public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
                     throws BadLocationException {
-                // Wenn das letzte Zeichen gleich dem momentanen ist und das Zeichen "^" ist, dann setze das neu eingebene
+                // Wenn das letzte Zeichen gleich dem momentanen ist und das Zeichen "^" ist,
+                // dann setze das neu eingebene
                 // Zeichen gleich ""
-                if (text.equals(last) && last.equals("^")) { 
+                if (text.equals(last) && last.equals("^")) {
                     text = "";
                 }
                 last = text;
@@ -145,7 +142,6 @@ public class FunctionDialog extends JFrame {
         functionInputLabel.setForeground(this.styleClass.DIALOG_FG);
         functionInputLabel.setBounds(10, 10, 132, 14);
         getContentPane().add(functionInputLabel);
-
 
         // Error Label, wird nur angezeigt wenn ein Fehler auftritt
         functionErrorLabel = new JLabel();
@@ -168,35 +164,38 @@ public class FunctionDialog extends JFrame {
         okButton.setForeground(buttonForeground);
         okButton.setBorder(BorderFactory.createLineBorder(buttonBackground));
         okButton.setFont(font.deriveFont(15f));
-        
-        MouseAdapter buttonListener = new MouseAdapter(){
+
+        MouseAdapter buttonListener = new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
                 ((JButton) e.getSource()).setBackground(buttonBackground.darker());
                 ((JButton) e.getSource()).setBorder(BorderFactory.createLineBorder(buttonBackground.darker()));
 
             }
+
             @Override
             public void mouseExited(MouseEvent e) {
                 ((JButton) e.getSource()).setBackground(buttonBackground);
                 ((JButton) e.getSource()).setBorder(BorderFactory.createLineBorder(buttonBackground));
             }
         };
-        
+
         // TODO: Function char schlauer machen
         switch (dialogType) {
             case ADD:
                 okButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
+                        System.out.println(functionInput.getText());
+                        if (functionInput.getText().equals("")) {
+                            enableWarn("Kein Funktionsausdruck eingegeben");
+                            return;
+                        }
                         for (IFunctionListener listener : functionListeners) {
                             try {
-                                String functionName = ((IFunctionListener) listener).functionAdded(
-                                        new FunctionEvent(
-                                                e.getSource(), 
-                                                colorPanel.getBackground(), 
-                                                functionInput.getText().trim(),
-                                                functionStringToChar(functionInput.getText().trim())));
+                                ((IFunctionListener) listener).functionAdded(new FunctionEvent(e.getSource(),
+                                        colorPanel.getBackground(), functionInput.getText().trim(),
+                                        functionStringToChar(functionInput.getText().trim())));
                                 hideWarn();
                                 closeDialog();
                                 functionInput.setText("");
@@ -214,14 +213,20 @@ public class FunctionDialog extends JFrame {
                 okButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
+                        if (functionInput.getText().equals("")) {
+                            var functionDeletedEvent = new FunctionEvent(e.getSource(), colorLabel.getBackground(),functionInput.getText() ,lastFunctionChar);
+                            for (IFunctionListener listener : functionListeners) {
+                                listener.functionDeleted(functionDeletedEvent);
+                            }
+                            closeDialog();
+                            caller.destroy();
+                            return;
+                        }
                         for (IFunctionListener listener : functionListeners) {
                             try {
-                                ((IFunctionListener) listener).functionEdited(
-                                        new FunctionEditedEvent(
-                                                e.getSource(),
-                                                colorPanel.getBackground(), 
-                                                functionInput.getText().trim(),
-                                                functionStringToChar(functionInput.getText().trim()), lastFunctionChar));
+                                ((IFunctionListener) listener).functionEdited(new FunctionEditedEvent(e.getSource(),
+                                        colorPanel.getBackground(), functionInput.getText().trim(),
+                                        functionStringToChar(functionInput.getText().trim()), lastFunctionChar));
                                 hideWarn();
                                 closeDialog();
                                 caller.editFunction(functionInput.getText().trim(), colorPanel.getBackground());
@@ -233,7 +238,7 @@ public class FunctionDialog extends JFrame {
                         }
                     }
                 });
-                
+
                 deriveButton = new JButton("Ableiten");
                 deriveButton.setBackground(buttonBackground);
                 deriveButton.setOpaque(true);
@@ -246,18 +251,16 @@ public class FunctionDialog extends JFrame {
 
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                    	for (IFunctionListener listener : functionListeners) {
+                        for (IFunctionListener listener : functionListeners) {
                             try {
-                                ((IFunctionListener) listener).functionDerived(
-                                        new FunctionDerivedEvent(
-                                                e.getSource(),
-                                                colorPanel.getBackground(), 
-                                                functionInput.getText().trim(),
-                                                functionStringToChar(functionInput.getText().trim()), lastFunctionChar));
+                                ((IFunctionListener) listener).functionDerived(new FunctionDerivedEvent(e.getSource(),
+                                        colorPanel.getBackground(), functionInput.getText().trim(),
+                                        functionStringToChar(functionInput.getText().trim()), lastFunctionChar));
                                 hideWarn();
                                 closeDialog();
-                                //TODO LE implement edit function with derived functionString
-                                //caller.editFunction(<FUNCTION_STRING_DER_ABLEITUNG>, colorPanel.getBackground());
+                                // TODO LE implement edit function with derived functionString
+                                // caller.editFunction(<FUNCTION_STRING_DER_ABLEITUNG>,
+                                // colorPanel.getBackground());
 
                             } catch (FunctionParsingException ex) {
                                 Logger.getLogger(FunctionDialog.class.getName()).log(Level.SEVERE, null, ex);
@@ -321,7 +324,10 @@ public class FunctionDialog extends JFrame {
     }
 
     /**
-     * Funktion nimmt einen Funktions-String (bsp.: f(x) = 3x) und gib den Funktions-Namen (in dem Fall f, zurück), falls der String keinen Funktionsnamen enthält, wird null zurückgegeben.
+     * Funktion nimmt einen Funktions-String (bsp.: f(x) = 3x) und gib den
+     * Funktions-Namen (in dem Fall f, zurück), falls der String keinen
+     * Funktionsnamen enthält, wird null zurückgegeben.
+     * 
      * @param string
      * @return String
      */
@@ -471,14 +477,10 @@ public class FunctionDialog extends JFrame {
         cancelButton.setBorder(BorderFactory.createLineBorder(buttonBackground));
         functionInput.setBackground(this.styleClass.DIALOG_BG);
         functionInput.setBorder(BorderFactory.createLineBorder(this.styleClass.DIALOG_BG));
-        functionInput.setBorder(
-                BorderFactory.createCompoundBorder(
-                        functionInput.getBorder(),
-                        BorderFactory.createEmptyBorder(0, 0, 0, 0)));
-        functionInput.setBorder(
-                BorderFactory.createCompoundBorder(
-                        functionInput.getBorder(),
-                        BorderFactory.createMatteBorder(0, 0, 1, 0, this.styleClass.DIALOG_FG)));
+        functionInput.setBorder(BorderFactory.createCompoundBorder(functionInput.getBorder(),
+                BorderFactory.createEmptyBorder(0, 0, 0, 0)));
+        functionInput.setBorder(BorderFactory.createCompoundBorder(functionInput.getBorder(),
+                BorderFactory.createMatteBorder(0, 0, 1, 0, this.styleClass.DIALOG_FG)));
         getContentPane().setBackground(styleClass.DIALOG_BG);
         revalidate();
         repaint();

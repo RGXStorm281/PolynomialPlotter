@@ -27,7 +27,7 @@ public interface IFunctionListener extends java.util.EventListener{
     
     /**
      * 
-     * @param e Das Event, das die Funktionsdetails enth�lt
+     * @param e Das Event, das die Funktionsdetails enthält
      * @return Der Funktionsname, den die Funktion nach dem Ableiten besitzt (alter Funktionsname + Apostroph)
      * @throws FunctionParsingException Wenn das Parsen der Funktion fehlschlägt, enthält die Exception die Informationen darüber, was das Problem war.
      */

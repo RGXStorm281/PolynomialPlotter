@@ -63,7 +63,7 @@ public class FunctionListener implements IFunctionListener {
     public String functionDerived(FunctionDerivedEvent e)throws FunctionParsingException {
 		//TODO RE implement
     	System.out.println("Function " + e.getFunctionName() + " was derived.");
-    	return null;    	
+    	return logic.deriveFunction(e.getFunctionName());    	
     }
 
     @Override

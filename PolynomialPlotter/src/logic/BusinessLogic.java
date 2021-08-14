@@ -12,6 +12,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.DrawingInformationContainer;
 import model.FunctionInfoContainer;
@@ -131,6 +132,33 @@ public class BusinessLogic {
             functionManager.add(targetFunctionName, targetFunction);
             logger.info("... parsen fehlgeschlagen, Funktion wurde wiederhergestellt.");
             // Dann Fehler an die GUI weitergeben, damit Problemdetails an den Bentzer weiter gegeben werden können.
+            throw f;
+        }
+    }
+    
+    /**
+     * Leitet eine Funktion ab, und speichert die Ableitung in einer neuen Funktion.
+     * @param functionName Der Name der Funktion, die abgeleitet werden soll.
+     * @return Der Name der Ableitungsfunktion.
+     * @throws FunctionParsingException 
+     */
+    public String deriveFunction(String functionName) throws FunctionParsingException{
+        var targetFunction = functionManager.getFunction(functionName);
+        
+        // Darf eigentlich nicht vorkommen. Wenn doch: Nichts tun.
+        if(targetFunction == null){
+            throw new FunctionParsingException(ParsingResponseCode.TargetFunctionEmpty, "Target-Funktion nicht gefunden.");
+        }
+        
+        try {
+            logger.info("Die Funktion '" + functionName + "' wird abgeleitet.");
+            var ableitungFunctionName = functionManager.functionAbleitenForFunctionName(functionName);
+            
+            calculateAndDraw();
+            return ableitungFunctionName;
+        } catch (FunctionParsingException f) {
+            logger.info("... Ableiten fehlgeschlagen.");
+            
             throw f;
         }
     }

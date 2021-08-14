@@ -11,14 +11,14 @@ public class FunctionDerivedEvent extends FunctionEvent {
 	String oldFunctionChar;
 	
 	/**
-     * Event für die Ableitung einer Funktion.
+     * Event fÃ¼r die Ableitung einer Funktion.
      * trÃ¤gt einen Parameter mehr: oldFunctionChar. dieser wird als Identifikation der originalen Funktion verwendet.
      * 
      * @param source         Object das dieses Event gecalled hat
      * @param functionColor  Farbe der Funktion
      * @param functionString Funktions-String
      * @param functionName   Funktions Name/Buchstabe/Identifier [f,g,h,...]
-     * @param oldFunctionChar Alter Funktions-Name (da sich dieser beim Ableiten ändern soll (hinzufügen von Apostroph))
+     * @param oldFunctionChar Alter Funktions-Name (da sich dieser beim Ableiten Ã¤ndern soll (hinzufÃ¼gen von Apostroph))
      */
 	public FunctionDerivedEvent(Object source, Color functionColor, String functionString, String functionName, String oldFunctionChar) {
 		super(source, functionColor, functionString, functionName);

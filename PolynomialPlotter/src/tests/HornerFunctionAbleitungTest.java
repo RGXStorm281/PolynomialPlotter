@@ -29,7 +29,7 @@ public class HornerFunctionAbleitungTest {
 		};
 		
 		for(int i = 0; i < testElements.length; i++){
-			HornerFunction testFunction = new HornerFunction(testElements[i]);
+			HornerFunction testFunction = new HornerFunction("f", "no display", testElements[i]);
 			var a = testFunction.getAbleitung().toString();
 			var b = Arrays.toString(erwarteteFaktoren[i]);
 

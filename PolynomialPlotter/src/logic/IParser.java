@@ -19,5 +19,5 @@ public interface IParser {
 	 * @return
 	 * @throws Exception 
 	 */
-    public IFunction parse(String function) throws FunctionParsingException;
+    public IFunction parse(String functionName, String function) throws FunctionParsingException;
 }

@@ -15,7 +15,7 @@ public class UniversalFunctionTests {
 	public void calculatesCorrectValues_LinearFunction()
 	{
 		//Arrange
-		UniversalFunction testFunction = new UniversalFunction("2x+1");
+		UniversalFunction testFunction = new UniversalFunction("f", "2x+1");
 		
 		double[] xValues = new double[] {
 				3.5,
@@ -45,7 +45,7 @@ public class UniversalFunctionTests {
 	public void calculatesCorrectValues_SquareFunction()
 	{
 		//Arrange
-		UniversalFunction testFunction = new UniversalFunction("2x^3+1");
+		UniversalFunction testFunction = new UniversalFunction("f", "2x^3+1");
 		
 		double[] xValues = new double[] {
 				3.5,
@@ -74,7 +74,7 @@ public class UniversalFunctionTests {
 	@Test
 	public void calculate_returnNullInsteadOfException()
 	{
-		UniversalFunction testFunction = new UniversalFunction("yxcv�asdf");
+		UniversalFunction testFunction = new UniversalFunction("f", "yxcv�asdf");
 		Object result = testFunction.calculate(3.5);
 		
 		Assert.assertEquals(null, result);

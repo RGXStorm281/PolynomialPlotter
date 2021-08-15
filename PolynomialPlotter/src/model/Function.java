@@ -12,10 +12,14 @@ package model;
 public abstract class Function {
     
     private boolean visible;
+    protected String displayString;
+    protected String functionName;
 
-    public Function() {
+    public Function(String functionName, String displayString) {
         // Per default ist die Funktion sichtbar.
         this.visible = true;
+        this.functionName = functionName;
+        this.displayString = displayString;
     }
 
     /**
@@ -30,5 +34,19 @@ public abstract class Function {
      */
     public void setVisible(boolean visible) {
         this.visible = visible;
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public String getFunctionName(){
+        return functionName;
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public String getDisplayString(){
+        return displayString;
     }
 }

@@ -140,7 +140,7 @@ public class FunctionManager {
     		return false;
     	}
     	
-    	IFunction function = this.parse(functionString);
+    	IFunction function = this.parse(functionName, functionString);
     	if(function == null) {
     		return false;
     	}
@@ -190,11 +190,11 @@ public class FunctionManager {
      * @param functionString inputString.
      * @return geparste function, oder null.
      */
-    private IFunction parse(String functionString) {
+    private IFunction parse(String functionName, String functionString) {
     	for (IParser parser:
 			parserArray) {
     		try {
-    			return parser.parse(functionString);
+    			return parser.parse(functionName, functionString);
     		}
     		catch (FunctionParsingException e) {
     			// TODO Loggen

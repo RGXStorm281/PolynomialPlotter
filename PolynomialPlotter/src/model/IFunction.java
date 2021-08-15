@@ -21,7 +21,7 @@ public interface IFunction {
 	/**
 	 * Berechnet die Ableitung der Function, sofern möglich.
 	 * @return Ableitung.
-	 * @throws Exception
+	 * @throws FunctionParsingException
 	 */
 	public IFunction getAbleitung() throws FunctionParsingException;
     
@@ -44,8 +44,20 @@ public interface IFunction {
     
     /**
      * Gibt zurück, ob der Graph der Funktion auf der GUI sichtbar sein soll.
-     * @return 
+     * @return Ob der Funktionsgraph gezeichnet wird.
      */
     public boolean isVisible();
+    
+    /**
+     * Gibt den Namen der Funktion zurück.
+     * @return Der Name der Funktion.
+     */
+    public String getFunctionName();
+    
+    /**
+     * Gibt den Anzeige-String zurück.
+     * @return Der Funktionsterm, so wie er angezeigt werden soll.
+     */
+    public String getDisplayString();
     
 }

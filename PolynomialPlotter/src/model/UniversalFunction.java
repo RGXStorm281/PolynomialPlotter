@@ -13,7 +13,8 @@ public class UniversalFunction extends Function implements IFunction {
 	private String functionalTerm;
 	private Color functionColor;
 	
-	public UniversalFunction(String term){
+	public UniversalFunction(String functionName, String term){
+        super(functionName, term);
 		functionalTerm = term;
 	}
 	

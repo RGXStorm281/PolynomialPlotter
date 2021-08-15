@@ -13,7 +13,7 @@ public class HornerParser implements IParser {
 	private static char[] operators = {'+', '-', '*', '/', '^'};
 	
 	@Override
-	public HornerFunction parse(String function) throws FunctionParsingException {
+	public HornerFunction parse(String functionName, String function) throws FunctionParsingException {
 	
 		try {
 			String fnct = function.replaceAll("\\s", "");
@@ -35,7 +35,7 @@ public class HornerParser implements IParser {
 			
 			double[] hornerElementArray = innerParse(fnct.toCharArray(), 0, fnct.length(), 0, 0);
 			
-			return new HornerFunction(hornerElementArray);
+			return new HornerFunction(functionName, function, hornerElementArray);
 		}
 		catch(Exception e) {
 			// TODO TV: Loggen

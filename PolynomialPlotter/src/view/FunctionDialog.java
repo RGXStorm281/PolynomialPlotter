@@ -191,12 +191,12 @@ public class FunctionDialog extends JFrame {
                     public void actionPerformed(ActionEvent e) {
                         for (IFunctionListener listener : functionListeners) {
                             try {
-                                String functionName = ((IFunctionListener) listener).functionAdded(
+                                ((IFunctionListener) listener).functionAdded(
                                         new FunctionEvent(
                                                 e.getSource(), 
                                                 colorPanel.getBackground(), 
                                                 functionInput.getText().trim(),
-                                                functionStringToChar(functionInput.getText().trim())));
+                                                functionNameFromInput(functionInput.getText().trim())));
                                 hideWarn();
                                 closeDialog();
                                 functionInput.setText("");
@@ -221,7 +221,7 @@ public class FunctionDialog extends JFrame {
                                                 e.getSource(),
                                                 colorPanel.getBackground(), 
                                                 functionInput.getText().trim(),
-                                                functionStringToChar(functionInput.getText().trim()), lastFunctionChar));
+                                                functionNameFromInput(functionInput.getText().trim()), lastFunctionChar));
                                 hideWarn();
                                 closeDialog();
                                 caller.editFunction(functionInput.getText().trim(), colorPanel.getBackground());
@@ -253,7 +253,7 @@ public class FunctionDialog extends JFrame {
                                                 e.getSource(),
                                                 colorPanel.getBackground(), 
                                                 functionInput.getText().trim(),
-                                                functionStringToChar(functionInput.getText().trim()), lastFunctionChar));
+                                                lastFunctionChar));
                                 hideWarn();
                                 closeDialog();
                                 //TODO LE implement edit function with derived functionString
@@ -325,7 +325,7 @@ public class FunctionDialog extends JFrame {
      * @param string
      * @return String
      */
-    protected String functionStringToChar(String string) {
+    protected String functionNameFromInput(String string) {
         String[] arr = string.split("=");
         if (arr.length == 1) { // Wenn kein "=" im String ist, gebe null zurück
             return null;

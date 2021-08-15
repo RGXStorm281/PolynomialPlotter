@@ -87,15 +87,13 @@ public class BusinessLogic {
      * @param functionName Der Name der Funktion.
      * @param functionString Ein String, der zur Funktion geparsed wird.
      * @param lineColor Die Farbe, in der die Funktionslinie gezeichnet werden soll.
-     * @return Der Funktionsname, der für die angelegte Funktion vergeben wurde.
      * @throws FunctionParsingException Details zum Parsing Fehler.
      */
-    public String addFunction(String functionName, String functionString, Color lineColor) throws FunctionParsingException{
+    public void addFunction(String functionName, String functionString, Color lineColor) throws FunctionParsingException{
         var name = functionManager.parseAndAddFunction(functionName, functionString, lineColor);
         logger.info("Neue Funktion '" + name + " hinzugefügt.");
         
         calculateAndDraw();
-        return name;
     }
     
     /**
@@ -104,10 +102,9 @@ public class BusinessLogic {
      * @param newFunctionName  Der neue Name der Funktion.
      * @param newFunctionString Der String, der als neue Funktion geparsed werden soll.
      * @param newLineColor Die Linienfarbe der Funktion.
-     * @return Der Funktionsname, den die editierte Funktion nach der Bearbeitung besitzt.
      * @throws FunctionParsingException Details zum Parsing Fehler.
      */
-    public String editFunction(String targetFunctionName, String newFunctionName, String newFunctionString, Color newLineColor) throws FunctionParsingException{
+    public void editFunction(String targetFunctionName, String newFunctionName, String newFunctionString, Color newLineColor) throws FunctionParsingException{
         var targetFunction = functionManager.getFunction(targetFunctionName);
         
         // Darf eigentlich nicht vorkommen. Wenn doch: Nichts tun.
@@ -126,7 +123,6 @@ public class BusinessLogic {
             logger.info("... neue Funktion '" + newFunctionName + "' erfolgreich geparsed und eingefügt.");
             // Neu berechnen und Zeichnen.
             calculateAndDraw();
-            return name;
         }catch (FunctionParsingException f){
             // Falls parsen fehl schlägt bestehende Funktion wiederherstellen.
             functionManager.add(targetFunctionName, targetFunction);
@@ -139,10 +135,9 @@ public class BusinessLogic {
     /**
      * Leitet eine Funktion ab, und speichert die Ableitung in einer neuen Funktion.
      * @param functionName Der Name der Funktion, die abgeleitet werden soll.
-     * @return Der Name der Ableitungsfunktion.
      * @throws FunctionParsingException 
      */
-    public String deriveFunction(String functionName) throws FunctionParsingException{
+    public void deriveFunction(String functionName) throws FunctionParsingException{
         var targetFunction = functionManager.getFunction(functionName);
         
         // Darf eigentlich nicht vorkommen. Wenn doch: Nichts tun.
@@ -153,9 +148,9 @@ public class BusinessLogic {
         try {
             logger.info("Die Funktion '" + functionName + "' wird abgeleitet.");
             var ableitungFunctionName = functionManager.functionAbleitenForFunctionName(functionName);
+            logger.info("Die Funktion '" + ableitungFunctionName + "' wurde abgeleitet.");
             
             calculateAndDraw();
-            return ableitungFunctionName;
         } catch (FunctionParsingException f) {
             logger.info("... Ableiten fehlgeschlagen.");
             

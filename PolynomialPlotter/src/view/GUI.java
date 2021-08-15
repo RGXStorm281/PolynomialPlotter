@@ -176,6 +176,7 @@ public class GUI extends JFrame implements IGUI {
             functions[i] = functionInfo[i].getFunction();
         }
         sidebar_panel.updateFunctionComponents(functions);
+        updateTheme();
     }
 
     @Override

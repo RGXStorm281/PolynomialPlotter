@@ -105,6 +105,10 @@ public class HornerFunction extends Function implements IFunction {
             display = summand + display;
         }
         
+        if(display.equals("")){
+            display = "0";
+        }
+        
         return display;
     }
 	

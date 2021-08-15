@@ -8,8 +8,6 @@ import java.awt.Color;
  */
 public class FunctionDerivedEvent extends FunctionEvent {
 	
-	String oldFunctionChar;
-	
 	/**
      * Event für die Ableitung einer Funktion.
      * trägt einen Parameter mehr: oldFunctionChar. dieser wird als Identifikation der originalen Funktion verwendet.
@@ -20,9 +18,8 @@ public class FunctionDerivedEvent extends FunctionEvent {
      * @param functionName   Funktions Name/Buchstabe/Identifier [f,g,h,...]
      * @param oldFunctionChar Alter Funktions-Name (da sich dieser beim Ableiten ändern soll (hinzufügen von Apostroph))
      */
-	public FunctionDerivedEvent(Object source, Color functionColor, String functionString, String functionName, String oldFunctionChar) {
+	public FunctionDerivedEvent(Object source, Color functionColor, String functionString, String functionName) {
 		super(source, functionColor, functionString, functionName);
-		this.oldFunctionChar = oldFunctionChar;
 	}
 
 }

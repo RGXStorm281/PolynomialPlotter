@@ -45,9 +45,9 @@ public class PolynomialPlotter {
     		new UniversalParser()
             };
             
-            initLogger();
+            var logger = initLogger();
             // Objekte initialisieren
-            Settings settings = new Settings("src/startup/settings.properties");
+            Settings settings = new Settings("src/startup/settings.properties", logger);
             FunctionManager model = new FunctionManager(availableParsers);
             GUI view = new GUI(settings);
             BusinessLogic logic = new BusinessLogic(view, model, settings);
@@ -74,8 +74,8 @@ public class PolynomialPlotter {
         } 
     }
     
-    private static void initLogger(){
-    	Settings.LOGGER = Logger.getGlobal();
+    private static Logger initLogger(){
+    	var logger = Logger.getGlobal();
     	FileHandler handler = null;
     	new File("logs").mkdirs();
 		try {
@@ -85,6 +85,7 @@ public class PolynomialPlotter {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-        Settings.LOGGER.addHandler(handler);
+        logger.addHandler(handler);
+        return logger;
     }
 }

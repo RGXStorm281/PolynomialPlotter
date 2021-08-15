@@ -12,7 +12,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.DrawingInformationContainer;
 import model.FunctionInfoContainer;
@@ -20,6 +19,7 @@ import model.IFunction;
 import model.Koordinate;
 import model.Tuple;
 import model.Utils;
+import startup.ISettings;
 import view.IGUI;
 
 /**
@@ -30,7 +30,7 @@ public class BusinessLogic {
 
     private final IGUI gui;
     private final FunctionManager functionManager;
-    private final Settings settings;
+    private final ISettings settings;
     private final Logger logger;
 
     private double positionX;
@@ -44,12 +44,12 @@ public class BusinessLogic {
 
     private final ExecutorService functionCalculationPool;
 
-    public BusinessLogic(IGUI gui, FunctionManager functionManager, Settings settings) {
+    public BusinessLogic(IGUI gui, FunctionManager functionManager, ISettings settings) {
         this.gui = gui;
         this.functionManager = functionManager;
         this.settings = settings;
-        this.functionCalculationPool = Executors.newFixedThreadPool(settings.THREADPOOL_SIZE);
-        this.logger = settings.LOGGER;
+        this.functionCalculationPool = Executors.newFixedThreadPool(settings.getThreadpoolSize());
+        this.logger = settings.getLogger();
 
         initPositon(settings);
     }
@@ -59,18 +59,18 @@ public class BusinessLogic {
      *
      * @param settings Die App-Settings.
      */
-    private void initPositon(Settings settings) {
+    private void initPositon(ISettings settings) {
         // Startposition (0|0).
-        this.positionX = settings.INITIAL_ORIGIN_X;
-        this.positionY = settings.INITIAL_ORIGIN_Y;
+        this.positionX = settings.getInitialOriginX();
+        this.positionY = settings.getInitialOriginY();
 
         // Für eventuelles Resizing zwischenspeichern.
-        this.cachedCanvasWidth = settings.INITIAL_PLOT_WIDTH;
-        this.cachedCanvasHeight = settings.INITIAL_PLOT_HEIGHT;
+        this.cachedCanvasWidth = settings.getInitialPlotWidth();
+        this.cachedCanvasHeight = settings.getInitialPlotHeight();
 
         // Ab Start sichtbare Intervalle in X-/Y-Richtung.
-        this.intervallSizeX = cachedCanvasWidth / settings.INITIAL_PIXEL_TO_UNIT_RATIO;
-        this.intervallSizeY = cachedCanvasHeight / settings.INITIAL_PIXEL_TO_UNIT_RATIO;
+        this.intervallSizeX = cachedCanvasWidth / settings.getInitialPixelToUnitRatio();
+        this.intervallSizeY = cachedCanvasHeight / settings.getInitialPixelToUnitRatio();
 
         evaluateStep();
     }
@@ -80,7 +80,7 @@ public class BusinessLogic {
      * intervallSizeX und der gecacheten Bildbreite.
      */
     private void evaluateStep() {
-        double numberOfCalculations = (double) cachedCanvasWidth / settings.CALCULATE_EVERY_X_PIXELS;
+        double numberOfCalculations = (double) cachedCanvasWidth / settings.getCalculateEveryXPixels();
         step = intervallSizeX / numberOfCalculations;
     }
 

@@ -24,9 +24,6 @@ import model.DrawingInformationContainer;
 import model.FunctionInfoContainer;
 import model.IFunction;
 import model.Koordinate;
-import startup.Settings;
-import view.GUI.FontFamily;
-import view.GUI.FontStyle;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -38,6 +35,7 @@ import java.util.List;
 import event.IPlotListener;
 import model.Tuple;
 import model.Utils;
+import startup.ISettings;
 
 /**
  * @author raphaelsack
@@ -56,7 +54,7 @@ public class JPlotter extends JPanel {
     private Color plotBackground;
     private Color plotForeground;
     private StyleClass styleClass;
-    private Settings settings;
+    private ISettings settings;
 
     private List<IPlotListener> plotListeners = new ArrayList<IPlotListener>();
     private Point mousePt; // Point to keep track of the last mouse-position
@@ -69,15 +67,15 @@ public class JPlotter extends JPanel {
 
     private DrawingInformationContainer drawingInformation;
 
-    public JPlotter(Settings _settings, StyleClass styleClass) {
+    public JPlotter(ISettings _settings, StyleClass styleClass) {
         this.styleClass = styleClass;
         this.settings = _settings;
-        this.subGrid = _settings.SUB_SQUARE_GRID;
+        this.subGrid = _settings.getSubSquareGrid();
         this.plotBackground = styleClass.PLOT_BG;
         this.gridColor = styleClass.GIRD_COLOR;
         this.plotForeground = styleClass.PLOT_FG;
-        this.squareDivider = _settings.SQUARE_SCALE;
-        this.squareScale = _settings.SQUARE_SCALE;
+        this.squareDivider = _settings.getSquareScale();
+        this.squareScale = _settings.getSquareScale();
         addMouseWheelListener(new MouseWheelListener() {
             public void mouseWheelMoved(MouseWheelEvent e) {
                 float dZoom = e.isControlDown() ? 0.1f : 0.05f;
@@ -142,7 +140,7 @@ public class JPlotter extends JPanel {
             }
             
         });
-        setPreferredSize(new Dimension(_settings.INITIAL_PLOT_WIDTH,_settings.INITIAL_PLOT_HEIGHT));
+        setPreferredSize(new Dimension(_settings.getInitialPlotWidth(),_settings.getInitialPlotHeight()));
     }
 
     /**

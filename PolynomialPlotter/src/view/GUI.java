@@ -13,13 +13,13 @@ import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 
 import model.DrawingInformationContainer;
-import startup.Settings;
 import event.FunctionEditedEvent;
 import event.FunctionEvent;
 import event.IFunctionListener;
 import event.IPlotListener;
 import logic.FunctionParsingException;
 import model.IFunction;
+import startup.ISettings;
 
 /**
  * @author raphaelsack
@@ -40,13 +40,13 @@ public class GUI extends JFrame implements IGUI {
     private JScrollPane scroll_sidebar_panel;
     private JPlotter plotter_panel;
 
-    private final Settings settings;
+    private final ISettings settings;
     private StyleClass styleClass;
 
-    public GUI(Settings settings) throws FileNotFoundException, IOException {
+    public GUI(ISettings settings) throws FileNotFoundException, IOException {
         super();
         this.settings = settings;
-        this.styleClass = new StyleClass(settings.THEME);
+        this.styleClass = new StyleClass(settings.getTheme());
         UIManager.put("MenuItem.selectionBackground", styleClass.MENU_BG_SELECTION);
         UIManager.put("MenuItem.selectionForeground", styleClass.MENU_FG_SELECTION);
         UIManager.put("Menu.selectionBackground", styleClass.MENU_BG_SELECTION);

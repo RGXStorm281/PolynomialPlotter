@@ -6,12 +6,17 @@ import java.util.Arrays;
 public class HornerFunction extends Function implements IFunction {
 	
 	private double[] hornerElements;
-	private Color functionColor;
     
 	public HornerFunction(String functionName, String displayString, double[] elements)
 	{
         super(functionName, displayString);
-		hornerElements = elements;
+		this.hornerElements = elements;
+	}
+    
+	public HornerFunction(String functionName, String displayString, double[] elements, Color functionColor)
+	{
+        super(functionName, displayString, functionColor);
+		this.hornerElements = elements;
 	}
         
     /**
@@ -29,22 +34,6 @@ public class HornerFunction extends Function implements IFunction {
 		
 		koordinate = new Koordinate(xValue, yValue);
 		return koordinate;
-	}
-
-    /**
-    * @inheritDoc 
-    */
-	@Override
-	public void setColor(Color color) {
-		functionColor = color;
-	}
-
-    /**
-    * @inheritDoc 
-    */
-	@Override
-	public Color getColor() {
-		return functionColor;
 	}
 	
 	/**

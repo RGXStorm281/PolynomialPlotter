@@ -19,11 +19,11 @@ import event.FunctionEvent;
 import event.IFunctionListener;
 import event.IPlotListener;
 import logic.FunctionParsingException;
+import model.IFunction;
 
 /**
  * @author raphaelsack
  */
-
 public class GUI extends JFrame implements IGUI {
 
     enum FontFamily {
@@ -135,8 +135,9 @@ public class GUI extends JFrame implements IGUI {
     }
 
     public void start() {
-        if (!isVisible())
+        if (!isVisible()) {
             setVisible(true);
+        }
     }
 
     private static Font ttfBase = null;
@@ -153,7 +154,7 @@ public class GUI extends JFrame implements IGUI {
             ex.printStackTrace();
             System.err.println("Font not loaded.");
         }
-        
+
         return font;
 
     }
@@ -169,6 +170,12 @@ public class GUI extends JFrame implements IGUI {
     @Override
     public void drawFunctions(DrawingInformationContainer drawingInformation) {
         plotter_panel.updateDrawingInformation(drawingInformation);
+        var functionInfo = drawingInformation.getFunctionInfo();
+        var functions = new IFunction[functionInfo.length];
+        for (int i = 0; i < functionInfo.length; i++) {
+            functions[i] = functionInfo[i].getFunction();
+        }
+        sidebar_panel.updateFunctionComponents(functions);
     }
 
     @Override
@@ -187,14 +194,11 @@ public class GUI extends JFrame implements IGUI {
 
     }
 
-    public void addJFunctionComponent(String functionChar, String functionString, Color functionColor) {
-        sidebar_panel.addJFunctionComponent(functionChar, functionString, functionColor);
-    }
-
     /**
-     * Funktion um einen "dekorierten" Polynominal-Ausdruck, in einen undekorierten
-     * String zu verwandeln. z.B.: 4x³+2x²+x+1 wird zu 4x^3+2x^2+x+1
-     * 
+     * Funktion um einen "dekorierten" Polynominal-Ausdruck, in einen
+     * undekorierten String zu verwandeln. z.B.: 4x³+2x²+x+1 wird zu
+     * 4x^3+2x^2+x+1
+     *
      * @param str dekorierter String
      * @return undekorierter String
      */
@@ -239,9 +243,9 @@ public class GUI extends JFrame implements IGUI {
     }
 
     /**
-     * Funktion um einen "undekorierten" Polynominal-Ausdruck, in einen dekorierten
-     * String zu verwandeln. z.B.: 4x^3+2x^2+x+1 wird zu 4x³+2x²+x+1
-     * 
+     * Funktion um einen "undekorierten" Polynominal-Ausdruck, in einen
+     * dekorierten String zu verwandeln. z.B.: 4x^3+2x^2+x+1 wird zu 4x³+2x²+x+1
+     *
      * @param str undekorierter String
      * @return dekorierter String
      */
@@ -258,11 +262,11 @@ public class GUI extends JFrame implements IGUI {
                 superscripted = !superscripted;
                 continue;
             }
-            if (!superscripted){
+            if (!superscripted) {
                 res += chars[i];
                 continue;
             }
-            if(uni < 48 || uni > 57){
+            if (uni < 48 || uni > 57) {
                 res += chars[i];
                 superscripted = !superscripted;
                 continue;

@@ -34,14 +34,11 @@ public class FunctionListener implements IFunctionListener {
         Color functionColor = e.getFunctionColor();    
         String functionName = e.getFunctionName();
 
-        
         functionName = logic.addFunction(functionName, functionString, functionColor);
         if(functionString.split("=").length == 1){
             functionString = functionName+"(x) = "+functionString;
         }
-            
         
-        view.addJFunctionComponent(functionName,functionString, functionColor);
         view.updateTheme();
         return functionName;
     }
@@ -61,7 +58,6 @@ public class FunctionListener implements IFunctionListener {
     
     @Override
     public String functionDerived(FunctionDerivedEvent e)throws FunctionParsingException {
-		//TODO RE implement
     	System.out.println("Function " + e.getFunctionName() + " was derived.");
     	return logic.deriveFunction(e.getFunctionName());    	
     }
@@ -75,8 +71,6 @@ public class FunctionListener implements IFunctionListener {
     @Override
     public void functionVisibilityToggled(FunctionVisibilityToggledEvent e) {
         String functionName = e.getFunctionName();
-        JFunctionComponent jfc = (JFunctionComponent)e.getSource();
-        jfc.setVisibility(!jfc.getVisibility());
         logic.toggleFunctionVisible(functionName);
     }
     

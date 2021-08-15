@@ -110,22 +110,21 @@ public class FunctionManager {
      * Leitet die mitgegebene Function ab, fügt diese als neue Function der Sammlung hinzu.
      * @param functionName
      * @return AbleitungFunctionName
-     * @throws Exception
+     * @throws FunctionParsingException
      */
     public String functionAbleitenForFunctionName(String functionName) throws FunctionParsingException {
     	
     	IFunction ableitung =  getFunction(functionName).getAbleitung();
-		String ableitungFunctionName = functionName + "'";
-    	if(!functionNameAddable(ableitungFunctionName)) {
-    		ableitungFunctionName = getAddableFunctionName();
+    	if(!functionNameAddable(ableitung.getFunctionName())) {
+    		throw new FunctionParsingException(ParsingResponseCode.NameAlreadyTaken, "Die Ableitungsfunktion " + ableitung.getFunctionName() + " existiert bereits.");
     	}
     	
-    	boolean ableitungAdded = this.add(ableitungFunctionName, ableitung);
+    	boolean ableitungAdded = this.add(ableitung.getFunctionName(), ableitung);
     	if(!ableitungAdded) {
     		throw new FunctionParsingException(ParsingResponseCode.AbleitenFailed, "Es ist ein unbekannter Fehler beim Hinzufügen der abgeleiteten Function aufgetreten.");
     	}
 
-		return ableitungFunctionName;
+		return ableitung.getFunctionName();
     }
     
     /** 

@@ -11,6 +11,7 @@ import model.DrawingInformationContainer;
 import java.awt.Color;
 import event.IFunctionListener;
 import event.IPlotListener;
+import model.IFunction;
 
 /**
  *
@@ -33,6 +34,12 @@ public interface IGUI{
      * @param drawingInformation Die nötigen Informationen für's Zeichnen.
      */
     void drawFunctions(DrawingInformationContainer drawingInformation);
+    
+    /**
+     * Aktualisiert die Funktionsliste.
+     * @param functions Die Funktionen.
+     */
+    public void updateFunctionList(IFunction[] functions);
 
     /**
      * Mit den Funktionen kann ein neuer Listener hinzugefügt werden

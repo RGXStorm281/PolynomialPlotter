@@ -170,13 +170,12 @@ public class GUI extends JFrame implements IGUI {
     @Override
     public void drawFunctions(DrawingInformationContainer drawingInformation) {
         plotter_panel.updateDrawingInformation(drawingInformation);
-        var functionInfo = drawingInformation.getFunctionInfo();
-        var functions = new IFunction[functionInfo.length];
-        for (int i = 0; i < functionInfo.length; i++) {
-            functions[i] = functionInfo[i].getFunction();
-        }
-        sidebar_panel.updateFunctionComponents(functions);
         updateTheme();
+    }
+    
+    @Override
+    public void updateFunctionList(IFunction[] functions){
+        sidebar_panel.updateFunctionComponents(functions);
     }
 
     @Override

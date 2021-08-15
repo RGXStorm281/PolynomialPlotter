@@ -87,7 +87,7 @@ public class Sidebar extends JPanel {
     /** Fügt ein JFunctionComponent hinzu
      * @param function Das Funktionsobjekt.
      */
-    public void addJFunctionComponent(IFunction function){
+    private void addJFunctionComponent(IFunction function){
         JFunctionComponent jfc = new JFunctionComponent(this.styleClass, function.getFunctionName(), function.getDisplayString(), function.getColor());
         jfc.setVisibility(function.isVisible());
         for(IFunctionListener functionListener: functionListeners)jfc.addFunctionListener(functionListener);
@@ -102,7 +102,7 @@ public class Sidebar extends JPanel {
     /**
      * Rendert alle JFunctionComponenten der JFunctionComponent-ArrayList
      */
-    public void renderJFunctionComponents(){
+    private void renderJFunctionComponents(){
         vFunctionsBox.removeAll();
         vFunctionsBox.add(heading);
         vFunctionsBox.add(addFunctionButton);
@@ -117,7 +117,7 @@ public class Sidebar extends JPanel {
     /** 
      * @return String
      */
-    public String getFunction() {
+    private String getFunction() {
         return functionDialog.getFunctionString();
     }
 

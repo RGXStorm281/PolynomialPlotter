@@ -91,7 +91,7 @@ public class BusinessLogic {
      */
     public void addFunction(String functionName, String functionString, Color lineColor) throws FunctionParsingException{
         var name = functionManager.parseAndAddFunction(functionName, functionString, lineColor);
-        logger.info("Neue Funktion '" + name + " hinzugefügt.");
+        logger.info("Neue Funktion " + name + " hinzugefügt.");
         
         calculateAndDraw();
     }
@@ -112,15 +112,15 @@ public class BusinessLogic {
             throw new FunctionParsingException(ParsingResponseCode.TargetFunctionEmpty, "Target-Funktion nicht gefunden.");
         }
         
-        logger.info("Edit von Funktion '" + targetFunctionName + "' gestartet...");
+        logger.info("Edit von Funktion " + targetFunctionName + " gestartet...");
         // Platz machen, falls sich der Funktionsname nicht geändert hat. 
         functionManager.delete(targetFunctionName);
-        logger.info("... Funktion ‘" + targetFunctionName + "' entfernt.");
+        logger.info("... Funktion " + targetFunctionName + " entfernt.");
         
         try {
             // Versuche neue Funktion zu speichern.
             var name = functionManager.parseAndAddFunction(newFunctionName, newFunctionString, newLineColor);
-            logger.info("... neue Funktion '" + newFunctionName + "' erfolgreich geparsed und eingefügt.");
+            logger.info("... neue Funktion " + newFunctionName + " erfolgreich geparsed und eingefügt.");
             // Neu berechnen und Zeichnen.
             calculateAndDraw();
         }catch (FunctionParsingException f){
@@ -146,9 +146,9 @@ public class BusinessLogic {
         }
         
         try {
-            logger.info("Die Funktion '" + functionName + "' wird abgeleitet.");
+            logger.info("Die Funktion " + functionName + " wird abgeleitet.");
             var ableitungFunctionName = functionManager.functionAbleitenForFunctionName(functionName);
-            logger.info("Die Funktion '" + ableitungFunctionName + "' wurde abgeleitet.");
+            logger.info("Die Funktion " + ableitungFunctionName + " ist die Ableitung.");
             
             calculateAndDraw();
         } catch (FunctionParsingException f) {
@@ -164,7 +164,7 @@ public class BusinessLogic {
      */
     public void deleteFunction(String functionName){
         functionManager.delete(functionName);
-        logger.info("Funktion '" + functionName + " entfernt.");
+        logger.info("Funktion " + functionName + " entfernt.");
         calculateAndDraw();
     }
     

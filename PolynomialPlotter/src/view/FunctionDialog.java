@@ -39,9 +39,10 @@ import logic.FunctionParsingException;
 
 /**
  * @author raphaelsack
- * 
+ *
  */
 public class FunctionDialog extends JFrame {
+
     // enum um Dialog für Add und Edit zu verwenden
     enum DialogType {
         ADD, EDIT
@@ -64,9 +65,11 @@ public class FunctionDialog extends JFrame {
     private JLabel colorLabel;
 
     private StyleClass styleClass;
-    private JPanel colorPanel; // Color-Panel für die Funktion hält auch den Farbwert
-    private List<IFunctionListener> functionListeners = new ArrayList<IFunctionListener>(); // Hält alle
-                                                                                            // Funktions-Listener
+    // Color-Panel für die Funktion hält auch den Farbwert
+    private JPanel colorPanel; 
+    // Hält alle
+    // Funktions-Listener
+    private List<IFunctionListener> functionListeners = new ArrayList<IFunctionListener>();
 
     FunctionDialog(JFunctionComponent caller, DialogType dialogType, StyleClass styleClass) {
         this.styleClass = styleClass;
@@ -118,7 +121,7 @@ public class FunctionDialog extends JFrame {
         // Unten stehende Code Filtert doppelte Circumflexe aus
         ((PlainDocument) functionInput.getDocument()).setDocumentFilter(new DocumentFilter() {
             // Beim Copy+Paste werden alle doppelten Circumflexe ersetzt durch ein einzelnes
-            private static final String REGEX = "\\^{2}"; 
+            private static final String REGEX = "\\^{2}";
             private String last = "";
 
             @Override
@@ -133,7 +136,7 @@ public class FunctionDialog extends JFrame {
                     throws BadLocationException {
                 // Wenn das letzte Zeichen gleich dem momentanen ist und das Zeichen "^" ist, dann setze das neu eingebene
                 // Zeichen gleich ""
-                if (text.equals(last) && last.equals("^")) { 
+                if (text.equals(last) && last.equals("^")) {
                     text = "";
                 }
                 last = text;
@@ -145,7 +148,6 @@ public class FunctionDialog extends JFrame {
         functionInputLabel.setForeground(this.styleClass.DIALOG_FG);
         functionInputLabel.setBounds(10, 10, 132, 14);
         getContentPane().add(functionInputLabel);
-
 
         // Error Label, wird nur angezeigt wenn ein Fehler auftritt
         functionErrorLabel = new JLabel();
@@ -168,21 +170,22 @@ public class FunctionDialog extends JFrame {
         okButton.setForeground(buttonForeground);
         okButton.setBorder(BorderFactory.createLineBorder(buttonBackground));
         okButton.setFont(font.deriveFont(15f));
-        
-        MouseAdapter buttonListener = new MouseAdapter(){
+
+        MouseAdapter buttonListener = new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
                 ((JButton) e.getSource()).setBackground(buttonBackground.darker());
                 ((JButton) e.getSource()).setBorder(BorderFactory.createLineBorder(buttonBackground.darker()));
 
             }
+
             @Override
             public void mouseExited(MouseEvent e) {
                 ((JButton) e.getSource()).setBackground(buttonBackground);
                 ((JButton) e.getSource()).setBorder(BorderFactory.createLineBorder(buttonBackground));
             }
         };
-        
+
         // TODO: Function char schlauer machen
         switch (dialogType) {
             case ADD:
@@ -193,10 +196,10 @@ public class FunctionDialog extends JFrame {
                             try {
                                 ((IFunctionListener) listener).functionAdded(
                                         new FunctionEvent(
-                                                e.getSource(), 
-                                                colorPanel.getBackground(), 
-                                                functionInput.getText().trim(),
-                                                functionNameFromInput(functionInput.getText().trim())));
+                                                e.getSource(),
+                                                colorPanel.getBackground(),
+                                                functionTermFromInput(functionInput.getText()),
+                                                functionNameFromInput(functionInput.getText())));
                                 hideWarn();
                                 closeDialog();
                                 functionInput.setText("");
@@ -219,9 +222,10 @@ public class FunctionDialog extends JFrame {
                                 ((IFunctionListener) listener).functionEdited(
                                         new FunctionEditedEvent(
                                                 e.getSource(),
-                                                colorPanel.getBackground(), 
-                                                functionInput.getText().trim(),
-                                                functionNameFromInput(functionInput.getText().trim()), lastFunctionChar));
+                                                colorPanel.getBackground(),
+                                                functionTermFromInput(functionInput.getText()),
+                                                functionNameFromInput(functionInput.getText()),
+                                                lastFunctionChar));
                                 hideWarn();
                                 closeDialog();
                                 caller.editFunction(functionInput.getText().trim(), colorPanel.getBackground());
@@ -233,7 +237,7 @@ public class FunctionDialog extends JFrame {
                         }
                     }
                 });
-                
+
                 deriveButton = new JButton("Ableiten");
                 deriveButton.setBackground(buttonBackground);
                 deriveButton.setOpaque(true);
@@ -246,13 +250,13 @@ public class FunctionDialog extends JFrame {
 
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                    	for (IFunctionListener listener : functionListeners) {
+                        for (IFunctionListener listener : functionListeners) {
                             try {
                                 ((IFunctionListener) listener).functionDerived(
                                         new FunctionDerivedEvent(
                                                 e.getSource(),
-                                                colorPanel.getBackground(), 
-                                                functionInput.getText().trim(),
+                                                colorPanel.getBackground(),
+                                                functionTermFromInput(functionInput.getText()),
                                                 lastFunctionChar));
                                 hideWarn();
                                 closeDialog();
@@ -297,8 +301,9 @@ public class FunctionDialog extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 Color col = CustomColorChooser.showDialog(null, "Farbe wählen", colorPanel.getBackground());
-                if (col != null)
+                if (col != null) {
                     colorPanel.setBackground(col);
+                }
             }
 
             @Override
@@ -321,16 +326,19 @@ public class FunctionDialog extends JFrame {
     }
 
     /**
-     * Funktion nimmt einen Funktions-String (bsp.: f(x) = 3x) und gib den Funktions-Namen (in dem Fall f, zurück), falls der String keinen Funktionsnamen enthält, wird null zurückgegeben.
-     * @param string
-     * @return String
+     * Funktion nimmt einen Funktions-String (bsp.: f(x) = 3x) und gib den
+     * Funktions-Namen (in dem Fall f, zurück), falls der String keinen
+     * Funktionsnamen enthält, wird null zurückgegeben.
+     *
+     * @param input Die Eingabe.
+     * @return Nur der Funktionsname.
      */
-    protected String functionNameFromInput(String string) {
-        String[] arr = string.split("=");
-        if (arr.length == 1) { // Wenn kein "=" im String ist, gebe null zurück
+    protected String functionNameFromInput(String input) {
+        String[] parts = input.split("=");
+        if (parts.length == 1) { // Wenn kein "=" im String ist, gebe null zurück
             return null;
         } else {
-            char toParse[] = arr[0].toCharArray();
+            char toParse[] = parts[0].toCharArray();
             String name = "";
             for (char c : toParse) {
                 if (c == '(') { // Wenn wir ein "(" erreicht haben, breche ab
@@ -340,6 +348,20 @@ public class FunctionDialog extends JFrame {
             }
             return name;
         }
+    }
+
+    /**
+     * Funktion nimmt einen Funktions-String (bsp.: f(x) = 3x) und gib den
+     * Funktions-Namen (in dem Fall f, zurück), falls der String keinen
+     * Funktionsnamen enthält, wird null zurückgegeben.
+     *
+     * @param input Die Eingabe.
+     * @return Nur der Funktionsterm.
+     */
+    protected String functionTermFromInput(String input) {
+        String[] parts = input.split("=");
+        // Immer das hinterste Element, egal ob ein Funktionsname angegeben wurde oder nicht.
+        return parts[parts.length - 1].trim();
     }
 
     protected void hideWarn() {
@@ -352,7 +374,7 @@ public class FunctionDialog extends JFrame {
 
     /**
      * Zeigt eine Warnung unter dem InputFeld an
-     * 
+     *
      * @param msg Fehlermeldung
      */
     protected void enableWarn(String msg) {
@@ -366,7 +388,7 @@ public class FunctionDialog extends JFrame {
 
     /**
      * Gibt den Funktionsstring zurück
-     * 
+     *
      * @return String
      */
     public String getFunctionString() {
@@ -376,7 +398,7 @@ public class FunctionDialog extends JFrame {
     /**
      * gibt die Farbe des Dialogs zurück [Wird übers colorPanel gemacht, spart
      * Speicherplatz]
-     * 
+     *
      * @return Color
      */
     public Color getColor() {
@@ -394,7 +416,7 @@ public class FunctionDialog extends JFrame {
 
     /**
      * generiert eine zufällge Farbe (für den Color-Chooser)
-     * 
+     *
      * @return Color
      */
     private Color randomColor() {
@@ -429,7 +451,7 @@ public class FunctionDialog extends JFrame {
 
     /**
      * Ändert den Funktionsstring im Eingabefeld [Fürs Editieren wichtig]
-     * 
+     *
      * @param functionString
      */
     public void setFunctionString(String functionString) {
@@ -439,7 +461,7 @@ public class FunctionDialog extends JFrame {
     /**
      * Ändert die intiale Farbe des ColorChooser (Wird über das Color-Panel
      * gehandelt [spart Speicherplatz])
-     * 
+     *
      * @param circleColor
      */
     public void setColor(Color circleColor) {
@@ -447,9 +469,9 @@ public class FunctionDialog extends JFrame {
     }
 
     /**
-     * Wenn der Dialog als Edit-Dialog gecallt wird, dann soll am anfang der alte
-     * Character mitgegeben werden
-     * 
+     * Wenn der Dialog als Edit-Dialog gecallt wird, dann soll am anfang der
+     * alte Character mitgegeben werden
+     *
      * @param functionChar
      */
     public void setLastFunctionChar(String functionChar) {

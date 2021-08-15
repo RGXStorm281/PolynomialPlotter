@@ -208,7 +208,6 @@ public class BusinessLogic {
         double moveY = Utils.mapToInterval(distance.getItem2(), 0, cachedCanvasHeight, 0, intervallSizeY);
         positionX += moveX;
         positionY += moveY;
-        debugPosition();
 
         calculateAndDraw();
     }
@@ -228,7 +227,6 @@ public class BusinessLogic {
         // Intervalle mit der Panelgröße skalieren.
         intervallSizeX *= (double) newCanvasWidth / cachedCanvasWidth;
         intervallSizeY *= (double) newCanvasHeight / cachedCanvasHeight;
-        debugIntervallSize();
 
         // gecachete Panelgröße aktualisieren.
         cachedCanvasWidth = newCanvasWidth;
@@ -261,16 +259,7 @@ public class BusinessLogic {
         int moveX = (int) Math.round(offsetX - newOffsetX);
         int moveY = (int) Math.round(offsetY - newOffsetY);
 
-        debugIntervallSize();
         moveCanvas(new Tuple<Integer, Integer>(-moveX, -moveY));
-    }
-
-    private void debugIntervallSize() {
-        // System.out.println("Intervall X: " + intervallSizeX + "; Intervall Y: " + intervallSizeY);
-    }
-
-    private void debugPosition() {
-        // System.out.println("Position X: " + positionX + "; Position Y: " + positionY);
     }
 
     /**

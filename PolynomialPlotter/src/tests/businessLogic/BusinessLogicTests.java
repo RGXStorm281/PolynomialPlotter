@@ -13,7 +13,11 @@ import org.junit.runners.Suite;
     AddFunctionTest.class,
     DeleteFunctionTest.class,
     EditFunctionTest.class,
-    DeriveFunctionTest.class
+    DeriveFunctionTest.class,
+    FunctionVisibilityTest.class,
+    MoveCanvasTest.class,
+    ResizeTest.class,
+    ZoomTest.class
 })
 
 /**

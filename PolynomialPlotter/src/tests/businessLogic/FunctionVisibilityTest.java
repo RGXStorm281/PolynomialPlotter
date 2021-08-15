@@ -13,31 +13,34 @@ import logic.FunctionManager;
 import logic.FunctionParsingException;
 import logic.HornerParser;
 import logic.IParser;
-import org.junit.*;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import startup.ISettings;
 
 /**
  *
  * @author robinepple
  */
-public class AddFunctionTest {
+public class FunctionVisibilityTest {
     
     private BusinessLogic bl;
     GuiMock view;
     private static final String TEST_FUNCTION_NAME = "test";
     private static final String TEST_FUNCTION = "5x^2+3x+2";
-    
+
     @Before
-    public void setUp() throws IOException{
+    public void setUp() throws IOException, FunctionParsingException {
         // Objekte initialisieren
         ISettings settings = initSettings();
-        FunctionManager model = new FunctionManager(new IParser[] {new HornerParser()});
+        FunctionManager model = new FunctionManager(new IParser[]{new HornerParser()});
         view = new GuiMock(settings);
-        
+
         bl = new BusinessLogic(view, model, settings);
-    } 
-    
-    private ISettings initSettings(){
+        bl.addFunction(TEST_FUNCTION_NAME, TEST_FUNCTION, Color.BLUE);
+    }
+
+    private ISettings initSettings() {
         var settings = new SettingsMock();
         settings.logger = Logger.getGlobal();
         settings.calculateEveryXPixels = 1;
@@ -50,15 +53,16 @@ public class AddFunctionTest {
         // settings.theme = ;
         return settings;
     }
-    
+
     @Test
-    public void AddFunctionTest(){
-        try {
-            bl.addFunction(TEST_FUNCTION_NAME, TEST_FUNCTION, Color.BLUE);
-            var functionInfo = view.drawingInformation.getFunctionInfo();
-            Assert.assertEquals(1, functionInfo.length);
-        } catch (FunctionParsingException ex) {
-            Assert.fail("Parsen fehlgeschlagen: " + ex.getMessage());
-        }
+    public void FunctionVisibilityTest() throws FunctionParsingException {
+        bl.toggleFunctionVisible(TEST_FUNCTION_NAME);
+        var functionInfo = view.drawingInformation.getFunctionInfo();
+        var function = functionInfo[0].getFunction();
+        Assert.assertEquals(false, function.isVisible());
+        bl.toggleFunctionVisible(TEST_FUNCTION_NAME);
+        functionInfo = view.drawingInformation.getFunctionInfo();
+        function = functionInfo[0].getFunction();
+        Assert.assertEquals(true, function.isVisible());
     }
 }

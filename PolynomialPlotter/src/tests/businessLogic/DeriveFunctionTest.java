@@ -57,7 +57,7 @@ public class DeriveFunctionTest {
     }
 
     @Test
-    public void EditFunctionTest() throws FunctionParsingException {
+    public void DeriveFunctionTest() throws FunctionParsingException {
         bl.deriveFunction(TEST_FUNCTION_NAME);
         var functionInfo = view.drawingInformation.getFunctionInfo();
         var function = functionInfo[1].getFunction();

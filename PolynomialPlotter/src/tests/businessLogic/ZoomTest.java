@@ -5,7 +5,6 @@
  */
 package tests.businessLogic;
 
-import java.awt.Color;
 import java.io.IOException;
 import java.util.logging.Logger;
 import logic.BusinessLogic;
@@ -13,52 +12,54 @@ import logic.FunctionManager;
 import logic.FunctionParsingException;
 import logic.HornerParser;
 import logic.IParser;
-import org.junit.*;
+import model.Tuple;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import startup.ISettings;
 
 /**
  *
  * @author robinepple
  */
-public class AddFunctionTest {
+public class ZoomTest {
     
     private BusinessLogic bl;
     GuiMock view;
-    private static final String TEST_FUNCTION_NAME = "test";
-    private static final String TEST_FUNCTION = "5x^2+3x+2";
-    
+
     @Before
-    public void setUp() throws IOException{
+    public void setUp() throws IOException, FunctionParsingException {
         // Objekte initialisieren
         ISettings settings = initSettings();
-        FunctionManager model = new FunctionManager(new IParser[] {new HornerParser()});
+        FunctionManager model = new FunctionManager(new IParser[]{new HornerParser()});
         view = new GuiMock(settings);
-        
+
         bl = new BusinessLogic(view, model, settings);
-    } 
-    
-    private ISettings initSettings(){
+    }
+
+    private ISettings initSettings() {
         var settings = new SettingsMock();
         settings.logger = Logger.getGlobal();
         settings.calculateEveryXPixels = 1;
         settings.initialOriginX = 0;
         settings.initialOriginY = 0;
         settings.initialPixelToUnitRatio = 1;
-        settings.initialPlotHeight = 10;
-        settings.initialPlotWidth = 10;
+        settings.initialPlotHeight = 20;
+        settings.initialPlotWidth = 20;
         settings.threadpoolSize = 8;
         // settings.theme = ;
         return settings;
     }
-    
+
     @Test
-    public void AddFunctionTest(){
-        try {
-            bl.addFunction(TEST_FUNCTION_NAME, TEST_FUNCTION, Color.BLUE);
-            var functionInfo = view.drawingInformation.getFunctionInfo();
-            Assert.assertEquals(1, functionInfo.length);
-        } catch (FunctionParsingException ex) {
-            Assert.fail("Parsen fehlgeschlagen: " + ex.getMessage());
-        }
+    public void ZoomTest() throws FunctionParsingException {
+        // Raus zoomen, Mausposition Mitte 1. Quadrant.
+        bl.zoom(2, new Tuple<>(15, 15));
+        var intervallX = view.drawingInformation.getIntervallX();
+        var intervallY = view.drawingInformation.getIntervallX();
+        Assert.assertEquals(-39, (double)intervallX.getItem1(), 0);
+        Assert.assertEquals(21, (double)intervallX.getItem2(), 0);
+        Assert.assertEquals(-39, (double)intervallY.getItem1(), 0);
+        Assert.assertEquals(21, (double)intervallX.getItem2(), 0);
     }
 }

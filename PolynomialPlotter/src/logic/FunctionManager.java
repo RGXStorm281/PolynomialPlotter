@@ -7,6 +7,7 @@ package logic;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Logger;
 import java.awt.Color;
 
 import model.IFunction;
@@ -196,8 +197,7 @@ public class FunctionManager {
     			return parser.parse(functionName, functionString);
     		}
     		catch (FunctionParsingException e) {
-    			// TODO Loggen
-    			System.out.println(e.getResponseCode() + " - " + e.getMessage());
+    			Logger.getGlobal().severe(e.getResponseCode() + " - " + e.getMessage());
     		}
     	}
     	

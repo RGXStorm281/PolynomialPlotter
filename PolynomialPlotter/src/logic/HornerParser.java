@@ -1,6 +1,7 @@
 package logic;
 
 import java.util.Arrays;
+import java.util.logging.Logger;
 
 import model.HornerFunction;
 
@@ -38,7 +39,7 @@ public class HornerParser implements IParser {
 			return new HornerFunction(functionName, function, hornerElementArray);
 		}
 		catch(Exception e) {
-			// TODO TV: Loggen
+			Logger.getGlobal().severe(e.getMessage());
 			throw new FunctionParsingException(ParsingResponseCode.ParsingFailed, "'" + function + "' konnte nicht geparsed werden");
 		}
 	}
@@ -372,7 +373,7 @@ public class HornerParser implements IParser {
 	private static double[] cleanPHA(double[] pHA) {
 		int i = pHA.length - 1;
 		while(i >= 0 
-				&& Math.round(pHA[i]) == 0) { // TODO TV Vergleich umstelle.
+				&& Math.round(pHA[i]) == 0) {
 			i--;
 		}
 		return Arrays.copyOfRange(pHA, 0, i + 1);

@@ -236,7 +236,7 @@ public class GUI extends JFrame implements IGUI {
             int uni = (int) chars[i];
             if (uni == 94) {
                 superscripted = !superscripted;
-                if(chars[i+1] == 'x')return str;
+                if(chars[i+1] == 'x' || chars[i+1]=='-' || chars[i+1] == '(')return str;
                 continue;
             }
             if (!superscripted) {

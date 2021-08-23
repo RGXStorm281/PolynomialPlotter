@@ -14,7 +14,7 @@ import logic.FunctionParsingException;
 import logic.HornerParser;
 import logic.IParser;
 import org.junit.*;
-import startup.ISettings;
+import model.ISettings;
 
 /**
  *

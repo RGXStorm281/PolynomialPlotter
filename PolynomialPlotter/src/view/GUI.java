@@ -19,7 +19,7 @@ import event.IFunctionListener;
 import event.IPlotListener;
 import logic.FunctionParsingException;
 import model.IFunction;
-import startup.ISettings;
+import model.ISettings;
 
 /**
  * @author raphaelsack

@@ -10,7 +10,7 @@ import event.IFunctionListener;
 import event.IPlotListener;
 import model.DrawingInformationContainer;
 import model.IFunction;
-import startup.ISettings;
+import model.ISettings;
 import view.IGUI;
 
 /**

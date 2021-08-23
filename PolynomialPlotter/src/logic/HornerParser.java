@@ -1,6 +1,7 @@
 package logic;
 
 import java.util.Arrays;
+import java.util.logging.Logger;
 
 import model.HornerFunction;
 
@@ -13,7 +14,7 @@ public class HornerParser implements IParser {
 	private static char[] operators = {'+', '-', '*', '/', '^'};
 	
 	@Override
-	public HornerFunction parse(String function) throws FunctionParsingException {
+	public HornerFunction parse(String functionName, String function) throws FunctionParsingException {
 	
 		try {
 			String fnct = function.replaceAll("\\s", "");
@@ -35,10 +36,10 @@ public class HornerParser implements IParser {
 			
 			double[] hornerElementArray = innerParse(fnct.toCharArray(), 0, fnct.length(), 0, 0);
 			
-			return new HornerFunction(hornerElementArray);
+			return new HornerFunction(functionName, function, hornerElementArray);
 		}
 		catch(Exception e) {
-			// TODO TV: Loggen
+			Logger.getGlobal().severe(e.getMessage());
 			throw new FunctionParsingException(ParsingResponseCode.ParsingFailed, "'" + function + "' konnte nicht geparsed werden");
 		}
 	}
@@ -372,7 +373,7 @@ public class HornerParser implements IParser {
 	private static double[] cleanPHA(double[] pHA) {
 		int i = pHA.length - 1;
 		while(i >= 0 
-				&& Math.round(pHA[i]) == 0) { // TODO TV Vergleich umstelle.
+				&& Math.round(pHA[i]) == 0) {
 			i--;
 		}
 		return Arrays.copyOfRange(pHA, 0, i + 1);

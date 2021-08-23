@@ -25,7 +25,7 @@ public class HornerFunctionTest {
 				-199.392
 		};	
 		
-		HornerFunction testFunction = new HornerFunction(testElements);
+		HornerFunction testFunction = new HornerFunction("f", "no display", testElements);
 		
 		double[] xValues = new double[] {
 				3.5,

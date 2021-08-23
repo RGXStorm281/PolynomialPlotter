@@ -7,6 +7,7 @@ package logic;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Logger;
 import java.awt.Color;
 
 import model.IFunction;
@@ -110,22 +111,21 @@ public class FunctionManager {
      * Leitet die mitgegebene Function ab, fügt diese als neue Function der Sammlung hinzu.
      * @param functionName
      * @return AbleitungFunctionName
-     * @throws Exception
+     * @throws FunctionParsingException
      */
     public String functionAbleitenForFunctionName(String functionName) throws FunctionParsingException {
     	
     	IFunction ableitung =  getFunction(functionName).getAbleitung();
-		String ableitungFunctionName = functionName + "'";
-    	if(!functionNameAddable(ableitungFunctionName)) {
-    		ableitungFunctionName = getAddableFunctionName();
+    	if(!functionNameAddable(ableitung.getFunctionName())) {
+    		throw new FunctionParsingException(ParsingResponseCode.NameAlreadyTaken, "Die Ableitungsfunktion " + ableitung.getFunctionName() + " existiert bereits.");
     	}
     	
-    	boolean ableitungAdded = this.add(ableitungFunctionName, ableitung);
+    	boolean ableitungAdded = this.add(ableitung.getFunctionName(), ableitung);
     	if(!ableitungAdded) {
     		throw new FunctionParsingException(ParsingResponseCode.AbleitenFailed, "Es ist ein unbekannter Fehler beim Hinzufügen der abgeleiteten Function aufgetreten.");
     	}
 
-		return ableitungFunctionName;
+		return ableitung.getFunctionName();
     }
     
     /** 
@@ -140,7 +140,7 @@ public class FunctionManager {
     		return false;
     	}
     	
-    	IFunction function = this.parse(functionString);
+    	IFunction function = this.parse(functionName, functionString);
     	if(function == null) {
     		return false;
     	}
@@ -190,15 +190,14 @@ public class FunctionManager {
      * @param functionString inputString.
      * @return geparste function, oder null.
      */
-    private IFunction parse(String functionString) {
+    private IFunction parse(String functionName, String functionString) {
     	for (IParser parser:
 			parserArray) {
     		try {
-    			return parser.parse(functionString);
+    			return parser.parse(functionName, functionString);
     		}
     		catch (FunctionParsingException e) {
-    			// TODO Loggen
-    			System.out.println(e.getResponseCode() + " - " + e.getMessage());
+    			Logger.getGlobal().severe(e.getResponseCode() + " - " + e.getMessage());
     		}
     	}
     	

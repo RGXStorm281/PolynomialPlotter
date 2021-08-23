@@ -6,9 +6,9 @@ import model.UniversalFunction;
 public class UniversalParser implements IParser {
 
 	@Override
-	public IFunction parse(String function) throws FunctionParsingException {
+	public IFunction parse(String functionName, String function) throws FunctionParsingException {
 		// erstellt eine neue IFunction.
-		var uFunction =  new UniversalFunction(function);
+		var uFunction =  new UniversalFunction(functionName, function);
 		
 		// prüft, ob die function generell berechenbar ist
 		try {

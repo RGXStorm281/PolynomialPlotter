@@ -15,35 +15,30 @@ import java.util.logging.*;
  *
  * @author robinepple
  */
-public class Settings {
+public class Settings implements ISettings {
     
 	//Logging.
-	public static Logger LOGGER;
+	private final Logger LOGGER;
 	
     // Plot.
-    public final int INITIAL_PLOT_WIDTH;
-    public final int INITIAL_PLOT_HEIGHT;
-    public final int INITIAL_PIXEL_TO_UNIT_RATIO;
-    public final int SUB_SQUARE_GRID;
-    public final int SQUARE_SCALE;
-    public final String THEME;
+    private final int INITIAL_PLOT_WIDTH;
+    private final int INITIAL_PLOT_HEIGHT;
+    private final int INITIAL_PIXEL_TO_UNIT_RATIO;
+    private final int SUB_SQUARE_GRID;
+    private final int SQUARE_SCALE;
+    private final String THEME;
     
     // Standardposition.
-    public final int INITIAL_ORIGIN_X;
-    public final int INITIAL_ORIGIN_Y;
-    
-    // Einstellungen für den Zoom.
-    public final double INITIAL_ZOOM;
-    public final double MIN_ZOOM;
-    public final double MAX_ZOOM;
-    public final float STANDARD_ZOOM_SCALE;
-    public final float INCREASED_ZOOM_SCALE;
+    private final int INITIAL_ORIGIN_X;
+    private final int INITIAL_ORIGIN_Y;
     
     // Berechnung der Funktionswerte.
-    public final int CALCULATE_EVERY_X_PIXELS;
-    public final int THREADPOOL_SIZE;
+    private final int CALCULATE_EVERY_X_PIXELS;
+    private final int THREADPOOL_SIZE;
 
-    public Settings(String path) throws FileNotFoundException, IOException {
+    public Settings(String path, Logger logger) throws FileNotFoundException, IOException {
+        this.LOGGER = logger;
+        
         Properties propertiesFile = new Properties();
         propertiesFile.load(new FileReader(path));
 
@@ -57,14 +52,62 @@ public class Settings {
         this.INITIAL_ORIGIN_X = Integer.parseInt(propertiesFile.getProperty("initialOriginX"));
         this.INITIAL_ORIGIN_Y= Integer.parseInt(propertiesFile.getProperty("initialOriginY"));
 
-        this.INITIAL_ZOOM = Double.parseDouble(propertiesFile.getProperty("initialZoom"));
-        this.MIN_ZOOM = Double.parseDouble(propertiesFile.getProperty("minZoom"));
-        this.MAX_ZOOM = Double.parseDouble(propertiesFile.getProperty("maxZoom"));
-        this.STANDARD_ZOOM_SCALE = Float.parseFloat(propertiesFile.getProperty("standardZoomScale"));
-        this.INCREASED_ZOOM_SCALE = Float.parseFloat(propertiesFile.getProperty("increasedZoomScale"));
-
         this.CALCULATE_EVERY_X_PIXELS = Integer.parseInt(propertiesFile.getProperty("calculateEveryXPixels"));
         this.THREADPOOL_SIZE = Integer.parseInt(propertiesFile.getProperty("threadpoolSize"));
-        
     }    
+
+    @Override
+    public Logger getLogger() {
+        return LOGGER;
+    }
+
+    @Override
+    public int getInitialPlotWidth() {
+        return INITIAL_PLOT_WIDTH;
+    }
+
+    @Override
+    public int getInitialPlotHeight() {
+        return INITIAL_PLOT_HEIGHT;
+    }
+
+    @Override
+    public int getInitialPixelToUnitRatio() {
+        return INITIAL_PIXEL_TO_UNIT_RATIO;
+    }
+
+    @Override
+    public int getSubSquareGrid() {
+        return SUB_SQUARE_GRID;
+    }
+
+    @Override
+    public int getSquareScale() {
+        return SQUARE_SCALE;
+    }
+
+    @Override
+    public String getTheme() {
+        return THEME;
+    }
+
+    @Override
+    public int getInitialOriginX() {
+        return INITIAL_ORIGIN_X;
+    }
+
+    @Override
+    public int getInitialOriginY() {
+        return INITIAL_ORIGIN_Y;
+    }
+
+    @Override
+    public int getCalculateEveryXPixels() {
+        return CALCULATE_EVERY_X_PIXELS;
+    }
+
+    @Override
+    public int getThreadpoolSize() {
+        return THREADPOOL_SIZE;
+    }
 }

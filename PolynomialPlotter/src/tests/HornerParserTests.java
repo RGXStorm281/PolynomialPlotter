@@ -39,7 +39,7 @@ public class HornerParserTests {
 			
 			String erwartetString = Arrays.toString(erwarteteFaktoren[i]);
 			try {
-				String functionString = hP.parse(functions[i]).toString();
+				String functionString = hP.parse("f", functions[i]).toString();
 				
 				// gibt Werte aus
 				System.out.println("In: " + functions[i]);

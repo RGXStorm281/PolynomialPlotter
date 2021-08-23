@@ -9,13 +9,10 @@ import java.awt.BasicStroke;
 import java.awt.Point;
 
 import javax.swing.JComponent;
-import javax.swing.plaf.FontUIResource;
 
 import event.FunctionEvent;
 import event.FunctionVisibilityToggledEvent;
 import view.FunctionDialog.DialogType;
-import view.GUI.FontFamily;
-import view.GUI.FontStyle;
 
 import java.awt.RenderingHints;
 import java.awt.geom.GeneralPath;
@@ -33,8 +30,8 @@ import model.Tuple;
 
 public class JFunctionComponent extends JComponent implements MouseMotionListener {
 
-    private String functionString; // Ganzer Funktions-String
-    private String functionChar; // Nur der Name
+    private String functionTerm; // Ganzer Funktions-String
+    private String functionName; // Nur der Name
 
     private StyleClass styleClass;
     private FunctionDialog functionEditDialog;
@@ -80,8 +77,8 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
     public JFunctionComponent(StyleClass styleClass, String functionChar, String functionString, Color circleColor) {
         super();
         this.circleColor = circleColor;
-        this.functionString = functionString;
-        this.functionChar = functionChar;
+        this.functionTerm = functionString;
+        this.functionName = functionChar;
         this.styleClass = styleClass;
         functionStringColor = styleClass.FUNCTION_CARD_FG;
         
@@ -127,7 +124,6 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
                     for (IFunctionListener listener : functionListeners){
                         listener.functionDeleted(functionDeletedEvent);
                     }
-                    destroy();
                     return;
                 }
                 if (isInCircleButtonBounds(e)) {
@@ -140,106 +136,104 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
                 }
                 JFunctionComponent t = (JFunctionComponent)(e.getSource());
                 functionEditDialog = new FunctionDialog(t,DialogType.EDIT,styleClass);
-                functionEditDialog.setFunctionString(t.functionString);
+                functionEditDialog.setFunctionString(t.getDisplayText());
                 functionEditDialog.setColor(t.circleColor);
-                functionEditDialog.setLastFunctionChar(t.functionChar);
+                functionEditDialog.setLastFunctionChar(t.functionName);
                 for(IFunctionListener listener : functionListeners)functionEditDialog.addFunctionListener(listener);
                 functionEditDialog.setLocationRelativeTo(t);
                 functionEditDialog.start();
             }
         });
             
-        }
+    }
         
-        /**
-         * Enternt sich selbst aus seinem Parent und löscht das Objekt
-         */
-        protected void destroy() {
-            var vBox = getParent();
-            var sideBar = (Sidebar) vBox.getParent();
-            sideBar.removeJFunctionComponent(this);
-        }
-        
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            if (cardHMargin == 0.0f) cardHMargin = (int) (getWidth() * ((1 - cardWidthPercent) / 2)); // Horizontal-Margin = Der Rest der Breite (ohne der Karte) / 2. 
-            if(cardWidth == 0.0f) cardWidth = (int) (getWidth() * cardWidthPercent);
-            addMouseMotionListener(this);
-            Graphics2D g2d = (Graphics2D) g;
-            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2d.setColor(Color.BLACK);
-            g2d.setColor(isVisible ? currentCardBg : currentCardBg.darker());
-            g2d.fillRoundRect((int) (cardHMargin), (int) (cardVMargin), (int) (cardWidth),
-            (int) (getHeight() - cardVMargin * 2), 20, 20);
-            paintColorCircle(g2d);
-            paintFunctionString(g2d);
-            paintCloseButton(g2d);
-            // paintEditButton(g2d);
-        }
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        if (cardHMargin == 0.0f) cardHMargin = (int) (getWidth() * ((1 - cardWidthPercent) / 2)); // Horizontal-Margin = Der Rest der Breite (ohne der Karte) / 2. 
+        if(cardWidth == 0.0f) cardWidth = (int) (getWidth() * cardWidthPercent);
+        addMouseMotionListener(this);
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setColor(Color.BLACK);
+        g2d.setColor(isVisible ? currentCardBg : currentCardBg.darker());
+        g2d.fillRoundRect((int) (cardHMargin), (int) (cardVMargin), (int) (cardWidth),
+        (int) (getHeight() - cardVMargin * 2), 20, 20);
+        paintColorCircle(g2d);
+        paintFunctionString(g2d);
+        paintCloseButton(g2d);
+        // paintEditButton(g2d);
+    }
        
-        /**
-         * malt den Close Button
-         * 
-         * @param g2d
-         */
-        private void paintCloseButton(Graphics2D g2d) {
-            g2d.translate(0, -getHeight() / 2);
-            Koordinate buttonCenter = new Koordinate(cardHMargin + closeButtonMargin, cardVMargin + closeButtonMargin);
-            if (closeCrossPath == null) { 
-                // Speichert einen Pfad nach dem ersten berechnen ab (Spart etwas Rechenzeit ein)
+    /**
+     * malt den Close Button
+     * 
+     * @param g2d
+     */
+    private void paintCloseButton(Graphics2D g2d) {
+        g2d.translate(0, -getHeight() / 2);
+        Koordinate buttonCenter = new Koordinate(cardHMargin + closeButtonMargin, cardVMargin + closeButtonMargin);
+        if (closeCrossPath == null) { 
+            // Speichert einen Pfad nach dem ersten berechnen ab (Spart etwas Rechenzeit ein)
 
-                // Nach: e^i*a = (sin(a)+cos(a)i)
-                /**
-                 * Mit x = sin(a) * r und y = cos(a) * r bekommt man einen Punkt auf einem Kreis (mit radius = r), die Position auf dem Kreis wird mit Radianten angegeben (a).
-                 * Über einen Offset lässt sich dieser Punkt frei bewegen.
-                 * z.B. x1
-                 *  sin(0.25*pi) --> x Position auf dem Einheitskreis beim Radianten 0.25*pi (45 Grad)
-                 *  (buttonRadius*LengthFactor) --> Länge der Linie
-                 *  buttonCenter.x + radius --> Offset
-                 * 
-                 * Da PI = 180Grad ist, nehmen wir für eine Linie immer einen Punkt auf dem Kreis welcher 45 Grad in eine Richtung rotiert ist und Verbinden ihn mit einem Punkt, welcher 180-Grad = PI weiter auf dem Kreis rotiert um eine Diagonale zu erhalten.
-                 * Wenn man das dann 2 mal macht, hat mein ein Kreuz mit einer insgesamten 45° Drehung
-                 */
-                closeCrossPath = new GeneralPath();
-                int x1 = (int) (Math.sin(0.25 * Math.PI) * (closeButtonRadius * closeButtonCrossLenghtFactor) + buttonCenter.getX() + closeButtonRadius);
-                int y1 = (int) (Math.cos(0.25 * Math.PI) * (closeButtonRadius * closeButtonCrossLenghtFactor) + buttonCenter.getY() + closeButtonRadius);
-                int x2 = (int) (Math.sin(1.25 * Math.PI) * (closeButtonRadius * closeButtonCrossLenghtFactor) + buttonCenter.getX() + closeButtonRadius);
-                int y2 = (int) (Math.cos(1.25 * Math.PI) * (closeButtonRadius * closeButtonCrossLenghtFactor) + buttonCenter.getY() + closeButtonRadius);
-                closeCrossPath.moveTo(x1, y1);
-                closeCrossPath.lineTo(x2, y2);
-                int x3 = (int) (Math.sin(0.75 * Math.PI) * (closeButtonRadius * closeButtonCrossLenghtFactor) + buttonCenter.getX() + closeButtonRadius);
-                int y3 = (int) (Math.cos(0.75 * Math.PI) * (closeButtonRadius * closeButtonCrossLenghtFactor) + buttonCenter.getY() + closeButtonRadius);
-                int x4 = (int) (Math.sin(1.75 * Math.PI) * (closeButtonRadius * closeButtonCrossLenghtFactor) + buttonCenter.getX() + closeButtonRadius);
-                int y4 = (int) (Math.cos(1.75 * Math.PI) * (closeButtonRadius * closeButtonCrossLenghtFactor) + buttonCenter.getY() + closeButtonRadius);
-                closeCrossPath.moveTo(x3, y3);
-                closeCrossPath.lineTo(x4, y4);
-            }
-            g2d.setColor(closeButtonBgCurrentColor);
-            g2d.fillOval((int) buttonCenter.getX(), (int) buttonCenter.getY(), closeButtonRadius * 2,
-            closeButtonRadius * 2);
-            g2d.setStroke(closeButtonCrossStroke);
-            g2d.setPaint(closeButtonCrossCurrentColor);
-            g2d.draw(closeCrossPath);
-            
+            // Nach: e^i*a = (sin(a)+cos(a)i)
+            /**
+             * Mit x = sin(a) * r und y = cos(a) * r bekommt man einen Punkt auf einem Kreis (mit radius = r), die Position auf dem Kreis wird mit Radianten angegeben (a).
+             * Über einen Offset lässt sich dieser Punkt frei bewegen.
+             * z.B. x1
+             *  sin(0.25*pi) --> x Position auf dem Einheitskreis beim Radianten 0.25*pi (45 Grad)
+             *  (buttonRadius*LengthFactor) --> Länge der Linie
+             *  buttonCenter.x + radius --> Offset
+             * 
+             * Da PI = 180Grad ist, nehmen wir für eine Linie immer einen Punkt auf dem Kreis welcher 45 Grad in eine Richtung rotiert ist und Verbinden ihn mit einem Punkt, welcher 180-Grad = PI weiter auf dem Kreis rotiert um eine Diagonale zu erhalten.
+             * Wenn man das dann 2 mal macht, hat mein ein Kreuz mit einer insgesamten 45° Drehung
+             */
+            closeCrossPath = new GeneralPath();
+            int x1 = (int) (Math.sin(0.25 * Math.PI) * (closeButtonRadius * closeButtonCrossLenghtFactor) + buttonCenter.getX() + closeButtonRadius);
+            int y1 = (int) (Math.cos(0.25 * Math.PI) * (closeButtonRadius * closeButtonCrossLenghtFactor) + buttonCenter.getY() + closeButtonRadius);
+            int x2 = (int) (Math.sin(1.25 * Math.PI) * (closeButtonRadius * closeButtonCrossLenghtFactor) + buttonCenter.getX() + closeButtonRadius);
+            int y2 = (int) (Math.cos(1.25 * Math.PI) * (closeButtonRadius * closeButtonCrossLenghtFactor) + buttonCenter.getY() + closeButtonRadius);
+            closeCrossPath.moveTo(x1, y1);
+            closeCrossPath.lineTo(x2, y2);
+            int x3 = (int) (Math.sin(0.75 * Math.PI) * (closeButtonRadius * closeButtonCrossLenghtFactor) + buttonCenter.getX() + closeButtonRadius);
+            int y3 = (int) (Math.cos(0.75 * Math.PI) * (closeButtonRadius * closeButtonCrossLenghtFactor) + buttonCenter.getY() + closeButtonRadius);
+            int x4 = (int) (Math.sin(1.75 * Math.PI) * (closeButtonRadius * closeButtonCrossLenghtFactor) + buttonCenter.getX() + closeButtonRadius);
+            int y4 = (int) (Math.cos(1.75 * Math.PI) * (closeButtonRadius * closeButtonCrossLenghtFactor) + buttonCenter.getY() + closeButtonRadius);
+            closeCrossPath.moveTo(x3, y3);
+            closeCrossPath.lineTo(x4, y4);
         }
+        g2d.setColor(closeButtonBgCurrentColor);
+        g2d.fillOval((int) buttonCenter.getX(), (int) buttonCenter.getY(), closeButtonRadius * 2,
+        closeButtonRadius * 2);
+        g2d.setStroke(closeButtonCrossStroke);
+        g2d.setPaint(closeButtonCrossCurrentColor);
+        g2d.draw(closeCrossPath);
+
+    }
         
-        public void setFunctionString(String functionString){
-            this.functionString = functionString;
-            revalidate();
-            repaint();
-        }
+    public void setFunctionString(String functionString){
+        this.functionTerm = functionString;
+        revalidate();
+        repaint();
+    }
     
+    /**
+     * Erstellt den Anzeige-Text aus Funktionsname und Funktionsterm.
+     * @return Der Anzeige-Text.
+     */
+    private String getDisplayText(){
+        return functionName  + "(x) = " + functionTerm;
+    }
         
-        /**
-         * Malt den Funktions-String
+    /**
+     * Malt den Funktions-String
      * 
      * @param g2d
      */
     private void paintFunctionString(Graphics2D g2d) {
         g2d.setColor(isVisible ? functionStringColor : functionStringColor.darker());
         g2d.setFont(GUI.getFont(20));
-        String visibleString = functionString;
+        String visibleString = getDisplayText();
         boolean overflow = false;
         double height = g2d.getFont().createGlyphVector(g2d.getFontRenderContext(), "f").getVisualBounds().getHeight();
         int x = (int) (getColorCirclePosition().getItem1() + circleRadius * 2 + circleMargin);
@@ -454,9 +448,9 @@ public class JFunctionComponent extends JComponent implements MouseMotionListene
     }
 
     public void editFunction(String fs, Color functionColor) {
-        this.functionString = fs;
+        this.functionTerm = fs;
         this.circleColor = functionColor;
-        System.out.println(this.functionString);
+        System.out.println(this.functionTerm);
         revalidate();
         repaint();
     }

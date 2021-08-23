@@ -18,6 +18,7 @@ import view.FunctionDialog.DialogType;
 import view.GUI.FontFamily;
 import view.GUI.FontStyle;
 import event.IFunctionListener;
+import model.IFunction;
 
 /**
  * @author raphaelsack
@@ -70,18 +71,27 @@ public class Sidebar extends JPanel {
         layout.setHgap(0);
         layout.setVgap(0);
     }
-
+    
+    /**
+     * Aktualisiert die Anzeige der Funktionsliste mit der mitgegebenen Liste.
+     * @param functions Die Funktionen, die dem Plotter aktuell zur Verfügung stehen.
+     */
+    public void updateFunctionComponents(IFunction[] functions){
+        functionList.clear();
+        for(var function : functions){
+            addJFunctionComponent(function);
+        }
+        renderJFunctionComponents();
+    }
     
     /** Fügt ein JFunctionComponent hinzu
-     * @param functionChar Funktions-Identifier
-     * @param functionString Funktions-String
-     * @param functionColor Funkctions-Farbe
+     * @param function Das Funktionsobjekt.
      */
-    public void addJFunctionComponent(String functionChar,String functionString, Color functionColor){
-        JFunctionComponent jfc = new JFunctionComponent(this.styleClass,functionChar, functionString, functionColor);
+    private void addJFunctionComponent(IFunction function){
+        JFunctionComponent jfc = new JFunctionComponent(this.styleClass, function.getFunctionName(), function.getDisplayString(), function.getColor());
+        jfc.setVisibility(function.isVisible());
         for(IFunctionListener functionListener: functionListeners)jfc.addFunctionListener(functionListener);
         functionList.add(jfc);
-        renderJFunctionComponents();
     }
 
 
@@ -92,7 +102,7 @@ public class Sidebar extends JPanel {
     /**
      * Rendert alle JFunctionComponenten der JFunctionComponent-ArrayList
      */
-    public void renderJFunctionComponents(){
+    private void renderJFunctionComponents(){
         vFunctionsBox.removeAll();
         vFunctionsBox.add(heading);
         vFunctionsBox.add(addFunctionButton);
@@ -107,7 +117,7 @@ public class Sidebar extends JPanel {
     /** 
      * @return String
      */
-    public String getFunction() {
+    private String getFunction() {
         return functionDialog.getFunctionString();
     }
 

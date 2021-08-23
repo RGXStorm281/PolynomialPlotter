@@ -6,11 +6,17 @@ import java.util.Arrays;
 public class HornerFunction extends Function implements IFunction {
 	
 	private double[] hornerElements;
-	private Color functionColor; 
-	
-	public HornerFunction(double[] elements)
+    
+	public HornerFunction(String functionName, String displayString, double[] elements)
 	{
-		hornerElements = elements;
+        super(functionName, displayString);
+		this.hornerElements = elements;
+	}
+    
+	public HornerFunction(String functionName, String displayString, double[] elements, Color functionColor)
+	{
+        super(functionName, displayString, functionColor);
+		this.hornerElements = elements;
 	}
         
     /**
@@ -29,30 +35,16 @@ public class HornerFunction extends Function implements IFunction {
 		koordinate = new Koordinate(xValue, yValue);
 		return koordinate;
 	}
-
-    /**
-    * @inheritDoc 
-    */
-	@Override
-	public void setColor(Color color) {
-		functionColor = color;
-	}
-
-    /**
-    * @inheritDoc 
-    */
-	@Override
-	public Color getColor() {
-		return functionColor;
-	}
 	
 	/**
 	 * 
 	 */
 	@Override
 	public IFunction getAbleitung() {
+        var ableitungName = getAbleitungName();
 		if(hornerElements.length < 2) {
-			return new HornerFunction(new double[] {0});
+            var elements = new double[] {0};
+			return new HornerFunction(ableitungName, createDisplayStringForElements(elements), elements);
 		}
 		
 		double[] ableitung = new double[hornerElements.length - 1];
@@ -60,8 +52,65 @@ public class HornerFunction extends Function implements IFunction {
 			ableitung[i - 1] = i * hornerElements[i];
 		}
 		
-		return new HornerFunction(ableitung);
+		return new HornerFunction(ableitungName, createDisplayStringForElements(ableitung), ableitung);
 	}
+    
+    /**
+     * Gibt den Namen der Ableitung zurück.
+     * @return Der Name der Ableitung.
+     */
+    private String getAbleitungName(){
+        return functionName + "'";
+    }
+    
+    /**
+     * Erstellt einen Anzeige-String für eine Funktion im Schema "-x^2 + 3x - 2"
+     * @param multipliers die Horner-Elemente (müssen so mitgegeben, damit die Funktion im Konstruktor aufgerufen werden kann).
+     * @return Den Anzeige-String.
+     */
+    private String createDisplayStringForElements(double[] hElements){
+        String display = "";
+        
+        for(int i = 0; i < hElements.length; i++){
+            var currentMultiplier = hElements[i];
+            var isLast = i == hElements.length-1;
+            
+            if(currentMultiplier == 0){
+                continue;
+            }
+            
+            // Betrag des Horner Elements nehmen, z.B. "5".
+            String summand = Double.toString(Math.abs(currentMultiplier));
+            // Dann x^n dahinter schreiben.
+            if(i == 1){
+                summand = summand + "x";
+            }else if(i > 1){
+                summand = summand + "x^" + i;
+            }
+            
+            // Plus/Minus davor schreiben.
+            if(currentMultiplier < 0){
+                if(isLast){
+                    summand = "-" + summand;
+                }else{
+                    summand = " - " + summand;
+                }
+            }else{
+                if(!isLast){
+                    summand = " + " + summand;
+                }
+            }
+            
+            // zusammen setzen.
+            display = summand + display;
+        }
+        
+        if(display.equals("")){
+            display = "0";
+        }
+        
+        return display;
+    }
 	
 	/**
 	 * Gibt das HornerElement als String eines gerundeten Doubles zurück (5 Nachkommastellen).

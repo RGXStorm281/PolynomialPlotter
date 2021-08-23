@@ -11,9 +11,14 @@ import net.objecthunter.exp4j.tokenizer.UnknownFunctionOrVariableException;
 public class UniversalFunction extends Function implements IFunction {
 
 	private String functionalTerm;
-	private Color functionColor;
 	
-	public UniversalFunction(String term){
+	public UniversalFunction(String functionName, String term){
+        super(functionName, term);
+		functionalTerm = term;
+	}
+	
+	public UniversalFunction(String functionName, String term, Color functionColor){
+        super(functionName, term, functionColor);
 		functionalTerm = term;
 	}
 	
@@ -49,21 +54,5 @@ public class UniversalFunction extends Function implements IFunction {
 	@Override
 	public String toString(){
 		return functionalTerm;
-	}
-
-    /**
-    * @inheritDoc 
-    */
-	@Override
-	public void setColor(Color color) {
-		functionColor = color;
-	}
-
-    /**
-    * @inheritDoc 
-    */
-	@Override
-	public Color getColor() {
-		return functionColor;
 	}
 }

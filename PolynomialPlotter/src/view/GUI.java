@@ -1,7 +1,6 @@
 package view;
 
 import java.awt.BorderLayout;
-import java.awt.Font;
 import java.awt.Color;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -25,23 +24,19 @@ import startup.ISettings;
  * @author raphaelsack
  */
 public class GUI extends JFrame implements IGUI {
-
-    enum FontFamily {
-        RUBIK, ROBOTO, INCONSOLATA, ASAP
-    }
-
-    enum FontStyle {
-        THIN, ITALIC, BOLD, REGULAR, LIGHT
-    }
-
+    
+ 
+    
     // Aufteilung der GUI in 3 Hauptkomponenten
     private JCustomMenuBar menubar;
     private Sidebar sidebar_panel;
     private JScrollPane scroll_sidebar_panel;
     private JPlotter plotter_panel;
-
+    
     private final ISettings settings;
     private StyleClass styleClass;
+    
+
 
     public GUI(ISettings settings) throws FileNotFoundException, IOException {
         super();
@@ -88,7 +83,7 @@ public class GUI extends JFrame implements IGUI {
         setLocationRelativeTo(null);
 
     }
-
+    @Override
     public void updateTheme() {
         styleClass.update();
         menubar.recolor();
@@ -96,7 +91,7 @@ public class GUI extends JFrame implements IGUI {
         plotter_panel.recolor();
     }
 
-    public void changeTheme(String newPath) {
+    protected void changeTheme(String newPath) {
         styleClass.change(newPath);
         menubar.recolor();
         sidebar_panel.recolor();
@@ -130,39 +125,24 @@ public class GUI extends JFrame implements IGUI {
         }
     }
 
+    @Override
     public JPlotter getPlotter() {
         return this.plotter_panel;
     }
-
+    @Override
     public void start() {
         if (!isVisible()) {
             setVisible(true);
         }
     }
 
-    private static Font ttfBase = null;
-    private static Font font = null;
-    private static InputStream myStream = null;
-    private static final String FONT_PATH_REGULAR = "data/Asap/Asap-Regular.ttf";
 
-    public static Font getFont(float f) {
-        try {
-            myStream = GUI.class.getResourceAsStream(FONT_PATH_REGULAR);
-            ttfBase = Font.createFont(Font.TRUETYPE_FONT, myStream);
-            font = ttfBase.deriveFont(Font.PLAIN, f);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            System.err.println("Font not loaded.");
-        }
-
-        return font;
-
-    }
-
+   
+    @Override
     public int getPlotWidth() {
         return plotter_panel.getWidth();
     }
-
+    @Override    
     public int getPlotHeight() {
         return plotter_panel.getHeight();
     }
@@ -184,10 +164,6 @@ public class GUI extends JFrame implements IGUI {
 
     }
 
-    public void closeFunctionDialog() {
-        this.sidebar_panel.getFunctionDialog().closeDialog();
-    }
-
     @Override
     public void addPlotListener(IPlotListener plotListener) {
         this.plotter_panel.addPlotListener(plotListener);
@@ -202,7 +178,7 @@ public class GUI extends JFrame implements IGUI {
      * @param str dekorierter String
      * @return undekorierter String
      */
-    public static String undecorate(String str) {
+    protected static String undecorate(String str) {
         char[] chars = str.toCharArray();
         boolean superscripted = false;
         String res = "";
@@ -249,7 +225,7 @@ public class GUI extends JFrame implements IGUI {
      * @param str undekorierter String
      * @return dekorierter String
      */
-    public static String decorate(String str) {
+    protected static String decorate(String str) {
         char[] chars = str.toCharArray();
         if (chars.length == 0) {
             return "";
@@ -260,6 +236,7 @@ public class GUI extends JFrame implements IGUI {
             int uni = (int) chars[i];
             if (uni == 94) {
                 superscripted = !superscripted;
+                if(chars[i+1] == 'x')return str;
                 continue;
             }
             if (!superscripted) {

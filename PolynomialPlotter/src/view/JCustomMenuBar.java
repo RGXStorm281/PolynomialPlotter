@@ -6,7 +6,6 @@ import java.awt.event.WindowEvent;
 import java.awt.event.KeyEvent;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 import java.util.ResourceBundle;
 import java.awt.Font;
 import java.awt.Component;
@@ -28,9 +27,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
-
-import view.GUI.FontFamily;
-import view.GUI.FontStyle;
 
 /**
  * @author raphaelsack
@@ -156,7 +152,7 @@ public class JCustomMenuBar extends JMenuBar {
 
     public void recolor() {
         themeDialog.recolor();
-        Font font = GUI.getFont(15);
+        Font font = styleClass.getFont(15);
         for (Component c : getComponents()) {
             if (!(c instanceof JMenu)) {
                 continue;

@@ -1,6 +1,5 @@
 package view;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.awt.FlowLayout;
@@ -15,8 +14,6 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import view.FunctionDialog.DialogType;
-import view.GUI.FontFamily;
-import view.GUI.FontStyle;
 import event.IFunctionListener;
 import model.IFunction;
 
@@ -45,7 +42,7 @@ public class Sidebar extends JPanel {
         
         heading = new JPanel(); // Panel used for the Heading-Text (to set a Background)
         headingText = new JLabel("Polynomialplotter");
-        headingText.setFont(GUI.getFont(30)); // Set the font to size 30
+        headingText.setFont(styleClass.getFont(30)); // Set the font to size 30
         headingText.setForeground(this.styleClass.HEADING_FG_COLOR); 
         headingText.setAlignmentX(Component.CENTER_ALIGNMENT);
         headingText.setBorder(new EmptyBorder(10,50,10,50)); // Add a margin around the Text
@@ -113,13 +110,6 @@ public class Sidebar extends JPanel {
         repaint();
     }
 
-    
-    /** 
-     * @return String
-     */
-    private String getFunction() {
-        return functionDialog.getFunctionString();
-    }
 
     
     /** 

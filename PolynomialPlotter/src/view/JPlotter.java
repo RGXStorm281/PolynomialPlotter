@@ -70,12 +70,12 @@ public class JPlotter extends JPanel {
     public JPlotter(ISettings _settings, StyleClass styleClass) {
         this.styleClass = styleClass;
         this.settings = _settings;
-        this.subGrid = _settings.getSubSquareGrid();
+        this.subGrid = settings.getSubSquareGrid();
         this.plotBackground = styleClass.PLOT_BG;
         this.gridColor = styleClass.GIRD_COLOR;
         this.plotForeground = styleClass.PLOT_FG;
-        this.squareDivider = _settings.getSquareScale();
-        this.squareScale = _settings.getSquareScale();
+        this.squareDivider = settings.getSquareScale();
+        this.squareScale = settings.getSquareScale();
         addMouseWheelListener(new MouseWheelListener() {
             public void mouseWheelMoved(MouseWheelEvent e) {
                 float dZoom = e.isControlDown() ? 0.1f : 0.05f;
@@ -180,7 +180,7 @@ public class JPlotter extends JPanel {
         Tuple<Double,Double> yInterval = drawingInformation.getIntervallY();
         Tuple<Integer,Integer> heightInterval = new Tuple<Integer,Integer>(0, getHeight());
         Tuple<Integer,Integer> widthInterval = new Tuple<Integer,Integer>(0, getWidth());
-        Font font = GUI.getFont(15);
+        Font font = styleClass.getFont(15);
         g2d.setPaint(plotForeground);
         g2d.setFont(font);
         int stringHeight = (int) font.createGlyphVector(g2d.getFontRenderContext(), "1").getVisualBounds().getHeight(); // Höhe ist immer gleich, wird am anfang berechnet
@@ -275,7 +275,7 @@ public class JPlotter extends JPanel {
         Tuple<Integer,Integer> heightInterval = new Tuple<Integer,Integer>(0, getHeight());
         Tuple<Integer,Integer> widthInterval = new Tuple<Integer,Integer>(0, getWidth());
         g2d.setPaint(plotForeground);
-        g2d.setFont(GUI.getFont(15));
+        g2d.setFont(styleClass.getFont(15));
         g2d.setStroke(new BasicStroke(axisStrokeWidth));
         // Wenn Achse sichtbar ist, dann zeichne sie
         if(xInterval.getItem1()<=0 && xInterval.getItem2() >=0){

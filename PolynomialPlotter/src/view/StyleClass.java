@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Properties;
 import java.awt.Color;
+import java.awt.Font;
 
 /**
  * @author raphaelsack
@@ -39,6 +40,11 @@ public class StyleClass {
 
     private String currTheme;
     public Color MENU_ACCEL;
+
+    private static Font ttfBase = null;
+    private static Font font = null;
+    private static InputStream myStream = null;
+    private static final String FONT_PATH_REGULAR = "data/Asap/Asap-Regular.ttf";
 
     public StyleClass(String path) throws FileNotFoundException, IOException {
         currTheme = path;
@@ -79,6 +85,21 @@ public class StyleClass {
         currTheme = newPath;
         update();
     }
+
+
+    public Font getFont(float f){
+
+        try {
+            myStream = GUI.class.getResourceAsStream(FONT_PATH_REGULAR);
+            ttfBase = Font.createFont(Font.TRUETYPE_FONT, myStream);
+            font = ttfBase.deriveFont(Font.PLAIN, f);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            System.err.println("Font not loaded.");
+        }
+        return font;
+    }
+
 
     public void update() {
         Properties propertiesFile = new Properties();

@@ -8,7 +8,6 @@ package view;
 import model.DrawingInformationContainer;
 
 
-import java.awt.Color;
 import event.IFunctionListener;
 import event.IPlotListener;
 import model.IFunction;
@@ -42,14 +41,6 @@ public interface IGUI{
     public void updateFunctionList(IFunction[] functions);
 
     /**
-     * Mit den Funktionen kann ein neuer Listener hinzugefügt werden
-     * in diesem Listener werden dann bei jedem Aufruf, das Funktionsobjekt und
-     * die Farbe des Graphens geholt und gespeichert werden. 
-     */
-
-
-
-    /**
      * Fügt einen FunctionListener hinzu
      * @param functionListener
      */
@@ -65,5 +56,10 @@ public interface IGUI{
 
     int getPlotHeight();
 
+
+    public JPlotter getPlotter();
+
     public void updateTheme();
+
+    public void start();
 }

@@ -12,8 +12,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.border.Border;
 
-import view.GUI.FontFamily;
-import view.GUI.FontStyle;
 
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
@@ -46,7 +44,7 @@ public class ThemeDialog extends JFrame{
         buttonBackground = styleClass.BUTTON_BG;
         this.styleClass = styleClass;
         buttonForeground = styleClass.BUTTON_FG;
-        Font font = GUI.getFont(16);
+        Font font = styleClass.getFont(16);
         getContentPane().setBackground(styleClass.DIALOG_BG);
         MouseAdapter buttonAdapter = new MouseAdapter(){
             @Override

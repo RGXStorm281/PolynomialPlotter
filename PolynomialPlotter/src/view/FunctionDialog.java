@@ -3,6 +3,7 @@ package view;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JColorChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -27,8 +28,6 @@ import javax.swing.text.PlainDocument;
 import event.FunctionDerivedEvent;
 import event.FunctionEditedEvent;
 import event.FunctionEvent;
-import view.GUI.FontFamily;
-import view.GUI.FontStyle;
 
 import java.awt.Dimension;
 import java.awt.Cursor;
@@ -89,7 +88,7 @@ public class FunctionDialog extends JFrame {
         }
 
         // Font setzen
-        Font font = GUI.getFont(16);
+        Font font = styleClass.getFont(16);
         setFont(font);
 
         // Frame zum Dialog machen
@@ -298,7 +297,7 @@ public class FunctionDialog extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                Color col = CustomColorChooser.showDialog(null, "Farbe wählen", colorPanel.getBackground());
+                Color col = JColorChooser.showDialog(null, "Farbe wählen", colorPanel.getBackground());
                 if (col != null) {
                     colorPanel.setBackground(col);
                 }

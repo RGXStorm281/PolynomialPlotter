@@ -34,9 +34,6 @@ public class FunctionListener implements IFunctionListener {
         String functionName = e.getFunctionName();
 
         logic.addFunction(functionName, functionString, functionColor);
-        if(functionString.split("=").length == 1){
-            functionString = functionName+"(x) = "+functionString;
-        }
     }
 
     @Override

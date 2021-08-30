@@ -262,14 +262,7 @@ public class HornerParser implements IParser {
 	}
 
 	private static double[] subtraktion(double[] pHALeft, double[] pHARight) {
-		double[] newPHA = new double[pHARight.length];
-		
-		// multipliziert alle Werte in rechten Array *(-1)
-		for(int i = 0; i < pHARight.length; i++) {
-			newPHA[i] = pHARight[i] * (-1);
-		}
-		
-		return addition(pHALeft, newPHA);
+		return addition(pHALeft, multiplikation(pHARight, new double[]{-1}));
 	}
 
 	private static double[] multiplikation(double[] pHALeft, double[] pHARight) {
@@ -301,13 +294,6 @@ public class HornerParser implements IParser {
 		if(gradRight < 0
 			|| pHARight[0] == 0) {
 			throw new FunctionParsingException(ParsingResponseCode.ParsingFailed, "Division durch 0 nicht erlaubt.");
-		}
-
-		// ermittelt den niedrigstenGrad des linken pHA
-		int lowestGradLeft = 0;
-		while(lowestGradLeft < pHALeft.length 
-				&& pHALeft[lowestGradLeft] == 0) {
-			lowestGradLeft++;
 		}
 
 		int newLength = pHALeft.length - pHARight.length + 1;

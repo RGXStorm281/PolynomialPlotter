@@ -260,8 +260,6 @@ public class FunctionDialog extends JFrame {
                                                 lastFunctionChar));
                                 hideWarn();
                                 closeDialog();
-                                //TODO LE implement edit function with derived functionString
-                                //caller.editFunction(<FUNCTION_STRING_DER_ABLEITUNG>, colorPanel.getBackground());
 
                             } catch (FunctionParsingException ex) {
                                 Logger.getLogger(FunctionDialog.class.getName()).log(Level.SEVERE, null, ex);
@@ -378,7 +376,10 @@ public class FunctionDialog extends JFrame {
      * @param msg Fehlermeldung
      */
     protected void enableWarn(String msg) {
+    	//TODO LE move derive button when warning is enabled
         functionErrorLabel.setText(msg);
+        deriveButton.setBounds(265, 69 + functionErrorLabel.getHeight(), 89, 33);
+        cancelButton.setBounds(365, 69 + functionErrorLabel.getHeight(), 89, 33);
         colorLabel.setBounds(10, 71 + functionErrorLabel.getHeight(), 53, 20);
         colorPanel.setBounds(60, 68 + functionErrorLabel.getHeight(), 26, 26);
         functionErrorLabel.setVisible(true);

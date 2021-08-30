@@ -58,14 +58,11 @@ public class JCustomMenuBar extends JMenuBar {
                 fd.setDirectory("%USERPROFILE%\\Pictures");
                 String fileName = new SimpleDateFormat("'graph_'yyyyMMddHHmm'.png'").format(new Date());
                 fd.setFile(fileName);
-                fd.setFilenameFilter((dir, name) -> name.endsWith(".png"));
                 fd.setVisible(true);
                 String filename = fd.getDirectory() + fd.getFile();
                 if (filename != null) {
-
                     Container pane = gui.getPlotter();
-                    BufferedImage img = new BufferedImage(gui.getPlotWidth(), gui.getPlotHeight(),
-                            BufferedImage.TYPE_INT_RGB);
+                    BufferedImage img = new BufferedImage(gui.getPlotWidth(), gui.getPlotHeight(),BufferedImage.TYPE_INT_RGB);
                     Graphics2D g2d = img.createGraphics();
                     pane.printAll(g2d);
                     g2d.dispose();

@@ -96,7 +96,6 @@ public class JPlotter extends JPanel {
             public void mouseExited(MouseEvent e) {
                 setCursor(Cursor.getDefaultCursor());
             }
-
         });
         // MouseMotionListener für die Drag-Funktionalität
         addMouseMotionListener(new MouseMotionAdapter() {

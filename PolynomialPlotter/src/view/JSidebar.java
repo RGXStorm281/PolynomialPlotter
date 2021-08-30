@@ -21,7 +21,7 @@ import model.IFunction;
  * @author raphaelsack
  */
 
-public class Sidebar extends JPanel {
+public class JSidebar extends JPanel {
 
     private Box vFunctionsBox;
     private JPanel heading;
@@ -32,7 +32,7 @@ public class Sidebar extends JPanel {
     private List<JFunctionComponent> functionList = new ArrayList<JFunctionComponent>();
     private JLabel headingText;
 
-    public Sidebar(StyleClass styleClass) {
+    public JSidebar(StyleClass styleClass) {
         this.styleClass = styleClass;
         setBackground(this.styleClass.SIDEBAR_BG_COLOR);
         addFunctionButton = new JAddButton(this.styleClass);

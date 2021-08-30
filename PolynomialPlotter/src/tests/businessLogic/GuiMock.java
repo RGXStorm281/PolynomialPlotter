@@ -12,6 +12,7 @@ import model.DrawingInformationContainer;
 import model.IFunction;
 import startup.ISettings;
 import view.IGUI;
+import view.JPlotter;
 
 /**
  *
@@ -61,6 +62,18 @@ public class GuiMock implements IGUI {
 
     @Override
     public void updateTheme() {
+        
+    }
+
+    @Override
+    public JPlotter getPlotter() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void start() {
+        // TODO Auto-generated method stub
         
     }
     

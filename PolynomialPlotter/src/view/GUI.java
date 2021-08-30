@@ -29,7 +29,7 @@ public class GUI extends JFrame implements IGUI {
     
     // Aufteilung der GUI in 3 Hauptkomponenten
     private JCustomMenuBar menubar;
-    private Sidebar sidebar_panel;
+    private JSidebar sidebar_panel;
     private JScrollPane scroll_sidebar_panel;
     private JPlotter plotter_panel;
     
@@ -64,7 +64,7 @@ public class GUI extends JFrame implements IGUI {
         pack();
 
         // Split up in 2 Panes
-        sidebar_panel = new Sidebar(styleClass);
+        sidebar_panel = new JSidebar(styleClass);
         plotter_panel = new JPlotter(this.settings, styleClass);
         scroll_sidebar_panel = new JScrollPane(sidebar_panel);
         scroll_sidebar_panel.getVerticalScrollBar().setUI(new MyScrollBarUI(styleClass));

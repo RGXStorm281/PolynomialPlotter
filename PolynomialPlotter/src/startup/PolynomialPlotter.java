@@ -61,7 +61,7 @@ public class PolynomialPlotter {
                 @Override 
                 public void run(){
                     view.start();
-                    view.simulateAddFunction(Color.RED, "c(x) = 120960.0x^5 + 45360.0x^4 + 33600.0x^3 + 10080.0x^2 + 9360.0x + 11160.0", null);
+                    view.simulateAddFunction(Color.RED, "120960.0x^5 + 45360.0x^4 + 33600.0x^3 + 10080.0x^2 + 9360.0x + 11160.0", null);
                 }
             });
             

@@ -41,7 +41,7 @@ public class Settings implements ISettings {
         this.LOGGER = logger;
         
         Properties propertiesFile = new Properties();
-        propertiesFile.load(new FileReader(path));
+        propertiesFile.load(getClass().getResourceAsStream(path));
 
         this.INITIAL_PLOT_WIDTH = Integer.parseInt(propertiesFile.getProperty("initialPlotWidth"));
         this.INITIAL_PLOT_HEIGHT = Integer.parseInt(propertiesFile.getProperty("initialPlotHeight"));

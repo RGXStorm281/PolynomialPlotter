@@ -47,7 +47,7 @@ public class PolynomialPlotter {
             
             var logger = initLogger();
             // Objekte initialisieren
-            Settings settings = new Settings("src/startup/settings.properties", logger);
+            Settings settings = new Settings("settings.properties", logger);
             FunctionManager model = new FunctionManager(availableParsers);
             GUI view = new GUI(settings);
             BusinessLogic logic = new BusinessLogic(view, model, settings);
@@ -61,7 +61,6 @@ public class PolynomialPlotter {
                 @Override 
                 public void run(){
                     view.start();
-                    view.simulateAddFunction(Color.RED, "120960.0x^5 + 45360.0x^4 + 33600.0x^3 + 10080.0x^2 + 9360.0x + 11160.0", null);
                 }
             });
             

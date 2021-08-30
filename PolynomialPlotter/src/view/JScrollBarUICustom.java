@@ -13,12 +13,12 @@ import javax.swing.JButton;
 
 
 
-public class MyScrollBarUI extends BasicScrollBarUI{
+public class JScrollBarUICustom extends BasicScrollBarUI{
 
     private StyleClass styleClass;
     private int thumbOffset = 2;
     
-    public MyScrollBarUI(StyleClass styleClass){
+    public JScrollBarUICustom(StyleClass styleClass){
         this.styleClass = styleClass;
     }
     

@@ -67,7 +67,7 @@ public class GUI extends JFrame implements IGUI {
         sidebar_panel = new JSidebar(styleClass);
         plotter_panel = new JPlotter(this.settings, styleClass);
         scroll_sidebar_panel = new JScrollPane(sidebar_panel);
-        scroll_sidebar_panel.getVerticalScrollBar().setUI(new MyScrollBarUI(styleClass));
+        scroll_sidebar_panel.getVerticalScrollBar().setUI(new JScrollBarUICustom(styleClass));
         scroll_sidebar_panel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scroll_sidebar_panel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scroll_sidebar_panel.getVerticalScrollBar().setUnitIncrement(16);

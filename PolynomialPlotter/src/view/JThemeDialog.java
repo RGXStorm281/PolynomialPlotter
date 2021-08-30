@@ -29,7 +29,7 @@ import java.awt.event.MouseAdapter;
  * @author raphaelsack
  */
 
-public class ThemeDialog extends JFrame{
+public class JThemeDialog extends JFrame{
 
     private Color buttonBackground;
     private Color buttonForeground;
@@ -40,7 +40,7 @@ public class ThemeDialog extends JFrame{
     private JLabel label;
     private JComboBox<String> jcb;
 
-    public ThemeDialog(GUI gui, StyleClass styleClass){
+    public JThemeDialog(GUI gui, StyleClass styleClass){
         buttonBackground = styleClass.BUTTON_BG;
         this.styleClass = styleClass;
         buttonForeground = styleClass.BUTTON_FG;

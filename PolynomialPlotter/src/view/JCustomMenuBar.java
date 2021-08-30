@@ -35,11 +35,11 @@ import javax.swing.KeyStroke;
 public class JCustomMenuBar extends JMenuBar {
     private GUI gui;
     private StyleClass styleClass;
-    private ThemeDialog themeDialog;
+    private JThemeDialog themeDialog;
 
     public JCustomMenuBar(GUI _gui, StyleClass styleClass) {
         this.gui = _gui;
-        themeDialog = new ThemeDialog(gui, styleClass);
+        themeDialog = new JThemeDialog(gui, styleClass);
         ResourceBundle rb = ResourceBundle.getBundle("i18n.resource", getDefaultLocale()); // Resource Bundle for
                                                                                            // localization
         setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));

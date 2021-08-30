@@ -17,7 +17,7 @@ import model.Tuple;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import startup.ISettings;
+import model.ISettings;
 
 /**
  *

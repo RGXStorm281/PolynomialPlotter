@@ -35,7 +35,7 @@ import java.util.List;
 import event.IPlotListener;
 import model.Tuple;
 import model.Utils;
-import startup.ISettings;
+import model.ISettings;
 
 /**
  * @author raphaelsack

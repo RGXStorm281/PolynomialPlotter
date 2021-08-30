@@ -18,7 +18,7 @@ import model.IFunction;
 import model.Koordinate;
 import model.Tuple;
 import model.Utils;
-import startup.ISettings;
+import model.ISettings;
 import view.IGUI;
 
 /**

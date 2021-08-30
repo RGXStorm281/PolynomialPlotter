@@ -6,7 +6,7 @@
 package tests.businessLogic;
 import tests.*;
 import java.util.logging.Logger;
-import startup.ISettings;
+import model.ISettings;
 
 /**
  *
